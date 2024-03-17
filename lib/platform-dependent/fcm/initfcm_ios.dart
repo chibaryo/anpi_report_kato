@@ -39,14 +39,14 @@ Future<void> initFCMIOS(String uid, String udid) async {
     debugPrint("New FCM Token: $fcmToken");
 
     // Save fcmToken to Firestore
-    await FirebaseFirestore.instance
-      .collection("tokens")
-      .doc(uid)
-      .collection("platforms")
-      .doc(udid)
-      .update({
-        "fcmToken": fcmToken,
-        "updatedAt": serverDate,
+      await FirebaseFirestore.instance
+        .collection("tokens")
+        .doc(uid)
+        .collection("platforms")
+        .doc(udid)
+        .update({
+          "fcmToken": fcmToken,
+          "updatedAt": serverDate,
       });
     print("Updated DB");
 

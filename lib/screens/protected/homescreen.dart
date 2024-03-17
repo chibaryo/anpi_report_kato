@@ -147,7 +147,7 @@ class HomeScreen extends HookConsumerWidget {
 
     useEffect(() {
       getDevInfo().then((value) {
-//        addDeviceInfo().then((value) {
+        addDeviceInfo().then((value) {
           getPlatformDeviceInfoByUdid().then((value) {
             final data = value.data();
             debugPrint("data: $data");
@@ -160,7 +160,6 @@ class HomeScreen extends HookConsumerWidget {
                   return const FcmAlertDialog();
                 }
               );
-              addDeviceInfo();
             } else {
               // Get one user
               getUserDocByUid().then((value) {
@@ -187,7 +186,7 @@ class HomeScreen extends HookConsumerWidget {
               });
             }
           });
-       // });
+        });
       });
 
 /*

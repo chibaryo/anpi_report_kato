@@ -30,14 +30,14 @@ Future<void> initFCMAndroid(String uid, String udid) async {
             "BLNDGJO2cAD302-pljCkgSvpVvMkt7atFMJtzG4SYW3SHKSW6aIKMm6AjDJGJ5uAtzRY-dovLXrs5wfbOZ7ZFy0");
 
     // Save fcmToken to Firestore
-    await FirebaseFirestore.instance
-      .collection("tokens")
-      .doc(uid)
-      .collection("platforms")
-      .doc(udid)
-      .update({
-        "fcmToken": fcmToken,
-        "updatedAt": serverDate,
+      await FirebaseFirestore.instance
+        .collection("tokens")
+        .doc(uid)
+        .collection("platforms")
+        .doc(udid)
+        .update({ // update
+          "fcmToken": fcmToken,
+          "updatedAt": serverDate,
       });
 
 //    final fcmNotifier = ref.read(fcmTokenDataProvider.notifier);
