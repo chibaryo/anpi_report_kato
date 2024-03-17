@@ -7,7 +7,7 @@ part of 'user_provider.dart';
 // **************************************************************************
 
 String _$asyncFirebaseUserNotifierHash() =>
-    r'4ca53367d11ab78c0f4aa92619e513ffbae73dae';
+    r'330788591d52986e5ed8121c10ae1947ebbfdf93';
 
 /// See also [AsyncFirebaseUserNotifier].
 @ProviderFor(AsyncFirebaseUserNotifier)

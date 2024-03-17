@@ -9,6 +9,7 @@ import 'package:flutter_settings_screens/flutter_settings_screens.dart' as scree
 
 import '../../providers/firebase/isadmin_provider.dart';
 import '../../providers/firebaseauth/auth_provider.dart';
+import '../../providers/firestore/user_provider.dart';
 import '../../providers/thememode/themeswitcher_provider.dart';
 import 'accountsettings.dart';
 import 'usersettings.dart';
@@ -48,6 +49,17 @@ class SettingsScreen extends HookConsumerWidget {
         );
       }
 
+    Future<DocumentSnapshot<Map<String, dynamic>>>
+      getUserDocByUid() async {
+        final docSnapshot = await FirebaseFirestore.instance
+          .collection("users")
+          .doc(authState.currentUser?.uid)
+          .get();
+        
+        return docSnapshot;
+    }
+
+
     useEffect((){
       setDefaultUsername().then((value) {
         getUserInfo().then((userInfo) {
@@ -79,15 +91,27 @@ class SettingsScreen extends HookConsumerWidget {
       ),
       onTap: () {
 //        await screensettings.Settings.clearCache();
-        // Logout
-        FirebaseAuth.instance.signOut().then((result) {
-          // Show snackbar
-          const snackBar = SnackBar(
-            content: Text("ログアウトしました")
-          );
-          ScaffoldMessenger.of(context).showSnackBar(snackBar);
+        // set flag off
+        ref.read(asyncFirebaseUserNotifierProvider.notifier).toggleFirebaseUserOnlineStatus(
+          uid: authState.currentUser!.uid,
+          isOnlineStatus: false
+        ); // toggleFirebaseUserOnlineStatus(
 
-          context.goNamed("RootScreen");
+        getUserDocByUid().then((value) {
+          final data = value.data();
+          final isOnlineStatus = data!['isOnline'];
+          debugPrint("user data!['isOnline']: $isOnlineStatus");
+
+          // Logout
+          FirebaseAuth.instance.signOut().then((result) {
+            // Show snackbar
+            const snackBar = SnackBar(
+              content: Text("ログアウトしました")
+            );
+            ScaffoldMessenger.of(context).showSnackBar(snackBar);
+
+            context.goNamed("RootScreen");
+          });
         });
       }
 //      onTap: () => Utils.showSnackBar(context, "Clicked Logout"),

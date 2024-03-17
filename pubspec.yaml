@@ -75,6 +75,8 @@ dependencies:
   custom_text_form_field_plus:
   device_info_plus:
   ios_utsname_ext:
+  device_imei:
+  flutter_device_identifier:
 
 dev_dependencies:
   flutter_test:

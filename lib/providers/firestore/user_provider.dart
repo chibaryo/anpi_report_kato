@@ -18,6 +18,20 @@ class AsyncFirebaseUserNotifier extends _$AsyncFirebaseUserNotifier {
     return _fetchFirebaseUsers();
   }
 
+  // Get one
+  Future<FirebaseUser?> getFirebaseUserById (String uid) async {
+    final doc = await FirebaseFirestore.instance
+      .collection("users")
+      .doc(uid)
+      .get();
+    
+    if (doc.exists) {
+      return FirebaseUser.fromJson(doc.data()!);
+    } else {
+      return null;
+    }
+  }
+
   // CREATE(Add)
   Future<void> addFirebaseUser({
     required String name,
@@ -55,6 +69,28 @@ class AsyncFirebaseUserNotifier extends _$AsyncFirebaseUserNotifier {
             "imagepath": imagepath,
             "isAdmin": isAdmin,
             "createdAt": serverDate,
+          });
+        return _fetchFirebaseUsers();
+      } catch (err) {
+        throw Exception(err);
+      }
+    });
+  }
+
+  Future<void> toggleFirebaseUserOnlineStatus({
+    required String uid,
+    required bool isOnlineStatus
+  }) async {
+    // Set the state to loading
+    state = const AsyncValue.loading();
+    // Add the new FirebaseUser and reload the FirebaseUser list from the remote repository
+    state = await AsyncValue.guard(() async {
+      try {
+        await FirebaseFirestore.instance
+          .collection("users")
+          .doc(uid)
+          .update({
+            "isOnline": isOnlineStatus
           });
         return _fetchFirebaseUsers();
       } catch (err) {

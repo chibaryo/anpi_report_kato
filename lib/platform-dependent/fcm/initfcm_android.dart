@@ -3,7 +3,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
-Future<void> initAndroidFCM(String uid) async {
+Future<void> initFCMAndroid(String uid, String udid) async {
   final serverDate = DateTime.now();
   // Init FirebaseAuth
   final messaging = FirebaseMessaging.instance;
@@ -28,15 +28,16 @@ Future<void> initAndroidFCM(String uid) async {
     final fcmToken = await messaging.getToken(
         vapidKey:
             "BLNDGJO2cAD302-pljCkgSvpVvMkt7atFMJtzG4SYW3SHKSW6aIKMm6AjDJGJ5uAtzRY-dovLXrs5wfbOZ7ZFy0");
-    debugPrint("FCM Token: $fcmToken");
 
     // Save fcmToken to Firestore
     await FirebaseFirestore.instance
       .collection("tokens")
       .doc(uid)
+      .collection("platforms")
+      .doc(udid)
       .update({
         "fcmToken": fcmToken,
-        "createdAt": serverDate,
+        "updatedAt": serverDate,
       });
 
 //    final fcmNotifier = ref.read(fcmTokenDataProvider.notifier);

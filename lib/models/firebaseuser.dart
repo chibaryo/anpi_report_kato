@@ -24,6 +24,7 @@ class FirebaseUser with _$FirebaseUser {
     @Default('') String email,
     @Default('') String imagepath,
     @Default(false) bool isAdmin,
+    @Default(false) bool isOnline,
     @TimestampConverter() DateTime? createdAt,
   }) = _FirebaseUser;
 
@@ -41,6 +42,7 @@ class FirebaseUser with _$FirebaseUser {
     'email': email,
     'imagepath': imagepath,
     'isAdmin': isAdmin,
+    'isOnline': isOnline,
     'createdAt': createdAt != null ? Timestamp.fromDate(createdAt!) : null,
   };
 }

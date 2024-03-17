@@ -1,7 +1,9 @@
 import 'dart:developer';
 import 'dart:io';
 
+import 'package:anpi_report_ios/platform-dependent/fcm/initfcm_android.dart';
 import 'package:anpi_report_ios/platform-dependent/fcm/initfcm_ios.dart';
+import 'package:anpi_report_ios/providers/firestore/user_provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -12,6 +14,8 @@ import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:ios_utsname_ext/extension.dart';
+import 'package:device_imei/device_imei.dart';
+import 'package:flutter_device_identifier/flutter_device_identifier.dart';
 
 import '../../models/deviceinfotable.dart';
 import '../../providers/firebaseauth/auth_provider.dart';
@@ -30,28 +34,41 @@ class HomeScreen extends HookConsumerWidget {
     final locationInfo = ref.watch(geocodingControllerProvider);
     final currentAddress = ref.watch(addressDataProvider);
     //
-    final iosSystemName = useState("");
-    final iosOsVersion = useState("");
-    final iosLocalizedModel = useState("");
-    final iosProductName = useState("");
-    final iosUDID = useState("");
+    final systemName = useState("");
+    final osVersion = useState("");
+    final localizedModel = useState("");
+    final productName = useState("");
+    final uDID = useState("");
     //
-    final iosUDIDNotifier = ref.watch(iOSUdidNotifierProvider);
+    final uDIDNotifier = ref.watch(udidNotifierProvider);
 
     Future<void> getDevInfo() async {
       final deviceInfoPlugin = DeviceInfoPlugin();
       if (Platform.isIOS) {
         final iosInfo = await deviceInfoPlugin.iosInfo;
 
-        iosSystemName.value = iosInfo.systemName;
-        iosOsVersion.value = iosInfo.systemVersion;
-        iosLocalizedModel.value = iosInfo.localizedModel;
+        systemName.value = iosInfo.systemName;
+        osVersion.value = iosInfo.systemVersion;
+        localizedModel.value = iosInfo.localizedModel;
         final iosMachine = iosInfo.utsname.machine;
-        iosProductName.value = iosMachine.iOSProductName;
-        iosUDID.value = iosInfo.identifierForVendor!;
+        productName.value = iosMachine.iOSProductName;
+        uDID.value = iosInfo.identifierForVendor!;
 
-        debugPrint("iosUDID.value : ${iosUDID.value}");
-        ref.read(iOSUdidNotifierProvider.notifier).state = iosInfo.identifierForVendor!;
+        debugPrint("uDID.value : ${uDID.value}");
+        ref.read(udidNotifierProvider.notifier).state = iosInfo.identifierForVendor!;
+      } else if (Platform.isAndroid) {
+        await FlutterDeviceIdentifier.requestPermission();
+        String androidID = await FlutterDeviceIdentifier.androidID;
+        debugPrint("### Android ### androidID: $androidID");
+
+        final androidInfo = await deviceInfoPlugin.androidInfo;
+
+        debugPrint("androidInfo: ${androidInfo.toString()}");
+        systemName.value = "Android";
+        osVersion.value = androidInfo.version.release;
+        localizedModel.value = androidInfo.display;
+        productName.value = androidInfo.product;
+        uDID.value = androidID;
 
       }
     }
@@ -62,13 +79,13 @@ class HomeScreen extends HookConsumerWidget {
         .collection("tokens")
         .doc(authState.currentUser?.uid)
         .collection("platforms")
-        .doc(iosUDID.value)
+        .doc(uDID.value)
         .set({
-          "systemName": iosSystemName.value,
-          "osVersion": iosOsVersion.value,
-          "localizedModel": iosLocalizedModel.value,
-          "productName": iosProductName.value,
-          "udId": iosUDID.value,
+          "systemName": systemName.value,
+          "osVersion": osVersion.value,
+          "localizedModel": localizedModel.value,
+          "productName": productName.value,
+          "udId": uDID.value,
 //          "fcmToken": "",
           "createdAt": serverDate,
           "updatedAt": serverDate,
@@ -81,13 +98,34 @@ class HomeScreen extends HookConsumerWidget {
           .collection("tokens")
           .doc(authState.currentUser?.uid)
           .collection("platforms")
-          .doc(iosUDID.value)
+          .doc(uDID.value)
           .get();
 
         return docSnapshot;
-      }
+    }
 
+    Future<DocumentSnapshot<Map<String, dynamic>>>
+      getUserDocByUid() async {
+        final docSnapshot = await FirebaseFirestore.instance
+          .collection("users")
+          .doc(authState.currentUser?.uid)
+          .get();
+        
+        return docSnapshot;
+    }
 
+    Future<void> toggleFirebaseUserOnlineStatus({
+      required String uid,
+      required bool isOnlineStatus
+    }) async {
+      await FirebaseFirestore.instance
+        .collection("users")
+        .doc(uid)
+        .update({
+          "isOnline": isOnlineStatus,
+        });
+    }
+    
     useEffect(() {
       getDevInfo().then((value) {
 //        addDeviceInfo().then((value) {
@@ -105,9 +143,29 @@ class HomeScreen extends HookConsumerWidget {
               );
               addDeviceInfo();
             } else {
-              debugPrint("Existing devicedata: $data");
-              // Only renew fcmtoken
-              initFCMIOS(authState.currentUser!.uid, iosUDID.value);
+              // Get one user
+              getUserDocByUid().then((value) {
+                final data = value.data();
+                final isOnlineStatus = data!['isOnline'];
+                debugPrint("user data!['isOnline']: $isOnlineStatus");
+
+                //
+                if (!isOnlineStatus) {
+                  debugPrint("### still offline ###");
+                  debugPrint("Existing devicedata: $data");
+                  // Only renew fcmtoken
+                  if (Platform.isIOS) {
+                    initFCMIOS(authState.currentUser!.uid, uDID.value);
+                  } else if (Platform.isAndroid) {
+                    initFCMAndroid(authState.currentUser!.uid, uDID.value);
+                  }
+                  // set flag on
+                  ref.read(asyncFirebaseUserNotifierProvider.notifier).toggleFirebaseUserOnlineStatus(
+                    uid: authState.currentUser!.uid,
+                    isOnlineStatus: true
+                  ); // toggleFirebaseUserOnlineStatus(
+                }
+              });
             }
           });
        // });
@@ -116,7 +174,7 @@ class HomeScreen extends HookConsumerWidget {
 /*
       queryDeviceInfoTableByUDID(
         authState.currentUser!.uid,
-        iosUDID
+        uDID
       ).then((value) {
         debugPrint("value: $value");
         if (value.isNotEmpty && value[0].fcmToken != "") {

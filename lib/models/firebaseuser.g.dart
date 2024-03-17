@@ -13,6 +13,7 @@ _$FirebaseUserImpl _$$FirebaseUserImplFromJson(Map<String, dynamic> json) =>
       email: json['email'] as String? ?? '',
       imagepath: json['imagepath'] as String? ?? '',
       isAdmin: json['isAdmin'] as bool? ?? false,
+      isOnline: json['isOnline'] as bool? ?? false,
       createdAt:
           const TimestampConverter().fromJson(json['createdAt'] as Timestamp?),
     );
@@ -24,5 +25,6 @@ Map<String, dynamic> _$$FirebaseUserImplToJson(_$FirebaseUserImpl instance) =>
       'email': instance.email,
       'imagepath': instance.imagepath,
       'isAdmin': instance.isAdmin,
+      'isOnline': instance.isOnline,
       'createdAt': const TimestampConverter().toJson(instance.createdAt),
     };

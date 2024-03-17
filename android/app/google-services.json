@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "1057187287026",
+    "project_id": "anpi-report",
+    "storage_bucket": "anpi-report.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1057187287026:android:6def8bafa5762d089f256b",
+        "android_client_info": {
+          "package_name": "com.example.anpi_report"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCbNgxOAa25DhVfxKkvaCYrMVjHeHxPFzA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1057187287026:android:0692bffbc9222ac99f256b",
+        "android_client_info": {
+          "package_name": "com.example.anpi_report_ios"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCbNgxOAa25DhVfxKkvaCYrMVjHeHxPFzA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

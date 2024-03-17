@@ -22,21 +22,20 @@ final firebaseFirestoreProvider =
 );
 
 typedef FirebaseFirestoreRef = AutoDisposeProviderRef<FirebaseFirestore>;
-String _$iOSUdidNotifierHash() => r'7cef3cfdb171f2fa0acd44844b864a5a9f5d99e3';
+String _$udidNotifierHash() => r'a1e777fff1cc0b78a29b6a983b7d13b3c5fc6ca0';
 
-/// See also [IOSUdidNotifier].
-@ProviderFor(IOSUdidNotifier)
-final iOSUdidNotifierProvider =
-    AutoDisposeNotifierProvider<IOSUdidNotifier, String>.internal(
-  IOSUdidNotifier.new,
-  name: r'iOSUdidNotifierProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$iOSUdidNotifierHash,
+/// See also [UdidNotifier].
+@ProviderFor(UdidNotifier)
+final udidNotifierProvider =
+    AutoDisposeNotifierProvider<UdidNotifier, String>.internal(
+  UdidNotifier.new,
+  name: r'udidNotifierProvider',
+  debugGetCreateSourceHash:
+      const bool.fromEnvironment('dart.vm.product') ? null : _$udidNotifierHash,
   dependencies: null,
   allTransitiveDependencies: null,
 );
 
-typedef _$IOSUdidNotifier = AutoDisposeNotifier<String>;
+typedef _$UdidNotifier = AutoDisposeNotifier<String>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member

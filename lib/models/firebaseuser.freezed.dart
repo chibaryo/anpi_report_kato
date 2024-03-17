@@ -25,6 +25,7 @@ mixin _$FirebaseUser {
   String get email => throw _privateConstructorUsedError;
   String get imagepath => throw _privateConstructorUsedError;
   bool get isAdmin => throw _privateConstructorUsedError;
+  bool get isOnline => throw _privateConstructorUsedError;
   @TimestampConverter()
   DateTime? get createdAt => throw _privateConstructorUsedError;
 
@@ -46,6 +47,7 @@ abstract class $FirebaseUserCopyWith<$Res> {
       String email,
       String imagepath,
       bool isAdmin,
+      bool isOnline,
       @TimestampConverter() DateTime? createdAt});
 }
 
@@ -67,6 +69,7 @@ class _$FirebaseUserCopyWithImpl<$Res, $Val extends FirebaseUser>
     Object? email = null,
     Object? imagepath = null,
     Object? isAdmin = null,
+    Object? isOnline = null,
     Object? createdAt = freezed,
   }) {
     return _then(_value.copyWith(
@@ -90,6 +93,10 @@ class _$FirebaseUserCopyWithImpl<$Res, $Val extends FirebaseUser>
           ? _value.isAdmin
           : isAdmin // ignore: cast_nullable_to_non_nullable
               as bool,
+      isOnline: null == isOnline
+          ? _value.isOnline
+          : isOnline // ignore: cast_nullable_to_non_nullable
+              as bool,
       createdAt: freezed == createdAt
           ? _value.createdAt
           : createdAt // ignore: cast_nullable_to_non_nullable
@@ -112,6 +119,7 @@ abstract class _$$FirebaseUserImplCopyWith<$Res>
       String email,
       String imagepath,
       bool isAdmin,
+      bool isOnline,
       @TimestampConverter() DateTime? createdAt});
 }
 
@@ -131,6 +139,7 @@ class __$$FirebaseUserImplCopyWithImpl<$Res>
     Object? email = null,
     Object? imagepath = null,
     Object? isAdmin = null,
+    Object? isOnline = null,
     Object? createdAt = freezed,
   }) {
     return _then(_$FirebaseUserImpl(
@@ -154,6 +163,10 @@ class __$$FirebaseUserImplCopyWithImpl<$Res>
           ? _value.isAdmin
           : isAdmin // ignore: cast_nullable_to_non_nullable
               as bool,
+      isOnline: null == isOnline
+          ? _value.isOnline
+          : isOnline // ignore: cast_nullable_to_non_nullable
+              as bool,
       createdAt: freezed == createdAt
           ? _value.createdAt
           : createdAt // ignore: cast_nullable_to_non_nullable
@@ -171,6 +184,7 @@ class _$FirebaseUserImpl with DiagnosticableTreeMixin implements _FirebaseUser {
       this.email = '',
       this.imagepath = '',
       this.isAdmin = false,
+      this.isOnline = false,
       @TimestampConverter() this.createdAt});
 
   factory _$FirebaseUserImpl.fromJson(Map<String, dynamic> json) =>
@@ -192,12 +206,15 @@ class _$FirebaseUserImpl with DiagnosticableTreeMixin implements _FirebaseUser {
   @JsonKey()
   final bool isAdmin;
   @override
+  @JsonKey()
+  final bool isOnline;
+  @override
   @TimestampConverter()
   final DateTime? createdAt;
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'FirebaseUser(uid: $uid, name: $name, email: $email, imagepath: $imagepath, isAdmin: $isAdmin, createdAt: $createdAt)';
+    return 'FirebaseUser(uid: $uid, name: $name, email: $email, imagepath: $imagepath, isAdmin: $isAdmin, isOnline: $isOnline, createdAt: $createdAt)';
   }
 
   @override
@@ -210,6 +227,7 @@ class _$FirebaseUserImpl with DiagnosticableTreeMixin implements _FirebaseUser {
       ..add(DiagnosticsProperty('email', email))
       ..add(DiagnosticsProperty('imagepath', imagepath))
       ..add(DiagnosticsProperty('isAdmin', isAdmin))
+      ..add(DiagnosticsProperty('isOnline', isOnline))
       ..add(DiagnosticsProperty('createdAt', createdAt));
   }
 
@@ -224,14 +242,16 @@ class _$FirebaseUserImpl with DiagnosticableTreeMixin implements _FirebaseUser {
             (identical(other.imagepath, imagepath) ||
                 other.imagepath == imagepath) &&
             (identical(other.isAdmin, isAdmin) || other.isAdmin == isAdmin) &&
+            (identical(other.isOnline, isOnline) ||
+                other.isOnline == isOnline) &&
             (identical(other.createdAt, createdAt) ||
                 other.createdAt == createdAt));
   }
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode =>
-      Object.hash(runtimeType, uid, name, email, imagepath, isAdmin, createdAt);
+  int get hashCode => Object.hash(
+      runtimeType, uid, name, email, imagepath, isAdmin, isOnline, createdAt);
 
   @JsonKey(ignore: true)
   @override
@@ -254,6 +274,7 @@ abstract class _FirebaseUser implements FirebaseUser {
       final String email,
       final String imagepath,
       final bool isAdmin,
+      final bool isOnline,
       @TimestampConverter() final DateTime? createdAt}) = _$FirebaseUserImpl;
 
   factory _FirebaseUser.fromJson(Map<String, dynamic> json) =
@@ -269,6 +290,8 @@ abstract class _FirebaseUser implements FirebaseUser {
   String get imagepath;
   @override
   bool get isAdmin;
+  @override
+  bool get isOnline;
   @override
   @TimestampConverter()
   DateTime? get createdAt;

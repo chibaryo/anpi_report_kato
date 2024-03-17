@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
+import '../platform-dependent/fcm/initfcm_android.dart';
 import '../platform-dependent/fcm/initfcm_ios.dart';
 import '../providers/firebaseauth/auth_provider.dart';
 import '../providers/firestore/deviceinfotable/deviceinfotable_provider.dart';
@@ -14,7 +15,7 @@ class FcmAlertDialog extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final authState = ref.watch(firebaseAuthProvider);
-    final iosUDIDNotifier = ref.watch(iOSUdidNotifierProvider);
+    final uDIDNotifier = ref.watch(udidNotifierProvider);
 
     return AlertDialog(
             title: const Text("通知許可しますか？"),
@@ -33,7 +34,12 @@ class FcmAlertDialog extends HookConsumerWidget {
                   if (Platform.isIOS) {
                     initFCMIOS(
                       authState.currentUser!.uid,
-                      iosUDIDNotifier
+                      uDIDNotifier
+                    );
+                  } else if (Platform.isAndroid) {
+                    initFCMAndroid(
+                      authState.currentUser!.uid,
+                      uDIDNotifier
                     );
                   }
                   //await initAndroidFCM(authState.currentUser!.uid);

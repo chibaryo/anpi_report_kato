@@ -31,7 +31,7 @@ Future<List<DeviceInfoTable>> queryDeviceInfoTableByUDID(String uid, String udId
 }
 
 @riverpod
-class IOSUdidNotifier extends _$IOSUdidNotifier {
+class UdidNotifier extends _$UdidNotifier {
   @override
   String build () {
     return "";

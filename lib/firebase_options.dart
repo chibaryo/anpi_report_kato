@@ -24,10 +24,7 @@ class DefaultFirebaseOptions {
     }
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for android - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return android;
       case TargetPlatform.iOS:
         return ios;
       case TargetPlatform.macOS:
@@ -52,12 +49,20 @@ class DefaultFirebaseOptions {
     }
   }
 
-  static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyCxqALVSGd4dax_nYSiWB54JMlXtkKp4NQ',
-    appId: '1:1057187287026:ios:f3891e9828c79c3b9f256b',
+  static const FirebaseOptions android = FirebaseOptions(
+    apiKey: 'AIzaSyCbNgxOAa25DhVfxKkvaCYrMVjHeHxPFzA',
+    appId: '1:1057187287026:android:0692bffbc9222ac99f256b',
     messagingSenderId: '1057187287026',
     projectId: 'anpi-report',
     storageBucket: 'anpi-report.appspot.com',
-    iosBundleId: 'com.example.anpiReportIos',
+  );
+
+  static const FirebaseOptions ios = FirebaseOptions(
+    apiKey: 'AIzaSyCxqALVSGd4dax_nYSiWB54JMlXtkKp4NQ',
+    appId: '1:1057187287026:ios:ae4cc868097ce0bd9f256b',
+    messagingSenderId: '1057187287026',
+    projectId: 'anpi-report',
+    storageBucket: 'anpi-report.appspot.com',
+    iosBundleId: 'K5JH8UC5BA.com.example.anpiReportIos',
   );
 }
