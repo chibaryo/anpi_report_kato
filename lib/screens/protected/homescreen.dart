@@ -18,8 +18,10 @@ import 'package:device_imei/device_imei.dart';
 import 'package:flutter_device_identifier/flutter_device_identifier.dart';
 
 import '../../models/deviceinfotable.dart';
+import '../../models/prevnotis.dart';
 import '../../providers/firebaseauth/auth_provider.dart';
 import '../../providers/firestore/deviceinfotable/deviceinfotable_provider.dart';
+import '../../providers/firestore/userreport_provider.dart';
 import '../../providers/geolocator/location_provider.dart';
 import '../../widgets/fcmalertdialog.dart';
 
@@ -31,6 +33,8 @@ class HomeScreen extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final authState = ref.watch(firebaseAuthProvider);
+    final prevnotisstream = ref.watch(prevNotisStreamProvider);
+
     final locationInfo = ref.watch(geocodingControllerProvider);
     final currentAddress = ref.watch(addressDataProvider);
     //
@@ -125,7 +129,22 @@ class HomeScreen extends HookConsumerWidget {
           "isOnline": isOnlineStatus,
         });
     }
-    
+
+    Future<List<DataRow>> buildDataRows(List<PrevNotis> prevs) async {
+      return Future.wait(prevs.map<Future<DataRow>>((e) async {
+        final docSnap = await FirebaseFirestore.instance
+          .collection("notifications")
+          .doc(e.notificationId)
+          .get();
+        final data = docSnap.data();
+
+        return DataRow(cells: <DataCell>[
+          DataCell(Text(data!["notiTitle"])),
+          DataCell(Text(e.isMeResponded ? "回答済み" : "未回答")),
+        ]);
+      })).then((rows) => rows.toList());
+    }
+
     useEffect(() {
       getDevInfo().then((value) {
 //        addDeviceInfo().then((value) {
@@ -209,6 +228,51 @@ class HomeScreen extends HookConsumerWidget {
             authState.currentUser != null
               ? Text("${authState.currentUser!.displayName} さん")
               : const Text("uid"),
+          // 回答済み
+          prevnotisstream.when(
+            data: (prevs) {
+                return prevs == null
+                  ? const Text("通知がありません")
+                  : FutureBuilder<List<DataRow>>(
+                  future: buildDataRows(prevs),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(child: CircularProgressIndicator());
+                    } else if (snapshot.hasError) {
+                      return Center(child: Text('Error: ${snapshot.error}'));
+                    } else {
+                      return DataTable(
+                        columns: const <DataColumn>[
+                          DataColumn(
+                            label: Expanded(
+                              child: Text(
+                                "通知名",
+                                style: TextStyle(fontStyle: FontStyle.italic),
+                              ),
+                            ),
+                          ),
+                          DataColumn(
+                            label: Expanded(
+                              child: Text(
+                                "回答ステータス",
+                                style: TextStyle(fontStyle: FontStyle.italic),
+                              ),
+                            ),
+                          ),
+                        ],
+                        rows: snapshot.data ?? const <DataRow>[],
+                      );
+                    }
+                  },
+                );
+            },
+            loading: () => const Center(child: CircularProgressIndicator()),
+            error: (error, stackTrace) {
+              debugPrint(error.toString());
+              return Center(child: Text('Error: $error'));
+            },
+          ),
+
           //
           Container(
               padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 32.0),
