@@ -16,6 +16,7 @@ import 'package:device_info_plus/device_info_plus.dart';
 import 'package:ios_utsname_ext/extension.dart';
 import 'package:device_imei/device_imei.dart';
 import 'package:flutter_device_identifier/flutter_device_identifier.dart';
+import 'package:flutter_app_badger/flutter_app_badger.dart';
 
 import '../../models/deviceinfotable.dart';
 import '../../models/prevnotis.dart';
@@ -133,6 +134,13 @@ class HomeScreen extends HookConsumerWidget {
     }
 
     Future<List<DataRow>> buildDataRows(List<PrevNotis> prevs) async {
+      final notAnsweredList = prevs.where((element) => !element.isMeResponded);
+      final notAnsweredCnt = notAnsweredList.length;
+      debugPrint("notAnsweredCnt: $notAnsweredCnt");
+      if (await FlutterAppBadger.isAppBadgeSupported()) {
+        FlutterAppBadger.updateBadgeCount(notAnsweredCnt);
+      }
+
       return Future.wait(prevs.map<Future<DataRow>>((e) async {
         final docSnap = await FirebaseFirestore.instance
           .collection("notifications")
