@@ -23,6 +23,7 @@ class AsyncUserReportNotifier extends _$AsyncUserReportNotifier {
   Future<void> addUserReport({
     required String uid,
     required String name,
+    required int siteCode,
     required String reportId,
     required String issueId,
     required String anpiStatus,
@@ -46,6 +47,7 @@ class AsyncUserReportNotifier extends _$AsyncUserReportNotifier {
           .set({
             "reportId": reportId,
             "issueId": issueId,
+            "siteCode": siteCode,
             "uid": uid,
             "name": name,
             "anpiStatus": anpiStatus,

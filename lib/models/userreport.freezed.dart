@@ -22,6 +22,7 @@ UserReport _$UserReportFromJson(Map<String, dynamic> json) {
 mixin _$UserReport {
   String get uid => throw _privateConstructorUsedError;
   String get name => throw _privateConstructorUsedError;
+  int get siteCode => throw _privateConstructorUsedError;
   String get anpiStatus => throw _privateConstructorUsedError;
   String get gotoOfficeStatus => throw _privateConstructorUsedError;
   String get message => throw _privateConstructorUsedError;
@@ -46,6 +47,7 @@ abstract class $UserReportCopyWith<$Res> {
   $Res call(
       {String uid,
       String name,
+      int siteCode,
       String anpiStatus,
       String gotoOfficeStatus,
       String message,
@@ -69,6 +71,7 @@ class _$UserReportCopyWithImpl<$Res, $Val extends UserReport>
   $Res call({
     Object? uid = null,
     Object? name = null,
+    Object? siteCode = null,
     Object? anpiStatus = null,
     Object? gotoOfficeStatus = null,
     Object? message = null,
@@ -85,6 +88,10 @@ class _$UserReportCopyWithImpl<$Res, $Val extends UserReport>
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
               as String,
+      siteCode: null == siteCode
+          ? _value.siteCode
+          : siteCode // ignore: cast_nullable_to_non_nullable
+              as int,
       anpiStatus: null == anpiStatus
           ? _value.anpiStatus
           : anpiStatus // ignore: cast_nullable_to_non_nullable
@@ -124,6 +131,7 @@ abstract class _$$UserReportImplCopyWith<$Res>
   $Res call(
       {String uid,
       String name,
+      int siteCode,
       String anpiStatus,
       String gotoOfficeStatus,
       String message,
@@ -145,6 +153,7 @@ class __$$UserReportImplCopyWithImpl<$Res>
   $Res call({
     Object? uid = null,
     Object? name = null,
+    Object? siteCode = null,
     Object? anpiStatus = null,
     Object? gotoOfficeStatus = null,
     Object? message = null,
@@ -161,6 +170,10 @@ class __$$UserReportImplCopyWithImpl<$Res>
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
               as String,
+      siteCode: null == siteCode
+          ? _value.siteCode
+          : siteCode // ignore: cast_nullable_to_non_nullable
+              as int,
       anpiStatus: null == anpiStatus
           ? _value.anpiStatus
           : anpiStatus // ignore: cast_nullable_to_non_nullable
@@ -195,6 +208,7 @@ class _$UserReportImpl with DiagnosticableTreeMixin implements _UserReport {
   const _$UserReportImpl(
       {this.uid = '',
       this.name = '',
+      this.siteCode = 0,
       this.anpiStatus = '',
       this.gotoOfficeStatus = '',
       this.message = '',
@@ -212,6 +226,9 @@ class _$UserReportImpl with DiagnosticableTreeMixin implements _UserReport {
   @override
   @JsonKey()
   final String name;
+  @override
+  @JsonKey()
+  final int siteCode;
   @override
   @JsonKey()
   final String anpiStatus;
@@ -240,7 +257,7 @@ class _$UserReportImpl with DiagnosticableTreeMixin implements _UserReport {
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'UserReport(uid: $uid, name: $name, anpiStatus: $anpiStatus, gotoOfficeStatus: $gotoOfficeStatus, message: $message, isLocationPermitted: $isLocationPermitted, position: $position, createdAt: $createdAt)';
+    return 'UserReport(uid: $uid, name: $name, siteCode: $siteCode, anpiStatus: $anpiStatus, gotoOfficeStatus: $gotoOfficeStatus, message: $message, isLocationPermitted: $isLocationPermitted, position: $position, createdAt: $createdAt)';
   }
 
   @override
@@ -250,6 +267,7 @@ class _$UserReportImpl with DiagnosticableTreeMixin implements _UserReport {
       ..add(DiagnosticsProperty('type', 'UserReport'))
       ..add(DiagnosticsProperty('uid', uid))
       ..add(DiagnosticsProperty('name', name))
+      ..add(DiagnosticsProperty('siteCode', siteCode))
       ..add(DiagnosticsProperty('anpiStatus', anpiStatus))
       ..add(DiagnosticsProperty('gotoOfficeStatus', gotoOfficeStatus))
       ..add(DiagnosticsProperty('message', message))
@@ -265,6 +283,8 @@ class _$UserReportImpl with DiagnosticableTreeMixin implements _UserReport {
             other is _$UserReportImpl &&
             (identical(other.uid, uid) || other.uid == uid) &&
             (identical(other.name, name) || other.name == name) &&
+            (identical(other.siteCode, siteCode) ||
+                other.siteCode == siteCode) &&
             (identical(other.anpiStatus, anpiStatus) ||
                 other.anpiStatus == anpiStatus) &&
             (identical(other.gotoOfficeStatus, gotoOfficeStatus) ||
@@ -283,6 +303,7 @@ class _$UserReportImpl with DiagnosticableTreeMixin implements _UserReport {
       runtimeType,
       uid,
       name,
+      siteCode,
       anpiStatus,
       gotoOfficeStatus,
       message,
@@ -308,6 +329,7 @@ abstract class _UserReport implements UserReport {
   const factory _UserReport(
       {final String uid,
       final String name,
+      final int siteCode,
       final String anpiStatus,
       final String gotoOfficeStatus,
       final String message,
@@ -322,6 +344,8 @@ abstract class _UserReport implements UserReport {
   String get uid;
   @override
   String get name;
+  @override
+  int get siteCode;
   @override
   String get anpiStatus;
   @override

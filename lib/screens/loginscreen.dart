@@ -1,3 +1,4 @@
+import 'package:anpi_report_ios/providers/firestore/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
@@ -18,6 +19,7 @@ class LoginScreen extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final authState = ref.watch(firebaseAuthProvider);
     final formKey = useMemoized(() => GlobalKey<FormBuilderState>());
+
     //
     Auth auth = Auth();
     final authResult = useState("");
@@ -50,7 +52,7 @@ class LoginScreen extends HookConsumerWidget {
                     mainAxisSize: MainAxisSize.min,
                     children: <Widget>[
                       FormBuilderTextField(
-                        name: "siteName",
+                        name: "siteCode",
                         decoration: const InputDecoration(labelText: "会社コード"),
                         obscureText: false,
                         validator: FormBuilderValidators.compose([
@@ -99,8 +101,14 @@ class LoginScreen extends HookConsumerWidget {
                                 ),
                                 onPressed: () {
                                   formKey.currentState?.saveAndValidate();
+                                  final siteCode = int.parse(formKey.currentState!.value["siteCode"]);
+                                  debugPrint("siteCode: $siteCode");
                                   final emailAddr = formKey.currentState!.value["emailAddr"];
                                   final passWord = formKey.currentState!.value["passWord"];
+
+                                  // Sitecode
+                                  ref.read(sitecodeProvider.notifier).state = siteCode;
+
                                   auth.signIn(emailAddr, passWord).then((result) {
                                     if (result == "err:credential") {
                                       authResult.value = "メールアドレスまたはパスワードが違います";

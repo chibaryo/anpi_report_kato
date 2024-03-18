@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../../models/firebaseuser.dart';
 
@@ -161,3 +162,5 @@ class AsyncFirebaseUserNotifier extends _$AsyncFirebaseUserNotifier {
   }
 
 }
+
+final sitecodeProvider = StateProvider<int>((ref) => 0);

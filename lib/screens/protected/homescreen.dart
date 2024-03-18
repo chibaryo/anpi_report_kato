@@ -32,6 +32,8 @@ class HomeScreen extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    //
+    final isLoading = useState(false);
     final authState = ref.watch(firebaseAuthProvider);
     final prevnotisstream = ref.watch(prevNotisStreamProvider);
 
@@ -216,8 +218,7 @@ class HomeScreen extends HookConsumerWidget {
 
     }, const []);
 
-    return Scaffold(
-      body: Center(
+    var body = Center(
         child: Column(
           children: <Widget>[
             const Text(
@@ -282,6 +283,7 @@ class HomeScreen extends HookConsumerWidget {
                     flex: 1,
                     child: ElevatedButton(
                       onPressed: () {
+                        isLoading.value = true;
                         ref.read(geocodingControllerProvider.notifier).getCurrentAddress().then((address) {
                           FirebaseFirestore.instance
                             .collection("locations")
@@ -305,6 +307,7 @@ class HomeScreen extends HookConsumerWidget {
                             ]);
                             debugPrint("### currentAddress : ${currentAddress.toString()} ###");
 
+                          isLoading.value = false;
                           context.pushNamed("PostEnqueteScreen");
                         });
                       },
@@ -316,7 +319,57 @@ class HomeScreen extends HookConsumerWidget {
             ),
           ],
         ),
-      ),
+      );
+
+    var bodyProgress = Container(
+      child: Stack(
+        children: <Widget>[
+          body,
+          Container(
+            alignment: AlignmentDirectional.center,
+            decoration: const BoxDecoration(
+              color: Colors.white70,
+            ),
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.blue.shade200,
+                borderRadius: BorderRadius.circular(10.0),
+              ),
+              width: 300.0,
+              height: 200.0,
+              alignment: AlignmentDirectional.center,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  const Center(
+                    child: SizedBox(
+                      height: 50.0,
+                      width: 50.0,
+                      child: CircularProgressIndicator(
+                        value: null,
+                        strokeWidth: 7.0,
+                      ),
+                    ),
+                  ),
+                  Container(
+                    margin: const EdgeInsets.only(top: 25.0),
+                    child: const Center(
+                      child: Text(
+                        "ロード中です...お待ちください..."
+                      ),
+                    ),
+                  )
+                ],
+              ),
+            ),
+          )
+        ],
+      )
+    );
+
+    return Scaffold(
+      body: isLoading.value ? bodyProgress : body,
     );
   }
 }

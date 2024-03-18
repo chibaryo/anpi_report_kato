@@ -41,7 +41,7 @@ final prevNotisStreamProvider =
 
 typedef PrevNotisStreamRef = AutoDisposeStreamProviderRef<List<PrevNotis>>;
 String _$asyncUserReportNotifierHash() =>
-    r'4de4b75c5d10e4c48990cc2c2e6f486bc818e9e6';
+    r'2e4ea2dd122eba250465b9996ea50dbff891048e';
 
 /// See also [AsyncUserReportNotifier].
 @ProviderFor(AsyncUserReportNotifier)

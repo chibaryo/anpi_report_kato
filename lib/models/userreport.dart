@@ -21,6 +21,7 @@ class UserReport with _$UserReport {
   const factory UserReport({
     @Default('') String uid,
     @Default('') String name,
+    @Default(0) int siteCode,
     @Default('') String anpiStatus,
     @Default('') String gotoOfficeStatus,
     @Default('') String message,
@@ -40,6 +41,7 @@ class UserReport with _$UserReport {
   Map<String, dynamic> toJson() => {
     'uid': uid,
     'name': name,
+    'siteCode': siteCode,
     'anpiStatus': anpiStatus,
     'gotoOfficeStatus': gotoOfficeStatus,
     'message': message,
