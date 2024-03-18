@@ -57,9 +57,5 @@
     <key>NSLocationAlwaysUsageDescription</key>
     <string>Required to post location information when posting photos and videos.</string>
     <!-- End of the geolocator Section -->
-		<key>UIBackgroundModes</key>
-		<array>
-    	<string>remote-notification</string>
-		</array>
 </dict>
 </plist>
