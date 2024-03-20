@@ -3,17 +3,17 @@
 <plist version="1.0">
 <dict>
 	<key>API_KEY</key>
-	<string>AIzaSyCxqALVSGd4dax_nYSiWB54JMlXtkKp4NQ</string>
+	<string>AIzaSyCG309C2cvmAgQr2Fq0ChRMLy1-tG_rieY</string>
 	<key>GCM_SENDER_ID</key>
-	<string>1057187287026</string>
+	<string>482610373416</string>
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>K5JH8UC5BA.com.example.anpiReportIos</string>
+	<string>com.example.anpiReportIos</string>
 	<key>PROJECT_ID</key>
-	<string>anpi-report</string>
+	<string>anpi-report-2024</string>
 	<key>STORAGE_BUCKET</key>
-	<string>anpi-report.appspot.com</string>
+	<string>anpi-report-2024.appspot.com</string>
 	<key>IS_ADS_ENABLED</key>
 	<false></false>
 	<key>IS_ANALYTICS_ENABLED</key>
@@ -25,6 +25,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:1057187287026:ios:ae4cc868097ce0bd9f256b</string>
+	<string>1:482610373416:ios:18fd1e4bbec24fdcd5661d</string>
 </dict>
 </plist>

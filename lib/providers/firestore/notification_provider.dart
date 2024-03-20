@@ -1,3 +1,4 @@
+import 'package:anpi_report_ios/models/notitemplate.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../../models/notification.dart';
@@ -67,3 +68,4 @@ final getOneNotificationById = FutureProvider.family<Notification, String>((ref,
   return snap;
 });
 */
+

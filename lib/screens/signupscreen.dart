@@ -112,6 +112,7 @@ class SignupScreen extends HookConsumerWidget {
                                 email: emailAddr,
                                 password: passWord,
                                 imagepath: "",
+                                isOnline: true,
                                 isAdmin: false,
                               ).then((value) {
                                 // Store fcmtoken to Firestore (empty)

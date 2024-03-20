@@ -39,6 +39,7 @@ class AsyncFirebaseUserNotifier extends _$AsyncFirebaseUserNotifier {
     required String email,
     required String password,
     required String imagepath,
+    bool? isOnline,
     bool? isAdmin,
     }) async {
     final serverDate = DateTime.now();
@@ -68,6 +69,7 @@ class AsyncFirebaseUserNotifier extends _$AsyncFirebaseUserNotifier {
             "email": email,
             "password": password,
             "imagepath": imagepath,
+            "isOnline": isOnline,
             "isAdmin": isAdmin,
             "createdAt": serverDate,
           });

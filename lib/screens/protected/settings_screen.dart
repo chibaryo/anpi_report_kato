@@ -13,6 +13,8 @@ import '../../providers/firestore/user_provider.dart';
 import '../../providers/thememode/themeswitcher_provider.dart';
 import 'accountsettings.dart';
 import 'usersettings.dart';
+import 'notificationadmin.dart';
+import 'notitemplates.dart';
 
 class SettingsScreen extends HookConsumerWidget {
   const SettingsScreen({Key? key}) : super(key: key);
@@ -198,7 +200,8 @@ class SettingsScreen extends HookConsumerWidget {
             screensettings.SettingsGroup(
               title: "管理",
               children: const <Widget>[
-//                NotificationAdmins(),
+                NotificationAdmins(),
+                NotiTemplatesAdmin(),
               ],
             )],
             screensettings.SettingsGroup(

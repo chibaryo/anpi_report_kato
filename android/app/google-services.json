@@ -1,13 +1,13 @@
 {
   "project_info": {
-    "project_number": "1057187287026",
-    "project_id": "anpi-report",
-    "storage_bucket": "anpi-report.appspot.com"
+    "project_number": "482610373416",
+    "project_id": "anpi-report-2024",
+    "storage_bucket": "anpi-report-2024.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:1057187287026:android:6def8bafa5762d089f256b",
+        "mobilesdk_app_id": "1:482610373416:android:ad3385db5c9dbb6bd5661d",
         "android_client_info": {
           "package_name": "com.example.anpi_report"
         }
@@ -15,7 +15,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyCbNgxOAa25DhVfxKkvaCYrMVjHeHxPFzA"
+          "current_key": "AIzaSyDIGcFbtC8zZ2PaFX9gneKo07mh2IoT_DM"
         }
       ],
       "services": {
@@ -26,7 +26,7 @@
     },
     {
       "client_info": {
-        "mobilesdk_app_id": "1:1057187287026:android:0692bffbc9222ac99f256b",
+        "mobilesdk_app_id": "1:482610373416:android:cccdf94b92f63edcd5661d",
         "android_client_info": {
           "package_name": "com.example.anpi_report_ios"
         }
@@ -34,7 +34,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyCbNgxOAa25DhVfxKkvaCYrMVjHeHxPFzA"
+          "current_key": "AIzaSyDIGcFbtC8zZ2PaFX9gneKo07mh2IoT_DM"
         }
       ],
       "services": {

@@ -50,19 +50,19 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyCbNgxOAa25DhVfxKkvaCYrMVjHeHxPFzA',
-    appId: '1:1057187287026:android:0692bffbc9222ac99f256b',
-    messagingSenderId: '1057187287026',
-    projectId: 'anpi-report',
-    storageBucket: 'anpi-report.appspot.com',
+    apiKey: 'AIzaSyDIGcFbtC8zZ2PaFX9gneKo07mh2IoT_DM',
+    appId: '1:482610373416:android:cccdf94b92f63edcd5661d',
+    messagingSenderId: '482610373416',
+    projectId: 'anpi-report-2024',
+    storageBucket: 'anpi-report-2024.appspot.com',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyCxqALVSGd4dax_nYSiWB54JMlXtkKp4NQ',
-    appId: '1:1057187287026:ios:ae4cc868097ce0bd9f256b',
-    messagingSenderId: '1057187287026',
-    projectId: 'anpi-report',
-    storageBucket: 'anpi-report.appspot.com',
+    apiKey: 'AIzaSyCG309C2cvmAgQr2Fq0ChRMLy1-tG_rieY',
+    appId: '1:482610373416:ios:5d6977ef9e2b4770d5661d',
+    messagingSenderId: '482610373416',
+    projectId: 'anpi-report-2024',
+    storageBucket: 'anpi-report-2024.appspot.com',
     iosBundleId: 'K5JH8UC5BA.com.example.anpiReportIos',
   );
 }

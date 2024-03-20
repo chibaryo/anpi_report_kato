@@ -78,6 +78,7 @@ dependencies:
   device_imei:
   flutter_device_identifier:
   flutter_app_badger:
+  badges:
 
 dev_dependencies:
   flutter_test:
