@@ -35,7 +35,7 @@ Future<void> initFCMIOS(String uid, String udid) async {
     // Get token
     final fcmToken = await messaging.getToken(
         vapidKey:
-            "BLNDGJO2cAD302-pljCkgSvpVvMkt7atFMJtzG4SYW3SHKSW6aIKMm6AjDJGJ5uAtzRY-dovLXrs5wfbOZ7ZFy0");
+            "BHFm_plXBmh3r0yAnBVKjQ8Hg7UXgkyq5sghEKGu2-ZTKYiVxjrR53vo-WwIL-B_9q0ScF5t8Mkj1Ws-dPlLSqI");
     debugPrint("New FCM Token: $fcmToken");
 
     // Save fcmToken to Firestore
