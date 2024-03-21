@@ -147,10 +147,13 @@ class HomeScreen extends HookConsumerWidget {
           .doc(e.notificationId)
           .get();
         final data = docSnap.data();
+        DateTime itemDay = data!["createdAt"].toDate();
+        itemDay = itemDay.add(const Duration(hours: 9));
+        debugPrint("### date ###: ${itemDay.month}/${itemDay.day}");
 
         return DataRow(cells: <DataCell>[
-          DataCell(Text(data!["notiTitle"])),
-          DataCell(Text(e.isMeResponded ? "回答済み" : "未回答")),
+          DataCell(Text("[${itemDay.month}/${itemDay.day} ${itemDay.hour}:${itemDay.minute}] ${data["notiTitle"]}")),
+            DataCell(Text(e.isMeResponded ? "回答済み" : "未回答")),
         ]);
       })).then((rows) => rows.toList());
     }

@@ -80,6 +80,10 @@ class NotificationAdmins extends HookConsumerWidget {
               Row(children: <Widget>[
                 ElevatedButton(
                   onPressed: () {
+                    // Clear form
+                    notiTitleController.text = "";
+                    notiBodyController.text = "";
+
                     showDialog(
                       context: context,
                       builder: (_) {
@@ -112,7 +116,6 @@ class NotificationAdmins extends HookConsumerWidget {
                                             onChanged: (NotiTemplate? template) {
                                               notiTitleController.text = template!.notiTitle;
                                               notiBodyController.text = template.notiBody;
-//                                              debugPrint("template: ${template.toString()}");
                                             },
                                           );
                                         },

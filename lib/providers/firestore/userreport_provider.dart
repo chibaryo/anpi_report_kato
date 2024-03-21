@@ -102,8 +102,8 @@ Stream<List<PrevNotis>> prevNotisStream (PrevNotisStreamRef ref) {
       }
  //     data['notificationId'] = id;
       return PrevNotis.fromJson(data);
-    }, toFirestore: (prenotis, _) {
-      return prenotis?.toJson() ?? {};
+    }, toFirestore: (prevnotis, _) {
+      return prevnotis?.toJson() ?? {};
     })
     .snapshots()
     .map((snapshot) =>
