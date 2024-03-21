@@ -115,6 +115,10 @@ class LoginScreen extends HookConsumerWidget {
                                     ref.read(sitecodeProvider.notifier).state = int.parse(siteCode);
           
                                     auth.signIn(emailAddr, passWord).then((result) {
+                                      debugPrint("result: ${result.toString()}");
+                                      if (result == "err:malformed_credential") {
+                                        authResult.value = "メールアドレスまたはパスワードが違います";
+                                      }
                                       if (result == "err:credential") {
                                         authResult.value = "メールアドレスまたはパスワードが違います";
                                       }
