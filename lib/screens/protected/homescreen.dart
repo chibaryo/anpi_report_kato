@@ -38,8 +38,8 @@ class HomeScreen extends HookConsumerWidget {
     final authState = ref.watch(firebaseAuthProvider);
     final prevnotisstream = ref.watch(prevNotisStreamProvider);
 
-    final locationInfo = ref.watch(geocodingControllerProvider);
-    final currentAddress = ref.watch(addressDataProvider);
+    //final locationInfo = ref.watch(geocodingControllerProvider);
+    //final currentAddress = ref.watch(addressDataProvider);
     //
     final systemName = useState("");
     final osVersion = useState("");
@@ -291,33 +291,7 @@ class HomeScreen extends HookConsumerWidget {
                     flex: 1,
                     child: ElevatedButton(
                       onPressed: () {
-                        isLoading.value = true;
-                        ref.read(geocodingControllerProvider.notifier).getCurrentAddress().then((address) {
-                          FirebaseFirestore.instance
-                            .collection("locations")
-                            .doc(authState.currentUser?.uid)
-                            .set({
-                              "address": FieldValue.arrayUnion(
-                                [
-                                  address.country,
-                                  address.prefecture,
-                                  address.city,
-                                  address.street
-                                ]
-                              )
-                            });
-                            // Store to provider
-                            ref.read(addressDataProvider.notifier).setAddress([
-                              address.country,
-                              address.prefecture,
-                              address.city,
-                              address.street
-                            ]);
-                            debugPrint("### currentAddress : ${currentAddress.toString()} ###");
-
-                          isLoading.value = false;
-                          context.pushNamed("PostEnqueteScreen");
-                        });
+                        context.pushNamed("PostEnqueteScreen");
                       },
                       child: const Text("回答する"),
                     ),

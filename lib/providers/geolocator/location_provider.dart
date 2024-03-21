@@ -13,24 +13,34 @@ class GeocodingController extends _$GeocodingController {
   late bool isServiceEnabled;
   late LocationPermission permission;
 
-  @override
+/*  @override
   Future<void> build() async {
-    isServiceEnabled = await Geolocator.isLocationServiceEnabled();
-    permission = await Geolocator.checkPermission();
-    if (!isServiceEnabled) {
-      return Future.error('Location services are disabled.');
-    }
-    if (permission == LocationPermission.denied) {
-      permission = await Geolocator.requestPermission();
-      if (permission == LocationPermission.denied) {
-        return Future.error('Location permissions are denied');
-      }
-    }
+    return;
+  }*/
 
-    if (permission == LocationPermission.deniedForever) {
-      return Future.error(
-          'Location permissions are permanently denied, we cannot request permissions.');
-    }
+  @override
+  FutureOr<void> build() async {
+      bool serviceEnabled;
+      LocationPermission permission;
+
+      serviceEnabled = await Geolocator.isLocationServiceEnabled();
+      if (!serviceEnabled) {
+        return Future.error("Location services are disabled");
+      }
+
+      permission = await Geolocator.checkPermission();
+      if (permission == LocationPermission.denied) {
+        permission = await Geolocator.requestPermission();
+        if (permission == LocationPermission.denied) {
+          return Future.error("Location permissions are denied");
+        }
+      }
+
+      if (permission == LocationPermission.deniedForever) {
+        return Future.error("Location permissions are permanently denined, we cannot request permissions.");
+      }
+
+//      return await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
   }
 
   Future<Position> getCurrentPosition() async {
@@ -57,8 +67,6 @@ class GeocodingController extends _$GeocodingController {
       city: placeMark?.locality ?? '',
       street: placeMark?.street ?? '',
     );
-    inspect(address);
-    print("### address: ${address.toString()} ###");
     return address;
   }
 

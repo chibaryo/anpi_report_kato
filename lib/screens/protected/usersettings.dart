@@ -1,5 +1,6 @@
+import 'package:anpi_report_ios/providers/geolocator/location_provider.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_settings_screens/flutter_settings_screens.dart';
+import 'package:flutter_settings_screens/flutter_settings_screens.dart' as screensettings;
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:logger/logger.dart';
 
@@ -12,7 +13,31 @@ class UserSettings extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
 //    final authState = ref.watch(firebaseAuthProvider);
 
-    Widget buildAccountInfo(BuildContext context) => SimpleSettingsTile(
+    Widget buildLocationPermission () => screensettings.SwitchSettingsTile(
+      settingKey: "key-locationpermission",
+//      defaultValue: true,
+      enabled: true,
+      title: "位置情報",
+      leading: Container(
+        padding: const EdgeInsets.all(6),
+        decoration: const BoxDecoration(
+          shape: BoxShape.circle,
+          color: Color(0xFF642ef3),
+        ),
+        child: const Icon(Icons.map_outlined, color: Colors.white),
+      ),
+      onChange: (value) {
+        debugPrint("value: $value");
+        if (value == true) {
+//          ref.read(geocodingControllerProvider.notifier).getLocationPermission();
+        } else if (value == false) {
+
+        }
+//        ref.read(themeSwitcherDataProvider.notifier).setDarkMode(!keyDarkMode);
+      },
+    );
+
+    Widget buildAccountInfo(BuildContext context) => screensettings.SimpleSettingsTile(
       title: 'アカウント情報編集',
       subtitle: "",
       leading: Container(
@@ -26,7 +51,7 @@ class UserSettings extends HookConsumerWidget {
       onTap: () => {},
     );
 
-    Widget buildLanguage () => DropDownSettingsTile(
+    Widget buildLanguage () => screensettings.DropDownSettingsTile(
       settingKey: "key-language",
       title: "言語設定",
       subtitle: "",
@@ -42,9 +67,9 @@ class UserSettings extends HookConsumerWidget {
       },
     );
 
-    return SimpleSettingsTile(
+    return screensettings.SimpleSettingsTile(
       title: "アプリ個人設定",
-      subtitle: "プライバシー, セキュリティ, 言語",
+      subtitle: "プライバシー, 権限, 言語",
       leading: Container(
         padding: const EdgeInsets.all(6),
         decoration: const BoxDecoration(
@@ -53,11 +78,12 @@ class UserSettings extends HookConsumerWidget {
         ),
         child: const Icon(Icons.person, color: Colors.white),
       ),
-      child: SettingsScreen(
+      child: screensettings.SettingsScreen(
         title: "個人設定",
         children: <Widget>[
           buildAccountInfo(context),
           buildLanguage(),
+          buildLocationPermission(),
 //          buildPrivacy(context),
 //          buildSecurity(context),
         ]

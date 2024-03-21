@@ -1,5 +1,9 @@
 import 'dart:convert';
 
+import 'package:anpi_report_ios/models/notitemplate.dart';
+import 'package:dropdown_button2/dropdown_button2.dart';
+import 'package:flutter/cupertino.dart';
+
 import '../../providers/firestore/notification_provider.dart';
 import 'package:custom_text_form_field_plus/custom_text_form_field_plus.dart';
 import 'package:flutter/material.dart';
@@ -14,6 +18,7 @@ import 'package:http/http.dart' as http;
 import 'package:uuid/uuid.dart';
 
 import '../../providers/firebaseauth/auth_provider.dart';
+import '../../providers/firestore/notitemplate_provider.dart';
 import '../../providers/firestore/user_provider.dart';
 import '../../providers/firestore/userreport_provider.dart';
 
@@ -29,6 +34,8 @@ class NotificationAdmins extends HookConsumerWidget {
     final formKey = useMemoized(() => GlobalKey<FormBuilderState>());
     //
     final reports = ref.watch(asyncUserReportNotifierProvider);
+
+    final notiTemplatesStream = ref.watch(notiTemplateStreamProvider);
     //
     final notiTitleController = useTextEditingController();
     final notiBodyController = useTextEditingController();
@@ -77,106 +84,133 @@ class NotificationAdmins extends HookConsumerWidget {
                       context: context,
                       builder: (_) {
                         return AlertDialog(
+                          insetPadding: const EdgeInsets.all(2.0),
                           title: const Text("全体通知をします"),
-                          content: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: <Widget>[
-                              FormBuilder(
-                                key: formKey,
-                                autovalidateMode: AutovalidateMode.disabled,
-                                child: Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: <Widget>[
-                                    CustomTextFormField(
-                                      hintText: "タイトル",
-                                      controller: notiTitleController,
-                                      autofocus: true,
+                          content: SingleChildScrollView(
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: <Widget>[
+                                FormBuilder(
+                                  key: formKey,
+                                  autovalidateMode: AutovalidateMode.disabled,
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: <Widget>[
+                                      notiTemplatesStream.when(
+                                        data: (templates) {
+                                          return DropdownButtonFormField2<NotiTemplate>(
+                                            isDense: true,
+                                            decoration: const InputDecoration(
+                                              labelText: "テンプレートを選択できます",
+                                            ),
+                                            items: templates.map<DropdownMenuItem<NotiTemplate>>((e) {
+                                              return DropdownMenuItem(
+                                                value: e,
+                                                child: Text(e.notiTitle),
+                                              );
+                                            }).toList(),
+                                            onChanged: (NotiTemplate? template) {
+                                              notiTitleController.text = template!.notiTitle;
+                                              notiBodyController.text = template.notiBody;
+//                                              debugPrint("template: ${template.toString()}");
+                                            },
+                                          );
+                                        },
+                                        loading: () => const Center(child: CircularProgressIndicator()),
+                                        error: (error, stackTrace) =>
+                                          Center(child: Text('Error: $error')),
+                                      ),
+                                      CustomTextFormField(
+                                        hintText: "タイトル",
+                                        controller: notiTitleController,
+                                        autofocus: true,
+                                      ),
+                            /*                                    FormBuilderTextField(
+                                        name: "notiTitle",
+                                        autofocus: true,
+                                        decoration: const InputDecoration(hintText: "タイトル"),
+                                        obscureText: false,
+                                        validator: FormBuilderValidators.compose([
+                                          FormBuilderValidators.required(),
+                                        ]),
+                                      ),*/
+                                      CustomTextFormField(
+                                        hintText: "本文",
+                                        controller: notiBodyController,
+                                        autofocus: true,
+                                      ),
+                            /*                                    FormBuilderTextField(
+                                        name: "notiBody",
+                                        autofocus: true,
+                                        decoration: const InputDecoration(hintText: "本文"),
+                                        obscureText: false,
+                                        validator: FormBuilderValidators.compose([
+                                          FormBuilderValidators.required(),
+                                        ]),
+                                      ),*/
+                                      
+                                    ],
+                                  ),
+                                ),
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      child: ElevatedButton(
+                                        child: const Text("キャンセル"),
+                                        onPressed: () async {
+                                          context.pop();
+                                        },
+                                      ),
                                     ),
-/*                                    FormBuilderTextField(
-                                      name: "notiTitle",
-                                      autofocus: true,
-                                      decoration: const InputDecoration(hintText: "タイトル"),
-                                      obscureText: false,
-                                      validator: FormBuilderValidators.compose([
-                                        FormBuilderValidators.required(),
-                                      ]),
-                                    ),*/
-                                    CustomTextFormField(
-                                      hintText: "本文",
-                                      controller: notiBodyController,
-                                      autofocus: true,
+                                    Expanded(
+                                      child: ElevatedButton(
+                                        child: const Text("送信"),
+                                        onPressed: () async {
+                                          var newId = const Uuid().v4();
+                                      
+                                          formKey.currentState?.saveAndValidate();
+                                          debugPrint(formKey.currentState?.value.toString());
+                                          final notiTitle = notiTitleController.text;
+                                          //final notiTitle = formKey.currentState!.value["notiTitle"];
+                                          final notiBody = notiBodyController.text;
+                                          // final notiBody = formKey.currentState!.value["notiBody"];
+                                      
+                                          // POST http
+                                          Uri url = Uri.parse("https://fcm-noti-anpi.vercel.app/api/sendToTopic");
+                                          Map<String, String> headers = {'Content-TYpe': 'application/json'};
+                                          String body = json.encode({
+                                            'title': notiTitle,
+                                            'body': notiBody,
+                                            'topic': 'notice_all',
+                                          });
+                                          http.post(url, headers: headers, body: body).then((http.Response resp) {
+                                            if (resp.statusCode != 200) {
+                                              debugPrint("# Error");
+                                            } else {
+                                              debugPrint("Status Code: ${resp.statusCode}");
+                                              final contentBody = resp.body;
+                                              debugPrint("contentBody: $contentBody");
+                                            }
+                                      
+                                            try {
+                                              // Save to Firestore : "notifications"
+                                              ref.read(asyncNotificationNotifierProvider.notifier).addNotification(
+                                                notificationId: newId,
+                                                notiTitle: notiTitle,
+                                                notiBody: notiBody
+                                              );
+                                            } catch (err) {
+                                              throw Exception(err);
+                                            }
+                                            context.pop();
+                                          });
+                                        },
+                                      ),
                                     ),
-/*                                    FormBuilderTextField(
-                                      name: "notiBody",
-                                      autofocus: true,
-                                      decoration: const InputDecoration(hintText: "本文"),
-                                      obscureText: false,
-                                      validator: FormBuilderValidators.compose([
-                                        FormBuilderValidators.required(),
-                                      ]),
-                                    ),*/
-          
                                   ],
                                 ),
-                              ),
-                              Row(
-                                children: [
-                                  Expanded(
-                                    child: ElevatedButton(
-                                      child: const Text("キャンセル"),
-                                      onPressed: () async {
-                                        context.pop();
-                                      },
-                                    ),
-                                  ),
-                                  Expanded(
-                                    child: ElevatedButton(
-                                      child: const Text("送信"),
-                                      onPressed: () async {
-                                        var newId = const Uuid().v4();
-          
-                                        formKey.currentState?.saveAndValidate();
-                                        debugPrint(formKey.currentState?.value.toString());
-                                        final notiTitle = notiTitleController.text;
-                                        //final notiTitle = formKey.currentState!.value["notiTitle"];
-                                        final notiBody = notiBodyController.text;
-                                        // final notiBody = formKey.currentState!.value["notiBody"];
-          
-                                        // POST http
-                                        Uri url = Uri.parse("https://fcm-noti-anpi.vercel.app/api/sendToTopic");
-                                        Map<String, String> headers = {'Content-TYpe': 'application/json'};
-                                        String body = json.encode({
-                                          'title': notiTitle,
-                                          'body': notiBody,
-                                          'topic': 'notice_all',
-                                        });
-                                        http.post(url, headers: headers, body: body).then((http.Response resp) {
-                                          if (resp.statusCode != 200) {
-                                            debugPrint("# Error");
-                                          } else {
-                                            debugPrint("Status Code: ${resp.statusCode}");
-                                            final contentBody = resp.body;
-                                            debugPrint("contentBody: $contentBody");
-                                          }
-          
-                                          try {
-                                            // Save to Firestore : "notifications"
-                                            ref.read(asyncNotificationNotifierProvider.notifier).addNotification(
-                                              notificationId: newId,
-                                              notiTitle: notiTitle,
-                                              notiBody: notiBody
-                                            );
-                                          } catch (err) {
-                                            throw Exception(err);
-                                          }
-                                          context.pop();
-                                        });
-                                      },
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
                         );
                       }
