@@ -3,7 +3,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
-Future<void> initFCMIOS(String uid, String udid) async {
+Future<String?> initFCMIOS(String uid, String udid) async {
   debugPrint("### We are in iOS ###");
   final serverDate = DateTime.now();
   // Init FirebaseAuth
@@ -57,7 +57,7 @@ Future<void> initFCMIOS(String uid, String udid) async {
 //        print("watch: ${ref.watch(fcmTokenDataProvider)}");
 
 //        FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
-    // FCM foreground
+    return fcmToken;
   } catch (err) {
     throw Exception(err);
   }

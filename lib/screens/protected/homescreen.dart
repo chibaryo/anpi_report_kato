@@ -188,7 +188,10 @@ class HomeScreen extends HookConsumerWidget {
                   debugPrint("Existing devicedata: $data");
                   // Only renew fcmtoken
                   if (Platform.isIOS) {
-                    initFCMIOS(authState.currentUser!.uid, uDID.value);
+                    initFCMIOS(authState.currentUser!.uid, uDID.value).then((fcmToken) {
+                      debugPrint("fcmToken: $fcmToken");
+                      ref.read(fcmTokenNotifierProvider.notifier).update(fcmToken!);
+                    });
                   } else if (Platform.isAndroid) {
                     initFCMAndroid(authState.currentUser!.uid, uDID.value).then((fcmToken) {
                       debugPrint("fcmToken: $fcmToken");
