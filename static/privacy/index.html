@@ -1,0 +1,17 @@
+<BODY>
+    <article id="privacy" />
+
+    <script>
+        fetch('https://jwpp1p2o9j.microcms.io/api/v1/privacy',
+            { headers: { "X-MICROCMS-API-KEY": "iNC6PIQPtpDvO69eOIhZgv79DCn1ubQALVAo" } })
+            .then((res) => {
+                return res.json();
+            })
+            .then((json) => {
+                document.getElementById("privacy").innerHTML = json.body;
+            })
+            .catch((reason) => {
+                console.log(reason);
+            });
+    </script>
+</BODY>
