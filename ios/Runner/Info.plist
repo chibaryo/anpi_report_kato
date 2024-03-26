@@ -57,5 +57,10 @@
     <key>NSLocationAlwaysUsageDescription</key>
     <string>Required to post location information when posting photos and videos.</string>
     <!-- End of the geolocator Section -->
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>sms</string>
+		<string>tel</string>
+	</array>
 </dict>
 </plist>

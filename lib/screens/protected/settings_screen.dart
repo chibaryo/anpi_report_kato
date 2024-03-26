@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:flutter_settings_screens/flutter_settings_screens.dart' as screensettings;
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../providers/firebase/isadmin_provider.dart';
 import '../../providers/firebaseauth/auth_provider.dart';
@@ -161,6 +162,40 @@ class SettingsScreen extends HookConsumerWidget {
       onTap: () => {},
     );
 
+    Widget buildTerms () => screensettings.SimpleSettingsTile(
+      title: "利用規約",
+      subtitle: "",
+      leading: Container(
+        padding: const EdgeInsets.all(6),
+        decoration: const BoxDecoration(
+          shape: BoxShape.circle,
+          color: Colors.purple
+        ),
+        child: const Icon(Icons.document_scanner_outlined, color: Colors.white),
+      ),
+      onTap: () {
+        final url = Uri.parse('https://chibaryo.github.io/anpi_report_ios/terms/');
+        launchUrl(url);
+      },
+    );
+
+    Widget buildPrivacy () => screensettings.SimpleSettingsTile(
+      title: "プライバシーポリシー",
+      subtitle: "",
+      leading: Container(
+        padding: const EdgeInsets.all(6),
+        decoration: const BoxDecoration(
+          shape: BoxShape.circle,
+          color: Colors.cyan
+        ),
+        child: const Icon(Icons.security_rounded, color: Colors.white),
+      ),
+      onTap: () {
+        final url = Uri.parse('https://chibaryo.github.io/anpi_report_ios/privacy/');
+        launchUrl(url);
+      },
+    );
+
     Widget buildDarkMode () => screensettings.SwitchSettingsTile(
       settingKey: "key-dark-mode",
 //      defaultValue: true,
@@ -210,6 +245,13 @@ class SettingsScreen extends HookConsumerWidget {
                 const UserSettings(),
                 buildLogout(),
                 buildDeleteAccount(),
+              ],
+            ),
+            screensettings.SettingsGroup(
+              title: "利用規約&プライバシーポリシー",
+              children: <Widget>[
+                buildTerms(),
+                buildPrivacy(),
               ],
             ),
             const SizedBox(height: 32,),
