@@ -24,7 +24,7 @@ final firebaseFirestoreProvider =
 );
 
 typedef FirebaseFirestoreRef = AutoDisposeProviderRef<FirebaseFirestore>;
-String _$prevNotisStreamHash() => r'90832ad0769359e84126b0bceb13a8a8f5e35b8d';
+String _$prevNotisStreamHash() => r'7fae7d0e1bf6cf6c349ae9620f2cc1a164e4db36';
 
 /// See also [prevNotisStream].
 @ProviderFor(prevNotisStream)

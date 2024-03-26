@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'dart:io';
 
 import 'package:anpi_report_ios/firebase_options.dart';
 import 'package:anpi_report_ios/router/router.dart';
@@ -12,7 +13,17 @@ import 'package:flutter_settings_screens/flutter_settings_screens.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
+import 'platform-dependent/fcm/initfcm_ios.dart';
 import 'providers/thememode/themeswitcher_provider.dart';
+
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  // If you're going to use other Firebase services in the background, such as Firestore,
+  // make sure you call `initializeApp` before using other Firebase services.
+  await Firebase.initializeApp();
+
+  print("Handling a background message: ${message.messageId}");
+  showLocalNotification(message);
+}
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -22,7 +33,7 @@ Future<void> main() async {
 
   await Settings.init(cacheProvider: SharePreferenceCache());
 //  await initializeFlutterLocalNotificationsPlugin();
-  //FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
   runApp(const ProviderScope(child: MyApp()));
 }
 
@@ -34,9 +45,9 @@ class MyApp extends HookConsumerWidget {
     final keyDarkMode = ref.watch(themeSwitcherDataProvider);
 
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      debugPrint("### message has come ### : $message");
-      inspect(message);
-//      showNotification(message);
+      debugPrint("### message has come ### : ${message.toString()}");
+//      inspect(message);
+      showLocalNotification(message);
     });
 
     useEffect((){

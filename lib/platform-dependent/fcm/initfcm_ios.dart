@@ -64,26 +64,41 @@ Future<void> initFCMIOS(String uid, String udid) async {
 }
 
 
-void showNotification(RemoteMessage message) {
-  const AndroidNotificationDetails androidPlatformChannelSpecifics =
-      AndroidNotificationDetails(
-    'your_channel_id', // チャンネルID
-    'your_channel_name', // チャンネル名
+Future<void> showLocalNotification(RemoteMessage message) async {
+  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+    FlutterLocalNotificationsPlugin();
+
+  var initializationSettings = InitializationSettings(
+    android: const AndroidInitializationSettings('@mipmap/ic_launcher'),
+    iOS: DarwinInitializationSettings(
+      requestAlertPermission: true,
+      requestBadgePermission: true,
+      requestSoundPermission: true,
+      onDidReceiveLocalNotification: (id, title, body, payload) async {
+        
+      },
+    )
+  );
+
+  await flutterLocalNotificationsPlugin.initialize(
+    initializationSettings,
+  );
+
+  var androidDetails = const AndroidNotificationDetails(
+      'your_channel_id', // チャンネルID
+      'your_channel_name', // チャンネル名
 //    'your_channel_description', // チャンネルの説明
     importance: Importance.max,
     priority: Priority.high,
     showWhen: false,
-//    icon: "アイコン名",
   );
-  const NotificationDetails platformChannelSpecifics =
-      NotificationDetails(android: androidPlatformChannelSpecifics);
+  var iOSDetails = DarwinNotificationDetails();
+  var generalNotificationDetails = NotificationDetails(android: androidDetails, iOS: iOSDetails);
+
   flutterLocalNotificationsPlugin.show(
     0, // 通知ID
     message.data["title"], // 通知のタイトル
     message.data["body"], // 通知の本文
-    platformChannelSpecifics,
+    generalNotificationDetails,
   );
 }
-
-final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-    FlutterLocalNotificationsPlugin();

@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:anpi_report_ios/platform-dependent/fcm/initfcm_android.dart';
 import 'package:anpi_report_ios/platform-dependent/fcm/initfcm_ios.dart';
+import 'package:anpi_report_ios/providers/firestore/deviceinfotable/fcmtoken_provider.dart';
 import 'package:anpi_report_ios/providers/firestore/user_provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -48,6 +49,7 @@ class HomeScreen extends HookConsumerWidget {
     final uDID = useState("");
     //
     final uDIDNotifier = ref.watch(udidNotifierProvider);
+    final fcmTokenNotifier = ref.watch(fcmTokenNotifierProvider);
 
     Future<void> getDevInfo() async {
       final deviceInfoPlugin = DeviceInfoPlugin();
@@ -188,13 +190,18 @@ class HomeScreen extends HookConsumerWidget {
                   if (Platform.isIOS) {
                     initFCMIOS(authState.currentUser!.uid, uDID.value);
                   } else if (Platform.isAndroid) {
-                    initFCMAndroid(authState.currentUser!.uid, uDID.value);
+                    initFCMAndroid(authState.currentUser!.uid, uDID.value).then((fcmToken) {
+                      debugPrint("fcmToken: $fcmToken");
+                      ref.read(fcmTokenNotifierProvider.notifier).update(fcmToken!);
+                    });
                   }
                   // set flag on
                   ref.read(asyncFirebaseUserNotifierProvider.notifier).toggleFirebaseUserOnlineStatus(
                     uid: authState.currentUser!.uid,
                     isOnlineStatus: true
                   ); // toggleFirebaseUserOnlineStatus(
+                  // Store udid
+                  ref.read(udidNotifierProvider.notifier).update(uDID.value);
                 }
               });
             }

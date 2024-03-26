@@ -7,7 +7,7 @@ part of 'location_provider.dart';
 // **************************************************************************
 
 String _$geocodingControllerHash() =>
-    r'16e44e13a72e74105965030e493853bfa5ccdbc8';
+    r'7800e5898eced0d008d036411ab32c1d2eac77bc';
 
 /// See also [GeocodingController].
 @ProviderFor(GeocodingController)

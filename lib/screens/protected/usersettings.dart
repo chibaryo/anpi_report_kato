@@ -1,8 +1,12 @@
+import 'package:anpi_report_ios/providers/firestore/deviceinfotable/deviceinfotable_provider.dart';
 import 'package:anpi_report_ios/providers/geolocator/location_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_settings_screens/flutter_settings_screens.dart' as screensettings;
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:logger/logger.dart';
+
+import '../../providers/firestore/deviceinfotable/fcmtoken_provider.dart';
 
 final logger = Logger();
 
@@ -11,7 +15,15 @@ class UserSettings extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final uDID = ref.watch(udidNotifierProvider);
+    final fcmToken = ref.watch(fcmTokenNotifierProvider);
 //    final authState = ref.watch(firebaseAuthProvider);
+    useEffect(() {
+      debugPrint("udID: $uDID");
+      debugPrint("fcmToken: $fcmToken");
+
+      return () {};
+    }, const []);
 
     Widget buildLocationPermission () => screensettings.SwitchSettingsTile(
       settingKey: "key-locationpermission",
@@ -67,6 +79,12 @@ class UserSettings extends HookConsumerWidget {
       },
     );
 
+    Widget buildFCMTokenChange () => screensettings.SimpleSettingsTile(
+      title: "FCMトークン",
+      subtitle: fcmToken,
+      onTap: () => {},
+    );
+
     return screensettings.SimpleSettingsTile(
       title: "アプリ個人設定",
       subtitle: "プライバシー, 権限, 言語",
@@ -84,6 +102,7 @@ class UserSettings extends HookConsumerWidget {
           buildAccountInfo(context),
           buildLanguage(),
           buildLocationPermission(),
+          buildFCMTokenChange(),
 //          buildPrivacy(context),
 //          buildSecurity(context),
         ]

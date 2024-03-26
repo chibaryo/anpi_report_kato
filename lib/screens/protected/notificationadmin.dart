@@ -180,7 +180,7 @@ class NotificationAdmins extends HookConsumerWidget {
                                       
                                           // POST http
                                           Uri url = Uri.parse("https://fcm-noti-anpi.vercel.app/api/sendToTopic");
-                                          Map<String, String> headers = {'Content-TYpe': 'application/json'};
+                                          Map<String, String> headers = {'Content-Type': 'application/json'};
                                           String body = json.encode({
                                             'title': notiTitle,
                                             'body': notiBody,

@@ -15,7 +15,7 @@ Future<List<DeviceInfoTable>> queryDeviceInfoTableByUDID(String uid, String udId
         .collection("tokens")
         .doc(uid)
         .collection("platforms")
-        .where("udId", isEqualTo: "DF5634CB-B77C-4BC8-BD51-C86DAE5EE468")
+        .where("udId", isEqualTo: udId)
         .get();
 
   return snapshot.docs.map((doc) {
@@ -41,3 +41,4 @@ class UdidNotifier extends _$UdidNotifier {
     state = udId;
   }
 }
+
