@@ -53,10 +53,12 @@
 	</array>
     <!-- geolocator Section -->
     <key>NSLocationWhenInUseUsageDescription</key>
-    <string>Required to post location information when posting photos and videos.</string>
-    <key>NSLocationAlwaysUsageDescription</key>
-    <string>Required to post location information when posting photos and videos.</string>
+    <string>Required to get location to include each user's report</string>
+    <!-- <key>NSLocationAlwaysUsageDescription</key>
+    <string>Get location to include each user's report if permitted.</string> -->
     <!-- End of the geolocator Section -->
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Request user's photo to show on application</string>
 	<key>LSApplicationQueriesSchemes</key>
 	<array>
 		<string>sms</string>
