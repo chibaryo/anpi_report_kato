@@ -150,7 +150,7 @@ class HomeScreen extends HookConsumerWidget {
           .get();
         final data = docSnap.data();
         DateTime itemDay = data!["createdAt"].toDate();
-        itemDay = itemDay.add(const Duration(hours: 9));
+        //itemDay = itemDay.add(const Duration(hours: 9));
         debugPrint("### date ###: ${itemDay.month}/${itemDay.day}");
 
         return DataRow(cells: <DataCell>[
