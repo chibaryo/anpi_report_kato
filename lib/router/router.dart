@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../layouts/commonbase.dart';
+import '../providers/firebaseauth/auth_provider.dart';
 import '../screens/loginscreen.dart';
 import '../screens/protected/homescreen.dart';
 import '../screens/protected/postenquete.dart';
@@ -11,6 +12,8 @@ import '../screens/rootscreen.dart';
 import '../screens/signupscreen.dart';
 
 final routerProvider = Provider<GoRouter>((ref) {
+  final authState = ref.watch(firebaseAuthProvider);
+
   return GoRouter(initialLocation: "/", routes: <RouteBase>[
     ShellRoute(
       builder: (BuildContext context, GoRouterState state, Widget body) =>
@@ -54,5 +57,16 @@ final routerProvider = Provider<GoRouter>((ref) {
       builder: (BuildContext context, GoRouterState state) =>
           const PostEnqueteScreen(),
     ),
-  ]);
+  ],
+  redirect: (context, state) {
+    final currentUser = authState.currentUser;
+
+    if (currentUser != null && (state.matchedLocation == "/login" || state.matchedLocation == "/")) {
+      print("currentUser: $currentUser");
+      return "/home";
+    }
+
+    return null;
+  },
+  );
 });
