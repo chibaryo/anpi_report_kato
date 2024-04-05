@@ -6,6 +6,7 @@ import 'package:anpi_report_ios/platform-dependent/fcm/initfcm_ios.dart';
 import 'package:anpi_report_ios/providers/firestore/deviceinfotable/fcmtoken_provider.dart';
 import 'package:anpi_report_ios/providers/firestore/user_provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:data_table_2/data_table_2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
@@ -252,39 +253,37 @@ class HomeScreen extends HookConsumerWidget {
           // 回答済み
           prevnotisstream.when(
             data: (prevs) {
-                return prevs == null
-                  ? const Text("通知がありません")
-                  : FutureBuilder<List<DataRow>>(
-                  future: buildDataRows(prevs),
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return const Center(child: CircularProgressIndicator());
-                    } else if (snapshot.hasError) {
-                      return Center(child: Text('Error: ${snapshot.error}'));
-                    } else {
-                      return DataTable(
-                        columns: const <DataColumn>[
-                          DataColumn(
-                            label: Expanded(
-                              child: Text(
+                return Expanded(
+                  child: prevs == null
+                    ? const Text("通知がありません")
+                    : FutureBuilder<List<DataRow>>(
+                    future: buildDataRows(prevs),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const Center(child: CircularProgressIndicator());
+                      } else if (snapshot.hasError) {
+                        return Center(child: Text('Error: ${snapshot.error}'));
+                      } else {
+                        return DataTable2(
+                          columns: const <DataColumn>[
+                            DataColumn(
+                              label: Text(
                                 "通知名",
                                 style: TextStyle(fontStyle: FontStyle.italic),
                               ),
                             ),
-                          ),
-                          DataColumn(
-                            label: Expanded(
-                              child: Text(
+                            DataColumn(
+                              label: Text(
                                 "回答ステータス",
                                 style: TextStyle(fontStyle: FontStyle.italic),
                               ),
                             ),
-                          ),
-                        ],
-                        rows: snapshot.data ?? const <DataRow>[],
-                      );
-                    }
-                  },
+                          ],
+                          rows: snapshot.data ?? const <DataRow>[],
+                        );
+                      }
+                    },
+                  ),
                 );
             },
             loading: () => const Center(child: CircularProgressIndicator()),
