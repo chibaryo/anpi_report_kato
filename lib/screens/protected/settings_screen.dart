@@ -8,6 +8,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:flutter_settings_screens/flutter_settings_screens.dart' as screensettings;
 import 'package:url_launcher/url_launcher.dart';
 
+import '../../providers/appStatus/appBootStatus.dart';
 import '../../providers/firebase/isadmin_provider.dart';
 import '../../providers/firebaseauth/auth_provider.dart';
 import '../../providers/firestore/user_provider.dart';
@@ -23,6 +24,9 @@ class SettingsScreen extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    // AppBootStatus
+    final appBootStatus = ref.watch(appBootStatusNotifierProvider);
+
     final keyDarkMode = ref.watch(themeSwitcherDataProvider);
     final authState = ref.watch(firebaseAuthProvider);
     final isAdmin = ref.watch(isAdminDataProvider);
@@ -64,6 +68,8 @@ class SettingsScreen extends HookConsumerWidget {
 
 
     useEffect((){
+      debugPrint("## Settings ## appBootStatus: $appBootStatus");
+
       setDefaultUsername().then((value) {
         getUserInfo().then((userInfo) {
           final userInfoData = userInfo.data();
@@ -104,6 +110,8 @@ class SettingsScreen extends HookConsumerWidget {
           final data = value.data();
           final isOnlineStatus = data!['isOnline'];
           debugPrint("user data!['isOnline']: $isOnlineStatus");
+          // Set AppBootStatus = false
+          ref.read(appBootStatusNotifierProvider.notifier).update(false);
 
           // Logout
           FirebaseAuth.instance.signOut().then((result) {

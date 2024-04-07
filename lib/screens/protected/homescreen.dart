@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:anpi_report_ios/platform-dependent/fcm/initfcm_android.dart';
 import 'package:anpi_report_ios/platform-dependent/fcm/initfcm_ios.dart';
+import 'package:anpi_report_ios/providers/appStatus/appBootStatus.dart';
 import 'package:anpi_report_ios/providers/firestore/deviceinfotable/fcmtoken_provider.dart';
 import 'package:anpi_report_ios/providers/firestore/user_provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -35,6 +36,9 @@ class HomeScreen extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    // AppBootStatus
+    final appBootStatus = ref.watch(appBootStatusNotifierProvider);
+
     //
     final isLoading = useState(false);
     final authState = ref.watch(firebaseAuthProvider);
@@ -65,7 +69,8 @@ class HomeScreen extends HookConsumerWidget {
         uDID.value = iosInfo.identifierForVendor!;
 
         debugPrint("uDID.value : ${uDID.value}");
-        ref.read(udidNotifierProvider.notifier).state = iosInfo.identifierForVendor!;
+        ref.read(udidNotifierProvider.notifier).state =
+            iosInfo.identifierForVendor!;
       } else if (Platform.isAndroid) {
         await FlutterDeviceIdentifier.requestPermission();
         String androidID = await FlutterDeviceIdentifier.androidID;
@@ -79,61 +84,54 @@ class HomeScreen extends HookConsumerWidget {
         localizedModel.value = androidInfo.display;
         productName.value = androidInfo.product;
         uDID.value = androidID;
-
       }
     }
 
     Future<void> addDeviceInfo() async {
       final serverDate = DateTime.now();
       await FirebaseFirestore.instance
-        .collection("tokens")
-        .doc(authState.currentUser?.uid)
-        .collection("platforms")
-        .doc(uDID.value)
-        .set({
-          "systemName": systemName.value,
-          "osVersion": osVersion.value,
-          "localizedModel": localizedModel.value,
-          "productName": productName.value,
-          "udId": uDID.value,
+          .collection("tokens")
+          .doc(authState.currentUser?.uid)
+          .collection("platforms")
+          .doc(uDID.value)
+          .set({
+        "systemName": systemName.value,
+        "osVersion": osVersion.value,
+        "localizedModel": localizedModel.value,
+        "productName": productName.value,
+        "udId": uDID.value,
 //          "fcmToken": "",
-          "createdAt": serverDate,
-          "updatedAt": serverDate,
-        });
+        "createdAt": serverDate,
+        "updatedAt": serverDate,
+      });
     }
 
     Future<DocumentSnapshot<Map<String, dynamic>>>
-      getPlatformDeviceInfoByUdid() async {
-        final docSnapshot = await FirebaseFirestore.instance
+        getPlatformDeviceInfoByUdid() async {
+      final docSnapshot = await FirebaseFirestore.instance
           .collection("tokens")
           .doc(authState.currentUser?.uid)
           .collection("platforms")
           .doc(uDID.value)
           .get();
 
-        return docSnapshot;
+      return docSnapshot;
     }
 
-    Future<DocumentSnapshot<Map<String, dynamic>>>
-      getUserDocByUid() async {
-        final docSnapshot = await FirebaseFirestore.instance
+    Future<DocumentSnapshot<Map<String, dynamic>>> getUserDocByUid() async {
+      final docSnapshot = await FirebaseFirestore.instance
           .collection("users")
           .doc(authState.currentUser?.uid)
           .get();
-        
-        return docSnapshot;
+
+      return docSnapshot;
     }
 
-    Future<void> toggleFirebaseUserOnlineStatus({
-      required String uid,
-      required bool isOnlineStatus
-    }) async {
-      await FirebaseFirestore.instance
-        .collection("users")
-        .doc(uid)
-        .update({
-          "isOnline": isOnlineStatus,
-        });
+    Future<void> toggleFirebaseUserOnlineStatus(
+        {required String uid, required bool isOnlineStatus}) async {
+      await FirebaseFirestore.instance.collection("users").doc(uid).update({
+        "isOnline": isOnlineStatus,
+      });
     }
 
     Future<List<DataRow>> buildDataRows(List<PrevNotis> prevs) async {
@@ -146,72 +144,88 @@ class HomeScreen extends HookConsumerWidget {
 
       return Future.wait(prevs.map<Future<DataRow>>((e) async {
         final docSnap = await FirebaseFirestore.instance
-          .collection("notifications")
-          .doc(e.notificationId)
-          .get();
+            .collection("notifications")
+            .doc(e.notificationId)
+            .get();
         final data = docSnap.data();
         DateTime itemDay = data!["createdAt"].toDate();
         //itemDay = itemDay.add(const Duration(hours: 9));
         debugPrint("### date ###: ${itemDay.month}/${itemDay.day}");
 
         return DataRow(cells: <DataCell>[
-          DataCell(Text("[${itemDay.month}/${itemDay.day} ${itemDay.hour}:${itemDay.minute}] ${data["notiTitle"]}")),
-            DataCell(Text(e.isMeResponded ? "回答済み" : "未回答")),
+          DataCell(Text(
+              "[${itemDay.month}/${itemDay.day} ${itemDay.hour}:${itemDay.minute}] ${data["notiTitle"]}")),
+          DataCell(Text(e.isMeResponded ? "回答済み" : "未回答")),
         ]);
       })).then((rows) => rows.toList());
     }
 
     useEffect(() {
-      getDevInfo().then((value) {
-        addDeviceInfo().then((value) {
-          getPlatformDeviceInfoByUdid().then((value) {
-            final data = value.data();
-            debugPrint("data: $data");
-            if (data == null || data!.isEmpty || data["fcmToken"] == "") {
-              debugPrint("Data empty");
-              showDialog(
-                context: context,
-                barrierDismissible: false,
-                builder: (_) {
-                  return const FcmAlertDialog();
-                }
-              );
-            } else {
-              // Get one user
-              getUserDocByUid().then((value) {
-                final data = value.data();
-                final isOnlineStatus = data!['isOnline'];
-                debugPrint("user data!['isOnline']: $isOnlineStatus");
+      // Check appbootstatus
+      debugPrint("## Home ## appBootStatus: $appBootStatus");
 
-                //
-                if (!isOnlineStatus) {
-                  debugPrint("### still offline ###");
-                  debugPrint("Existing devicedata: $data");
-                  // Only renew fcmtoken
-                  if (Platform.isIOS) {
-                    initFCMIOS(authState.currentUser!.uid, uDID.value).then((fcmToken) {
-                      debugPrint("fcmToken: $fcmToken");
-                      ref.read(fcmTokenNotifierProvider.notifier).update(fcmToken!);
+      if (!appBootStatus) {
+        getDevInfo().then((value) {
+          addDeviceInfo().then((value) {
+            getPlatformDeviceInfoByUdid().then((value) {
+              final data = value.data();
+              debugPrint("data: $data");
+              if (data == null || data!.isEmpty || data["fcmToken"] == "") {
+                debugPrint("Data empty");
+                showDialog(
+                    context: context,
+                    barrierDismissible: false,
+                    builder: (_) {
+                      return const FcmAlertDialog();
                     });
-                  } else if (Platform.isAndroid) {
-                    initFCMAndroid(authState.currentUser!.uid, uDID.value).then((fcmToken) {
-                      debugPrint("fcmToken: $fcmToken");
-                      ref.read(fcmTokenNotifierProvider.notifier).update(fcmToken!);
-                    });
+              } else {
+                // Get one user
+                getUserDocByUid().then((value) {
+                  final data = value.data();
+                  final isOnlineStatus = data!['isOnline'];
+                  debugPrint("user data!['isOnline']: $isOnlineStatus");
+
+                  //
+                  if (!isOnlineStatus) {
+                    debugPrint("### still offline ###");
+                    debugPrint("Existing devicedata: $data");
+                    // Only renew fcmtoken
+                    if (Platform.isIOS) {
+                      initFCMIOS(authState.currentUser!.uid, uDID.value)
+                          .then((fcmToken) {
+                        debugPrint("fcmToken: $fcmToken");
+                        ref
+                            .read(fcmTokenNotifierProvider.notifier)
+                            .update(fcmToken!);
+                      });
+                    } else if (Platform.isAndroid) {
+                      initFCMAndroid(authState.currentUser!.uid, uDID.value)
+                          .then((fcmToken) {
+                        debugPrint("fcmToken: $fcmToken");
+                        ref
+                            .read(fcmTokenNotifierProvider.notifier)
+                            .update(fcmToken!);
+                      });
+                    }
+                    // set flag on
+                    ref
+                        .read(asyncFirebaseUserNotifierProvider.notifier)
+                        .toggleFirebaseUserOnlineStatus(
+                            uid: authState.currentUser!.uid,
+                            isOnlineStatus:
+                                true); // toggleFirebaseUserOnlineStatus(
+                    // Store udid
+                    ref.read(udidNotifierProvider.notifier).update(uDID.value);
                   }
-                  // set flag on
-                  ref.read(asyncFirebaseUserNotifierProvider.notifier).toggleFirebaseUserOnlineStatus(
-                    uid: authState.currentUser!.uid,
-                    isOnlineStatus: true
-                  ); // toggleFirebaseUserOnlineStatus(
-                  // Store udid
-                  ref.read(udidNotifierProvider.notifier).update(uDID.value);
-                }
-              });
-            }
+                });
+              }
+            });
           });
+
+          // FLAG ON
+          ref.read(appBootStatusNotifierProvider.notifier).update(true);
         });
-      });
+      }
 
 /*
       queryDeviceInfoTableByUDID(
@@ -237,54 +251,58 @@ class HomeScreen extends HookConsumerWidget {
       }); */
 
       return () {};
-
     }, const []);
 
     var body = Center(
-        child: Column(
-          children: <Widget>[
-            const Text(
-              '今までの緊急速報',
-              style: TextStyle(fontSize: 32.0),
-            ),
-            authState.currentUser != null
+      child: Column(
+        children: <Widget>[
+          const Text(
+            '今までの緊急速報',
+            style: TextStyle(fontSize: 32.0),
+          ),
+          authState.currentUser != null
               ? Text("${authState.currentUser!.displayName} さん")
               : const Text("uid"),
           // 回答済み
           prevnotisstream.when(
             data: (prevs) {
-                return Expanded(
-                  child: prevs == null
+              return Expanded(
+                child: prevs == null
                     ? const Text("通知がありません")
                     : FutureBuilder<List<DataRow>>(
-                    future: buildDataRows(prevs),
-                    builder: (context, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return const Center(child: CircularProgressIndicator());
-                      } else if (snapshot.hasError) {
-                        return Center(child: Text('Error: ${snapshot.error}'));
-                      } else {
-                        return DataTable2(
-                          columns: const <DataColumn>[
-                            DataColumn(
-                              label: Text(
-                                "通知名",
-                                style: TextStyle(fontStyle: FontStyle.italic),
-                              ),
-                            ),
-                            DataColumn(
-                              label: Text(
-                                "回答ステータス",
-                                style: TextStyle(fontStyle: FontStyle.italic),
-                              ),
-                            ),
-                          ],
-                          rows: snapshot.data ?? const <DataRow>[],
-                        );
-                      }
-                    },
-                  ),
-                );
+                        future: buildDataRows(prevs),
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return const Center(
+                                child: CircularProgressIndicator());
+                          } else if (snapshot.hasError) {
+                            return Center(
+                                child: Text('Error: ${snapshot.error}'));
+                          } else {
+                            return DataTable2(
+                              columns: const <DataColumn>[
+                                DataColumn(
+                                  label: Text(
+                                    "通知名",
+                                    style:
+                                        TextStyle(fontStyle: FontStyle.italic),
+                                  ),
+                                ),
+                                DataColumn(
+                                  label: Text(
+                                    "回答ステータス",
+                                    style:
+                                        TextStyle(fontStyle: FontStyle.italic),
+                                  ),
+                                ),
+                              ],
+                              rows: snapshot.data ?? const <DataRow>[],
+                            );
+                          }
+                        },
+                      ),
+              );
             },
             loading: () => const Center(child: CircularProgressIndicator()),
             error: (error, stackTrace) {
@@ -295,7 +313,8 @@ class HomeScreen extends HookConsumerWidget {
 
           //
           Container(
-              padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 32.0),
+              padding:
+                  const EdgeInsets.symmetric(vertical: 16.0, horizontal: 32.0),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
@@ -309,58 +328,54 @@ class HomeScreen extends HookConsumerWidget {
                     ),
                   )
                 ],
-              )
-            ),
-          ],
-        ),
-      );
+              )),
+        ],
+      ),
+    );
 
     var bodyProgress = Container(
-      child: Stack(
-        children: <Widget>[
-          body,
-          Container(
-            alignment: AlignmentDirectional.center,
-            decoration: const BoxDecoration(
-              color: Colors.white70,
+        child: Stack(
+      children: <Widget>[
+        body,
+        Container(
+          alignment: AlignmentDirectional.center,
+          decoration: const BoxDecoration(
+            color: Colors.white70,
+          ),
+          child: Container(
+            decoration: BoxDecoration(
+              color: Colors.blue.shade200,
+              borderRadius: BorderRadius.circular(10.0),
             ),
-            child: Container(
-              decoration: BoxDecoration(
-                color: Colors.blue.shade200,
-                borderRadius: BorderRadius.circular(10.0),
-              ),
-              width: 300.0,
-              height: 200.0,
-              alignment: AlignmentDirectional.center,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  const Center(
-                    child: SizedBox(
-                      height: 50.0,
-                      width: 50.0,
-                      child: CircularProgressIndicator(
-                        value: null,
-                        strokeWidth: 7.0,
-                      ),
+            width: 300.0,
+            height: 200.0,
+            alignment: AlignmentDirectional.center,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                const Center(
+                  child: SizedBox(
+                    height: 50.0,
+                    width: 50.0,
+                    child: CircularProgressIndicator(
+                      value: null,
+                      strokeWidth: 7.0,
                     ),
                   ),
-                  Container(
-                    margin: const EdgeInsets.only(top: 25.0),
-                    child: const Center(
-                      child: Text(
-                        "ロード中です...お待ちください..."
-                      ),
-                    ),
-                  )
-                ],
-              ),
+                ),
+                Container(
+                  margin: const EdgeInsets.only(top: 25.0),
+                  child: const Center(
+                    child: Text("ロード中です...お待ちください..."),
+                  ),
+                )
+              ],
             ),
-          )
-        ],
-      )
-    );
+          ),
+        )
+      ],
+    ));
 
     return Scaffold(
       body: isLoading.value ? bodyProgress : body,
