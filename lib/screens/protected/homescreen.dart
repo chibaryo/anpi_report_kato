@@ -186,7 +186,7 @@ class HomeScreen extends HookConsumerWidget {
                   debugPrint("user data!['isOnline']: $isOnlineStatus");
 
                   //
-                  if (!isOnlineStatus) {
+                  //if (!isOnlineStatus) {
                     debugPrint("### still offline ###");
                     debugPrint("Existing devicedata: $data");
                     // Only renew fcmtoken
@@ -216,7 +216,7 @@ class HomeScreen extends HookConsumerWidget {
                                 true); // toggleFirebaseUserOnlineStatus(
                     // Store udid
                     ref.read(udidNotifierProvider.notifier).update(uDID.value);
-                  }
+                  //}
                 });
               }
             });
