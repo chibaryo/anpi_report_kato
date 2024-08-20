@@ -23,9 +23,12 @@ mixin _$Notification {
   String get notificationId => throw _privateConstructorUsedError;
   String get notiTitle => throw _privateConstructorUsedError;
   String get notiBody => throw _privateConstructorUsedError;
-  List<String> get a_respondents => throw _privateConstructorUsedError;
+  String get notiTopic => throw _privateConstructorUsedError;
+  String get notiType => throw _privateConstructorUsedError;
   @TimestampConverter()
   DateTime? get createdAt => throw _privateConstructorUsedError;
+  @TimestampConverter()
+  DateTime? get updatedAt => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -43,8 +46,10 @@ abstract class $NotificationCopyWith<$Res> {
       {String notificationId,
       String notiTitle,
       String notiBody,
-      List<String> a_respondents,
-      @TimestampConverter() DateTime? createdAt});
+      String notiTopic,
+      String notiType,
+      @TimestampConverter() DateTime? createdAt,
+      @TimestampConverter() DateTime? updatedAt});
 }
 
 /// @nodoc
@@ -63,8 +68,10 @@ class _$NotificationCopyWithImpl<$Res, $Val extends Notification>
     Object? notificationId = null,
     Object? notiTitle = null,
     Object? notiBody = null,
-    Object? a_respondents = null,
+    Object? notiTopic = null,
+    Object? notiType = null,
     Object? createdAt = freezed,
+    Object? updatedAt = freezed,
   }) {
     return _then(_value.copyWith(
       notificationId: null == notificationId
@@ -79,13 +86,21 @@ class _$NotificationCopyWithImpl<$Res, $Val extends Notification>
           ? _value.notiBody
           : notiBody // ignore: cast_nullable_to_non_nullable
               as String,
-      a_respondents: null == a_respondents
-          ? _value.a_respondents
-          : a_respondents // ignore: cast_nullable_to_non_nullable
-              as List<String>,
+      notiTopic: null == notiTopic
+          ? _value.notiTopic
+          : notiTopic // ignore: cast_nullable_to_non_nullable
+              as String,
+      notiType: null == notiType
+          ? _value.notiType
+          : notiType // ignore: cast_nullable_to_non_nullable
+              as String,
       createdAt: freezed == createdAt
           ? _value.createdAt
           : createdAt // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
+      updatedAt: freezed == updatedAt
+          ? _value.updatedAt
+          : updatedAt // ignore: cast_nullable_to_non_nullable
               as DateTime?,
     ) as $Val);
   }
@@ -103,8 +118,10 @@ abstract class _$$NotificationImplCopyWith<$Res>
       {String notificationId,
       String notiTitle,
       String notiBody,
-      List<String> a_respondents,
-      @TimestampConverter() DateTime? createdAt});
+      String notiTopic,
+      String notiType,
+      @TimestampConverter() DateTime? createdAt,
+      @TimestampConverter() DateTime? updatedAt});
 }
 
 /// @nodoc
@@ -121,8 +138,10 @@ class __$$NotificationImplCopyWithImpl<$Res>
     Object? notificationId = null,
     Object? notiTitle = null,
     Object? notiBody = null,
-    Object? a_respondents = null,
+    Object? notiTopic = null,
+    Object? notiType = null,
     Object? createdAt = freezed,
+    Object? updatedAt = freezed,
   }) {
     return _then(_$NotificationImpl(
       notificationId: null == notificationId
@@ -137,13 +156,21 @@ class __$$NotificationImplCopyWithImpl<$Res>
           ? _value.notiBody
           : notiBody // ignore: cast_nullable_to_non_nullable
               as String,
-      a_respondents: null == a_respondents
-          ? _value._a_respondents
-          : a_respondents // ignore: cast_nullable_to_non_nullable
-              as List<String>,
+      notiTopic: null == notiTopic
+          ? _value.notiTopic
+          : notiTopic // ignore: cast_nullable_to_non_nullable
+              as String,
+      notiType: null == notiType
+          ? _value.notiType
+          : notiType // ignore: cast_nullable_to_non_nullable
+              as String,
       createdAt: freezed == createdAt
           ? _value.createdAt
           : createdAt // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
+      updatedAt: freezed == updatedAt
+          ? _value.updatedAt
+          : updatedAt // ignore: cast_nullable_to_non_nullable
               as DateTime?,
     ));
   }
@@ -156,9 +183,10 @@ class _$NotificationImpl with DiagnosticableTreeMixin implements _Notification {
       {this.notificationId = '',
       this.notiTitle = '',
       this.notiBody = '',
-      final List<String> a_respondents = const [],
-      @TimestampConverter() this.createdAt})
-      : _a_respondents = a_respondents;
+      this.notiTopic = '',
+      this.notiType = '',
+      @TimestampConverter() this.createdAt,
+      @TimestampConverter() this.updatedAt});
 
   factory _$NotificationImpl.fromJson(Map<String, dynamic> json) =>
       _$$NotificationImplFromJson(json);
@@ -172,22 +200,22 @@ class _$NotificationImpl with DiagnosticableTreeMixin implements _Notification {
   @override
   @JsonKey()
   final String notiBody;
-  final List<String> _a_respondents;
   @override
   @JsonKey()
-  List<String> get a_respondents {
-    if (_a_respondents is EqualUnmodifiableListView) return _a_respondents;
-    // ignore: implicit_dynamic_type
-    return EqualUnmodifiableListView(_a_respondents);
-  }
-
+  final String notiTopic;
+  @override
+  @JsonKey()
+  final String notiType;
   @override
   @TimestampConverter()
   final DateTime? createdAt;
+  @override
+  @TimestampConverter()
+  final DateTime? updatedAt;
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'Notification(notificationId: $notificationId, notiTitle: $notiTitle, notiBody: $notiBody, a_respondents: $a_respondents, createdAt: $createdAt)';
+    return 'Notification(notificationId: $notificationId, notiTitle: $notiTitle, notiBody: $notiBody, notiTopic: $notiTopic, notiType: $notiType, createdAt: $createdAt, updatedAt: $updatedAt)';
   }
 
   @override
@@ -198,8 +226,10 @@ class _$NotificationImpl with DiagnosticableTreeMixin implements _Notification {
       ..add(DiagnosticsProperty('notificationId', notificationId))
       ..add(DiagnosticsProperty('notiTitle', notiTitle))
       ..add(DiagnosticsProperty('notiBody', notiBody))
-      ..add(DiagnosticsProperty('a_respondents', a_respondents))
-      ..add(DiagnosticsProperty('createdAt', createdAt));
+      ..add(DiagnosticsProperty('notiTopic', notiTopic))
+      ..add(DiagnosticsProperty('notiType', notiType))
+      ..add(DiagnosticsProperty('createdAt', createdAt))
+      ..add(DiagnosticsProperty('updatedAt', updatedAt));
   }
 
   @override
@@ -213,16 +243,20 @@ class _$NotificationImpl with DiagnosticableTreeMixin implements _Notification {
                 other.notiTitle == notiTitle) &&
             (identical(other.notiBody, notiBody) ||
                 other.notiBody == notiBody) &&
-            const DeepCollectionEquality()
-                .equals(other._a_respondents, _a_respondents) &&
+            (identical(other.notiTopic, notiTopic) ||
+                other.notiTopic == notiTopic) &&
+            (identical(other.notiType, notiType) ||
+                other.notiType == notiType) &&
             (identical(other.createdAt, createdAt) ||
-                other.createdAt == createdAt));
+                other.createdAt == createdAt) &&
+            (identical(other.updatedAt, updatedAt) ||
+                other.updatedAt == updatedAt));
   }
 
   @JsonKey(ignore: true)
   @override
   int get hashCode => Object.hash(runtimeType, notificationId, notiTitle,
-      notiBody, const DeepCollectionEquality().hash(_a_respondents), createdAt);
+      notiBody, notiTopic, notiType, createdAt, updatedAt);
 
   @JsonKey(ignore: true)
   @override
@@ -243,8 +277,10 @@ abstract class _Notification implements Notification {
       {final String notificationId,
       final String notiTitle,
       final String notiBody,
-      final List<String> a_respondents,
-      @TimestampConverter() final DateTime? createdAt}) = _$NotificationImpl;
+      final String notiTopic,
+      final String notiType,
+      @TimestampConverter() final DateTime? createdAt,
+      @TimestampConverter() final DateTime? updatedAt}) = _$NotificationImpl;
 
   factory _Notification.fromJson(Map<String, dynamic> json) =
       _$NotificationImpl.fromJson;
@@ -256,10 +292,15 @@ abstract class _Notification implements Notification {
   @override
   String get notiBody;
   @override
-  List<String> get a_respondents;
+  String get notiTopic;
+  @override
+  String get notiType;
   @override
   @TimestampConverter()
   DateTime? get createdAt;
+  @override
+  @TimestampConverter()
+  DateTime? get updatedAt;
   @override
   @JsonKey(ignore: true)
   _$$NotificationImplCopyWith<_$NotificationImpl> get copyWith =>

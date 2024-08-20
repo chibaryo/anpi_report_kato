@@ -22,8 +22,10 @@ class Notification with _$Notification {
     @Default('') String notificationId,
     @Default('') String notiTitle,
     @Default('') String notiBody,
-    @Default([]) List<String> a_respondents,
+    @Default('') String notiTopic,
+    @Default('') String notiType,
     @TimestampConverter() DateTime? createdAt,
+    @TimestampConverter() DateTime? updatedAt,
   }) = _Notification;
 
   // Tagからデータを取得する際の変換処理
@@ -31,6 +33,7 @@ class Notification with _$Notification {
   factory Notification.fromJson(Map<String, dynamic> json) =>
     _$NotificationFromJson(json).copyWith(
       createdAt: (json['createdAt'] as Timestamp?)?.toDate(),
+      updatedAt: (json['updatedAt'] as Timestamp?)?.toDate(),
     );
 
   // DartのオブジェクトからFirebaseへ渡す際の変換処理
@@ -39,7 +42,9 @@ class Notification with _$Notification {
     'notificationId': notificationId,
     'notiTitle': notiTitle,
     'notiBody': notiBody,
-    'a_respondents': a_respondents,
+    'notiTopic': notiTopic,
+    'notiType': notiType,
     'createdAt': createdAt != null ? Timestamp.fromDate(createdAt!) : null,
+    'updatedAt': updatedAt != null ? Timestamp.fromDate(updatedAt!) : null,
   };
 }

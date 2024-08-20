@@ -31,6 +31,12 @@ final routerProvider = Provider<GoRouter>((ref) {
           builder: (BuildContext context, GoRouterState state) =>
               const SettingsScreen(),
         ),
+         GoRoute(
+            path: "/enquete/:notiId",
+            name: "PostEnqueteScreen",
+            builder: (BuildContext context, GoRouterState state) =>
+              PostEnqueteScreen(notiId: state.pathParameters['notiId']!),
+        ),
       ],
     ),
     GoRoute(
@@ -48,18 +54,14 @@ final routerProvider = Provider<GoRouter>((ref) {
     GoRoute(
       path: "/signup",
       name: "SignupScreen",
-      builder: (BuildContext context, GoRouterState state) =>
-          const SignupScreen(),
-    ),
-    GoRoute(
-      path: "/enquete",
-      name: "PostEnqueteScreen",
-      builder: (BuildContext context, GoRouterState state) =>
-          const PostEnqueteScreen(),
+      builder: (BuildContext context, GoRouterState state) {
+          return const SignupScreen();
+      }
     ),
   ],
   redirect: (context, state) {
     final currentUser = authState.currentUser;
+
 
     if (currentUser != null && (state.matchedLocation == "/login" || state.matchedLocation == "/")) {
       print("currentUser: $currentUser");

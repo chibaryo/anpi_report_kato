@@ -7,7 +7,7 @@ import 'package:logger/logger.dart';
 final logger = Logger();
 
 class RootScreen extends HookConsumerWidget {
-  const RootScreen({Key? key}) : super(key: key);
+  const RootScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

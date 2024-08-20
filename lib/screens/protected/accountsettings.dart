@@ -73,7 +73,7 @@ class AccountSettings extends HookConsumerWidget {
     );
 
     return SimpleSettingsTile(
-      title: authState.currentUser!.displayName!,
+      title: authState.currentUser?.displayName ?? "No Name",
       subtitle: authState.currentUser!.email,
       leading: Container(
         padding: const EdgeInsets.all(6),

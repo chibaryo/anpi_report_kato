@@ -13,7 +13,7 @@ import '../repository/firebase/authrepo.dart';
 final logger = Logger();
 
 class LoginScreen extends HookConsumerWidget {
-  const LoginScreen({Key? key}) : super(key: key);
+  const LoginScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

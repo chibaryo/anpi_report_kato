@@ -40,11 +40,12 @@ class SettingsScreen extends HookConsumerWidget {
         return docSnapshot;
       }
 
-      Future<void> setDefaultUsername () async {
+      Future<void> setDefaultUsername() async {
+        final displayName = authState.currentUser?.displayName ?? "Default Username";
         await screensettings.Settings.setValue<String>(
           "key-displayname",
-          authState.currentUser!.displayName!,
-          notify: true
+          displayName,
+          notify: true,
         );
       }
 

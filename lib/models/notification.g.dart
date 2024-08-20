@@ -11,12 +11,12 @@ _$NotificationImpl _$$NotificationImplFromJson(Map<String, dynamic> json) =>
       notificationId: json['notificationId'] as String? ?? '',
       notiTitle: json['notiTitle'] as String? ?? '',
       notiBody: json['notiBody'] as String? ?? '',
-      a_respondents: (json['a_respondents'] as List<dynamic>?)
-              ?.map((e) => e as String)
-              .toList() ??
-          const [],
+      notiTopic: json['notiTopic'] as String? ?? '',
+      notiType: json['notiType'] as String? ?? '',
       createdAt:
           const TimestampConverter().fromJson(json['createdAt'] as Timestamp?),
+      updatedAt:
+          const TimestampConverter().fromJson(json['updatedAt'] as Timestamp?),
     );
 
 Map<String, dynamic> _$$NotificationImplToJson(_$NotificationImpl instance) =>
@@ -24,6 +24,8 @@ Map<String, dynamic> _$$NotificationImplToJson(_$NotificationImpl instance) =>
       'notificationId': instance.notificationId,
       'notiTitle': instance.notiTitle,
       'notiBody': instance.notiBody,
-      'a_respondents': instance.a_respondents,
+      'notiTopic': instance.notiTopic,
+      'notiType': instance.notiType,
       'createdAt': const TimestampConverter().toJson(instance.createdAt),
+      'updatedAt': const TimestampConverter().toJson(instance.updatedAt),
     };

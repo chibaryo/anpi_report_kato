@@ -1,5 +1,6 @@
 import 'package:anpi_report_ios/providers/firestore/deviceinfotable/deviceinfotable_provider.dart';
 import 'package:anpi_report_ios/providers/geolocator/location_provider.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_settings_screens/flutter_settings_screens.dart' as screensettings;
@@ -25,11 +26,10 @@ class UserSettings extends HookConsumerWidget {
       return () {};
     }, const []);
 
-    Widget buildLocationPermission () => screensettings.SwitchSettingsTile(
-      settingKey: "key-locationpermission",
-//      defaultValue: true,
+    Widget buildLocationPermission(String title, String topic) => screensettings.SwitchSettingsTile(
+      settingKey: "key-locationpermission-$title",
       enabled: true,
-      title: "位置情報",
+      title: title,
       leading: Container(
         padding: const EdgeInsets.all(6),
         decoration: const BoxDecoration(
@@ -38,16 +38,17 @@ class UserSettings extends HookConsumerWidget {
         ),
         child: const Icon(Icons.map_outlined, color: Colors.white),
       ),
-      onChange: (value) {
+      onChange: (value) async {
+        final messaging = FirebaseMessaging.instance;
         debugPrint("value: $value");
         if (value == true) {
-//          ref.read(geocodingControllerProvider.notifier).getLocationPermission();
+          await messaging.subscribeToTopic("notice_$topic");
         } else if (value == false) {
-
+          await messaging.unsubscribeFromTopic("notice_$topic");
         }
-//        ref.read(themeSwitcherDataProvider.notifier).setDarkMode(!keyDarkMode);
       },
     );
+
 
     Widget buildAccountInfo(BuildContext context) => screensettings.SimpleSettingsTile(
       title: 'アカウント情報編集',
@@ -86,8 +87,8 @@ class UserSettings extends HookConsumerWidget {
     );
 
     return screensettings.SimpleSettingsTile(
-      title: "アプリ個人設定",
-      subtitle: "プライバシー, 権限, 言語",
+      title: "個人設定",
+      subtitle: "言語、トピック",
       leading: Container(
         padding: const EdgeInsets.all(6),
         decoration: const BoxDecoration(
@@ -99,9 +100,14 @@ class UserSettings extends HookConsumerWidget {
       child: screensettings.SettingsScreen(
         title: "個人設定",
         children: <Widget>[
-          buildAccountInfo(context),
-          buildLanguage(),
-          buildLocationPermission(),
+          //buildAccountInfo(context),
+          //buildLanguage(),
+          buildLocationPermission("東京", "tokyo"),
+          buildLocationPermission("名古屋", "nagoya"),
+          buildLocationPermission("大阪", "osaka"),
+          buildLocationPermission("広島", "hiroshima"),
+          buildLocationPermission("岡山", "okayama"),
+          buildLocationPermission("九州", "kyushu"),
           buildFCMTokenChange(),
 //          buildPrivacy(context),
 //          buildSecurity(context),

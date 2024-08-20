@@ -23,11 +23,18 @@ mixin _$FirebaseUser {
   String get uid => throw _privateConstructorUsedError;
   String get name => throw _privateConstructorUsedError;
   String get email => throw _privateConstructorUsedError;
-  String get imagepath => throw _privateConstructorUsedError;
+  String get password =>
+      throw _privateConstructorUsedError; //    @Default('') String imagepath,
   bool get isAdmin => throw _privateConstructorUsedError;
-  bool get isOnline => throw _privateConstructorUsedError;
+  String get officeLocation => throw _privateConstructorUsedError;
+  List<String> get department =>
+      throw _privateConstructorUsedError; // Add the department field
+  String get jobLevel =>
+      throw _privateConstructorUsedError; //    @Default(false) bool isOnline,
   @TimestampConverter()
   DateTime? get createdAt => throw _privateConstructorUsedError;
+  @TimestampConverter()
+  DateTime? get updatedAt => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -45,10 +52,13 @@ abstract class $FirebaseUserCopyWith<$Res> {
       {String uid,
       String name,
       String email,
-      String imagepath,
+      String password,
       bool isAdmin,
-      bool isOnline,
-      @TimestampConverter() DateTime? createdAt});
+      String officeLocation,
+      List<String> department,
+      String jobLevel,
+      @TimestampConverter() DateTime? createdAt,
+      @TimestampConverter() DateTime? updatedAt});
 }
 
 /// @nodoc
@@ -67,10 +77,13 @@ class _$FirebaseUserCopyWithImpl<$Res, $Val extends FirebaseUser>
     Object? uid = null,
     Object? name = null,
     Object? email = null,
-    Object? imagepath = null,
+    Object? password = null,
     Object? isAdmin = null,
-    Object? isOnline = null,
+    Object? officeLocation = null,
+    Object? department = null,
+    Object? jobLevel = null,
     Object? createdAt = freezed,
+    Object? updatedAt = freezed,
   }) {
     return _then(_value.copyWith(
       uid: null == uid
@@ -85,21 +98,33 @@ class _$FirebaseUserCopyWithImpl<$Res, $Val extends FirebaseUser>
           ? _value.email
           : email // ignore: cast_nullable_to_non_nullable
               as String,
-      imagepath: null == imagepath
-          ? _value.imagepath
-          : imagepath // ignore: cast_nullable_to_non_nullable
+      password: null == password
+          ? _value.password
+          : password // ignore: cast_nullable_to_non_nullable
               as String,
       isAdmin: null == isAdmin
           ? _value.isAdmin
           : isAdmin // ignore: cast_nullable_to_non_nullable
               as bool,
-      isOnline: null == isOnline
-          ? _value.isOnline
-          : isOnline // ignore: cast_nullable_to_non_nullable
-              as bool,
+      officeLocation: null == officeLocation
+          ? _value.officeLocation
+          : officeLocation // ignore: cast_nullable_to_non_nullable
+              as String,
+      department: null == department
+          ? _value.department
+          : department // ignore: cast_nullable_to_non_nullable
+              as List<String>,
+      jobLevel: null == jobLevel
+          ? _value.jobLevel
+          : jobLevel // ignore: cast_nullable_to_non_nullable
+              as String,
       createdAt: freezed == createdAt
           ? _value.createdAt
           : createdAt // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
+      updatedAt: freezed == updatedAt
+          ? _value.updatedAt
+          : updatedAt // ignore: cast_nullable_to_non_nullable
               as DateTime?,
     ) as $Val);
   }
@@ -117,10 +142,13 @@ abstract class _$$FirebaseUserImplCopyWith<$Res>
       {String uid,
       String name,
       String email,
-      String imagepath,
+      String password,
       bool isAdmin,
-      bool isOnline,
-      @TimestampConverter() DateTime? createdAt});
+      String officeLocation,
+      List<String> department,
+      String jobLevel,
+      @TimestampConverter() DateTime? createdAt,
+      @TimestampConverter() DateTime? updatedAt});
 }
 
 /// @nodoc
@@ -137,10 +165,13 @@ class __$$FirebaseUserImplCopyWithImpl<$Res>
     Object? uid = null,
     Object? name = null,
     Object? email = null,
-    Object? imagepath = null,
+    Object? password = null,
     Object? isAdmin = null,
-    Object? isOnline = null,
+    Object? officeLocation = null,
+    Object? department = null,
+    Object? jobLevel = null,
     Object? createdAt = freezed,
+    Object? updatedAt = freezed,
   }) {
     return _then(_$FirebaseUserImpl(
       uid: null == uid
@@ -155,21 +186,33 @@ class __$$FirebaseUserImplCopyWithImpl<$Res>
           ? _value.email
           : email // ignore: cast_nullable_to_non_nullable
               as String,
-      imagepath: null == imagepath
-          ? _value.imagepath
-          : imagepath // ignore: cast_nullable_to_non_nullable
+      password: null == password
+          ? _value.password
+          : password // ignore: cast_nullable_to_non_nullable
               as String,
       isAdmin: null == isAdmin
           ? _value.isAdmin
           : isAdmin // ignore: cast_nullable_to_non_nullable
               as bool,
-      isOnline: null == isOnline
-          ? _value.isOnline
-          : isOnline // ignore: cast_nullable_to_non_nullable
-              as bool,
+      officeLocation: null == officeLocation
+          ? _value.officeLocation
+          : officeLocation // ignore: cast_nullable_to_non_nullable
+              as String,
+      department: null == department
+          ? _value._department
+          : department // ignore: cast_nullable_to_non_nullable
+              as List<String>,
+      jobLevel: null == jobLevel
+          ? _value.jobLevel
+          : jobLevel // ignore: cast_nullable_to_non_nullable
+              as String,
       createdAt: freezed == createdAt
           ? _value.createdAt
           : createdAt // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
+      updatedAt: freezed == updatedAt
+          ? _value.updatedAt
+          : updatedAt // ignore: cast_nullable_to_non_nullable
               as DateTime?,
     ));
   }
@@ -182,10 +225,14 @@ class _$FirebaseUserImpl with DiagnosticableTreeMixin implements _FirebaseUser {
       {this.uid = '',
       this.name = '',
       this.email = '',
-      this.imagepath = '',
+      this.password = '',
       this.isAdmin = false,
-      this.isOnline = false,
-      @TimestampConverter() this.createdAt});
+      this.officeLocation = '',
+      final List<String> department = const <String>[],
+      this.jobLevel = '',
+      @TimestampConverter() this.createdAt,
+      @TimestampConverter() this.updatedAt})
+      : _department = department;
 
   factory _$FirebaseUserImpl.fromJson(Map<String, dynamic> json) =>
       _$$FirebaseUserImplFromJson(json);
@@ -201,20 +248,38 @@ class _$FirebaseUserImpl with DiagnosticableTreeMixin implements _FirebaseUser {
   final String email;
   @override
   @JsonKey()
-  final String imagepath;
+  final String password;
+//    @Default('') String imagepath,
   @override
   @JsonKey()
   final bool isAdmin;
   @override
   @JsonKey()
-  final bool isOnline;
+  final String officeLocation;
+  final List<String> _department;
+  @override
+  @JsonKey()
+  List<String> get department {
+    if (_department is EqualUnmodifiableListView) return _department;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_department);
+  }
+
+// Add the department field
+  @override
+  @JsonKey()
+  final String jobLevel;
+//    @Default(false) bool isOnline,
   @override
   @TimestampConverter()
   final DateTime? createdAt;
+  @override
+  @TimestampConverter()
+  final DateTime? updatedAt;
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'FirebaseUser(uid: $uid, name: $name, email: $email, imagepath: $imagepath, isAdmin: $isAdmin, isOnline: $isOnline, createdAt: $createdAt)';
+    return 'FirebaseUser(uid: $uid, name: $name, email: $email, password: $password, isAdmin: $isAdmin, officeLocation: $officeLocation, department: $department, jobLevel: $jobLevel, createdAt: $createdAt, updatedAt: $updatedAt)';
   }
 
   @override
@@ -225,10 +290,13 @@ class _$FirebaseUserImpl with DiagnosticableTreeMixin implements _FirebaseUser {
       ..add(DiagnosticsProperty('uid', uid))
       ..add(DiagnosticsProperty('name', name))
       ..add(DiagnosticsProperty('email', email))
-      ..add(DiagnosticsProperty('imagepath', imagepath))
+      ..add(DiagnosticsProperty('password', password))
       ..add(DiagnosticsProperty('isAdmin', isAdmin))
-      ..add(DiagnosticsProperty('isOnline', isOnline))
-      ..add(DiagnosticsProperty('createdAt', createdAt));
+      ..add(DiagnosticsProperty('officeLocation', officeLocation))
+      ..add(DiagnosticsProperty('department', department))
+      ..add(DiagnosticsProperty('jobLevel', jobLevel))
+      ..add(DiagnosticsProperty('createdAt', createdAt))
+      ..add(DiagnosticsProperty('updatedAt', updatedAt));
   }
 
   @override
@@ -239,19 +307,35 @@ class _$FirebaseUserImpl with DiagnosticableTreeMixin implements _FirebaseUser {
             (identical(other.uid, uid) || other.uid == uid) &&
             (identical(other.name, name) || other.name == name) &&
             (identical(other.email, email) || other.email == email) &&
-            (identical(other.imagepath, imagepath) ||
-                other.imagepath == imagepath) &&
+            (identical(other.password, password) ||
+                other.password == password) &&
             (identical(other.isAdmin, isAdmin) || other.isAdmin == isAdmin) &&
-            (identical(other.isOnline, isOnline) ||
-                other.isOnline == isOnline) &&
+            (identical(other.officeLocation, officeLocation) ||
+                other.officeLocation == officeLocation) &&
+            const DeepCollectionEquality()
+                .equals(other._department, _department) &&
+            (identical(other.jobLevel, jobLevel) ||
+                other.jobLevel == jobLevel) &&
             (identical(other.createdAt, createdAt) ||
-                other.createdAt == createdAt));
+                other.createdAt == createdAt) &&
+            (identical(other.updatedAt, updatedAt) ||
+                other.updatedAt == updatedAt));
   }
 
   @JsonKey(ignore: true)
   @override
   int get hashCode => Object.hash(
-      runtimeType, uid, name, email, imagepath, isAdmin, isOnline, createdAt);
+      runtimeType,
+      uid,
+      name,
+      email,
+      password,
+      isAdmin,
+      officeLocation,
+      const DeepCollectionEquality().hash(_department),
+      jobLevel,
+      createdAt,
+      updatedAt);
 
   @JsonKey(ignore: true)
   @override
@@ -272,10 +356,13 @@ abstract class _FirebaseUser implements FirebaseUser {
       {final String uid,
       final String name,
       final String email,
-      final String imagepath,
+      final String password,
       final bool isAdmin,
-      final bool isOnline,
-      @TimestampConverter() final DateTime? createdAt}) = _$FirebaseUserImpl;
+      final String officeLocation,
+      final List<String> department,
+      final String jobLevel,
+      @TimestampConverter() final DateTime? createdAt,
+      @TimestampConverter() final DateTime? updatedAt}) = _$FirebaseUserImpl;
 
   factory _FirebaseUser.fromJson(Map<String, dynamic> json) =
       _$FirebaseUserImpl.fromJson;
@@ -287,14 +374,21 @@ abstract class _FirebaseUser implements FirebaseUser {
   @override
   String get email;
   @override
-  String get imagepath;
-  @override
+  String get password;
+  @override //    @Default('') String imagepath,
   bool get isAdmin;
   @override
-  bool get isOnline;
+  String get officeLocation;
   @override
+  List<String> get department;
+  @override // Add the department field
+  String get jobLevel;
+  @override //    @Default(false) bool isOnline,
   @TimestampConverter()
   DateTime? get createdAt;
+  @override
+  @TimestampConverter()
+  DateTime? get updatedAt;
   @override
   @JsonKey(ignore: true)
   _$$FirebaseUserImplCopyWith<_$FirebaseUserImpl> get copyWith =>

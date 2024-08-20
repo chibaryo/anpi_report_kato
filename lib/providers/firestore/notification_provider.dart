@@ -7,19 +7,43 @@ part 'notification_provider.g.dart';
 
 @riverpod
 class AsyncNotificationNotifier extends _$AsyncNotificationNotifier {
-  Future<List<Notification>> _fetchNotifications() async {
-    final snapshots = await FirebaseFirestore.instance
+  Stream<List<Notification>> _notificationsStream() {
+    return FirebaseFirestore.instance
       .collection('notifications')
-//      .where("respondents", arrayContains: "Phrrgq7sijQ9VcInGJXdNmMlMGI2")
-      .get();
-
-    // データ(Map型)を取得
-    return snapshots.docs.map((doc) => Notification.fromJson(doc.data())).toList();
+      .snapshots()
+      .map((snapshot) =>
+        snapshot.docs.map((doc) => Notification.fromJson(doc.data())).toList()
+      );
   }
 
   @override
   FutureOr<List<Notification>> build() async {
-    return _fetchNotifications();
+    // Using Stream for real-time updates
+    return _notificationsStream().first; // Get the initial data
+  }
+
+  void listenToNotifications() {
+    // Subscribe to the notifications stream
+    _notificationsStream().listen((notifications) {
+      state = AsyncValue.data(notifications);
+    });
+  }
+
+  Future<Notification?> fetchNotificationByNotiId(String notiId) async {
+    try {
+      final doc = await FirebaseFirestore.instance
+          .collection("notifications")
+          .doc(notiId)
+          .get();
+
+      if (doc.exists) {
+        return Notification.fromJson(doc.data()!);
+      } else {
+        return null; // Handle if the notification doesn't exist
+      }
+    } catch (e) {
+      throw Exception("Failed to fetch notification: $e");
+    }
   }
 
   // CREATE(Add)
@@ -27,16 +51,14 @@ class AsyncNotificationNotifier extends _$AsyncNotificationNotifier {
     required String notificationId,
     required String notiTitle,
     required String notiBody,
-    }) async {
+  }) async {
     final serverDate = DateTime.now();
 
     // Set the state to loading
     state = const AsyncValue.loading();
-    // Add the new FirebaseUser and reload the FirebaseUser list from the remote repository
+    // Add the new notification and reload the list
     state = await AsyncValue.guard(() async {
       try {
-
-        // Add to firestore
         await FirebaseFirestore.instance
           .collection("notifications")
           .doc(notificationId)
@@ -46,26 +68,10 @@ class AsyncNotificationNotifier extends _$AsyncNotificationNotifier {
             "notiBody": notiBody,
             "createdAt": serverDate,
           });
-        return _fetchNotifications();
+        return _notificationsStream().first; // Return the updated list
       } catch (err) {
         throw Exception(err);
       }
     });
   }
-
-
 }
-
-
-// Get one
-/*
-final getOneNotificationById = FutureProvider.family<Notification, String>((ref, notificationId) async {
-  final snap = await FirebaseFirestore.instance
-    .collection("notifications")
-    .doc(notificationId)
-    .get();
-
-  return snap;
-});
-*/
-

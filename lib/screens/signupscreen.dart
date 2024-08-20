@@ -15,6 +15,10 @@ final logger = Logger();
 class SignupScreen extends HookConsumerWidget {
   const SignupScreen({Key? key}) : super(key: key);
 
+  popB(BuildContext context) {
+    context.pop();
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final formKey = useMemoized(() => GlobalKey<FormBuilderState>());
@@ -143,6 +147,10 @@ class SignupScreen extends HookConsumerWidget {
                   ),
                 ),
               ),
+              ElevatedButton(child: const Text("Back"), onPressed: (
+              ) {
+                popB(context);
+              },)
             ],
           ),
         ));

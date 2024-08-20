@@ -6,6 +6,7 @@ import 'package:anpi_report_ios/platform-dependent/fcm/initfcm_ios.dart';
 import 'package:anpi_report_ios/providers/appStatus/appBootStatus.dart';
 import 'package:anpi_report_ios/providers/firestore/deviceinfotable/fcmtoken_provider.dart';
 import 'package:anpi_report_ios/providers/firestore/user_provider.dart';
+import 'package:anpi_report_ios/screens/protected/postenquete.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:data_table_2/data_table_2.dart';
 import 'package:flutter/material.dart';
@@ -25,17 +26,25 @@ import '../../models/deviceinfotable.dart';
 import '../../models/prevnotis.dart';
 import '../../providers/firebaseauth/auth_provider.dart';
 import '../../providers/firestore/deviceinfotable/deviceinfotable_provider.dart';
+import '../../providers/firestore/notification_provider.dart';
 import '../../providers/firestore/userreport_provider.dart';
 import '../../providers/geolocator/location_provider.dart';
 import '../../widgets/fcmalertdialog.dart';
 
 final logger = Logger();
 
+String formatDateTime(DateTime? dateTime) {
+  if (dateTime == null) return '';
+  return '[${dateTime.month.toString().padLeft(2, '0')}/${dateTime.day.toString().padLeft(2, '0')} ${dateTime.hour.toString().padLeft(2, '0')}:${dateTime.minute.toString().padLeft(2, '0')}]';
+}
+
 class HomeScreen extends HookConsumerWidget {
   const HomeScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    // TabView
+    final tabController = useTabController(initialLength: 2);
     // AppBootStatus
     final appBootStatus = ref.watch(appBootStatusNotifierProvider);
 
@@ -43,6 +52,9 @@ class HomeScreen extends HookConsumerWidget {
     final isLoading = useState(false);
     final authState = ref.watch(firebaseAuthProvider);
     final prevnotisstream = ref.watch(prevNotisStreamProvider);
+    final notificationsState = ref.watch(asyncNotificationNotifierProvider);
+    // Trigger listening to snapshots when the widget is built
+    ref.read(asyncNotificationNotifierProvider.notifier).listenToNotifications();
 
     //final locationInfo = ref.watch(geocodingControllerProvider);
     //final currentAddress = ref.watch(addressDataProvider);
@@ -163,7 +175,7 @@ class HomeScreen extends HookConsumerWidget {
     useEffect(() {
       // Check appbootstatus
       debugPrint("## Home ## appBootStatus: $appBootStatus");
-
+/*
       if (!appBootStatus) {
         getDevInfo().then((value) {
           addDeviceInfo().then((value) {
@@ -226,7 +238,7 @@ class HomeScreen extends HookConsumerWidget {
           ref.read(appBootStatusNotifierProvider.notifier).update(true);
         });
       }
-
+*/
 /*
       queryDeviceInfoTableByUDID(
         authState.currentUser!.uid,
@@ -253,7 +265,57 @@ class HomeScreen extends HookConsumerWidget {
       return () {};
     }, const []);
 
-    var body = Center(
+    var buildBody = Column(
+      children: [
+        TabBar(
+          controller: tabController,
+          tabs: const [
+            Tab(text: "回答済み"),
+            Tab(text: "未回答"),
+          ],
+        ),
+        // TabBarView
+        Expanded(
+          child: TabBarView(
+            controller: tabController,
+            children: [
+              // "Answered" Pane
+              Center(
+                child: notificationsState.when(
+                  data: (notifications) {
+                    return ListView.builder(
+                      itemCount: notifications.length,
+                      itemBuilder: (context, index) {
+                        final notification = notifications[index];
+                        final formattedDate = formatDateTime(notification.createdAt);
+
+                        return ListTile(
+                          title: Text('$formattedDate ${notification.notiTitle}'),
+                          subtitle: Text(notification.notiBody, overflow: TextOverflow.ellipsis,),
+//                          trailing: Text(notification.createdAt?.toLocal().toString() ?? ''),
+                onTap: () {
+                  print("notiId: ${notification.notificationId}");
+                  context.pushNamed("PostEnqueteScreen", pathParameters: { 'notiId': notification.notificationId } );
+                },
+                        );
+                      },
+                    );
+                  },
+                  loading: () => Center(child: CircularProgressIndicator()),
+                  error: (err, stack) => Center(child: Text('Error: $err')),
+                ),
+              ),
+                            ElevatedButton(onPressed: () {
+                              context.pushNamed("PostEnqueteScreen", pathParameters: { 'notiId': 'xxxx'} );
+//                context.pushNamed("SignupScreen");
+              }, child: const Text("Goto enq")),
+              ],
+          ),
+        )
+      ],
+    );
+
+/*    var buildBody = Center(
       child: Column(
         children: <Widget>[
           const Text(
@@ -332,11 +394,11 @@ class HomeScreen extends HookConsumerWidget {
         ],
       ),
     );
-
+*/
     var bodyProgress = Container(
         child: Stack(
       children: <Widget>[
-        body,
+        buildBody,
         Container(
           alignment: AlignmentDirectional.center,
           decoration: const BoxDecoration(
@@ -378,7 +440,7 @@ class HomeScreen extends HookConsumerWidget {
     ));
 
     return Scaffold(
-      body: isLoading.value ? bodyProgress : body,
+      body: isLoading.value ? bodyProgress : buildBody,
     );
   }
 }

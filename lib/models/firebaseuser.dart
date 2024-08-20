@@ -22,16 +22,22 @@ class FirebaseUser with _$FirebaseUser {
     @Default('') String uid,
     @Default('') String name,
     @Default('') String email,
-    @Default('') String imagepath,
+    @Default('') String password,
+//    @Default('') String imagepath,
     @Default(false) bool isAdmin,
-    @Default(false) bool isOnline,
+    @Default('') String officeLocation,
+    @Default(<String>[]) List<String> department, // Add the department field
+    @Default('') String jobLevel,
+//    @Default(false) bool isOnline,
     @TimestampConverter() DateTime? createdAt,
+    @TimestampConverter() DateTime? updatedAt,
   }) = _FirebaseUser;
 
   // Tagからデータを取得する際の変換処理
   factory FirebaseUser.fromJson(Map<String, dynamic> json) =>
     _$FirebaseUserFromJson(json).copyWith(
       createdAt: (json['createdAt'] as Timestamp?)?.toDate(),
+      updatedAt: (json['updatedAt'] as Timestamp?)?.toDate(),
     );
 
   // DartのオブジェクトからFirebaseへ渡す際の変換処理
@@ -40,9 +46,14 @@ class FirebaseUser with _$FirebaseUser {
     'uid': uid,
     'name': name,
     'email': email,
-    'imagepath': imagepath,
+    'password': password,
+//    'imagepath': imagepath,
     'isAdmin': isAdmin,
-    'isOnline': isOnline,
+//    'isOnline': isOnline,
+    'officeLocation': officeLocation,
+    'department': department, // Add department to toJson method
+    'jobLevel': jobLevel,
     'createdAt': createdAt != null ? Timestamp.fromDate(createdAt!) : null,
+    'updatedAt': updatedAt != null ? Timestamp.fromDate(updatedAt!) : null,
   };
 }
