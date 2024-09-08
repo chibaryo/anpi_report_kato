@@ -1,16 +1,19 @@
-import 'package:anpi_report_ios/firebase_options.dart';
-import 'package:anpi_report_ios/router/router.dart';
+import 'dart:developer';
+
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:flutter_settings_screens/flutter_settings_screens.dart';
-import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'firebase_options.dart';
+import 'package:timeago/timeago.dart' as timeago;
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
+import 'platform-dependent/fcm/initfcm_android.dart';
 import 'platform-dependent/fcm/initfcm_ios.dart';
-import 'providers/thememode/themeswitcher_provider.dart';
+import 'router/app_router.dart';
 
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   // If you're going to use other Firebase services in the background, such as Firestore,
@@ -27,9 +30,40 @@ Future<void> main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  await Settings.init(cacheProvider: SharePreferenceCache());
-//  await initializeFlutterLocalNotificationsPlugin();
+  // Init FCM
+  final messaging = FirebaseMessaging.instance;
+  final fcmSettings = await messaging.requestPermission(
+    alert: true,
+    badge: true,
+    sound: true,
+  );
+  if (kDebugMode) {
+    print("FCM Permission granted: ${fcmSettings.authorizationStatus}");
+  }
+  try {
+    final fcmToken = await messaging.getToken(
+      vapidKey: "BHFm_plXBmh3r0yAnBVKjQ8Hg7UXgkyq5sghEKGu2-ZTKYiVxjrR53vo-WwIL-B_9q0ScF5t8Mkj1Ws-dPlLSqI",
+    );
+    // Print fcmToken
+    debugPrint("Got fcmToken: $fcmToken");
+    // Subscribe to "notice_all" (default)
+    await messaging.subscribeToTopic("notice_all");
+
+    // Save to secure storage
+    const secureStorage = FlutterSecureStorage();
+    await secureStorage.write(
+      key: "fcmToken",
+      value: fcmToken,
+    );
+    await secureStorage.readAll();
+
+  } catch (err) {
+    throw Exception(err);
+  }
+
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+
+  timeago.setLocaleMessages("ja", timeago.JaMessages());
   runApp(const ProviderScope(child: MyApp()));
 }
 
@@ -38,52 +72,40 @@ class MyApp extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final keyDarkMode = ref.watch(themeSwitcherDataProvider);
-
-    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      debugPrint("### message has come ### : ${message.toString()}");
-//      inspect(message);
-      showLocalNotification(message);
-    });
-
-    useEffect((){
+    useEffect(() {
       return () {};
     }, const []);
 
-    final router = ref.watch(routerProvider);
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      debugPrint("### message has come ### : ${message.toString()}");
+      inspect(message);
+      showAndroidLocalNotification(message);
+    });
+
+    final appRouter = ref.watch(appRouterProvider);// appRouterProviderは、ルーティングの設定を管理する
+
     return MaterialApp.router(
-      debugShowCheckedModeBanner: false,
       localizationsDelegates: const [
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,
-        FormBuilderLocalizations.delegate,
       ],
       supportedLocales: const [
         Locale('ja'),
         Locale('en'),
       ],
       title: "Flutter Demo App",
-      theme: keyDarkMode
-      ?
-      ThemeData.light().copyWith(     
-        primaryColor: Colors.teal,
-        secondaryHeaderColor: Colors.blue,
-        scaffoldBackgroundColor: Colors.white,
-        canvasColor: Colors.white,
-      )
-      :
-      ThemeData.dark().copyWith(
-        primaryColor: Colors.teal,
-        secondaryHeaderColor: Colors.white,
-        scaffoldBackgroundColor: const Color(0xFF170635),
-        canvasColor: const Color(0xFF170635),
-//        primarySwatch: Colors.purple,
-      )
-      ,
+      theme: ThemeData(
+        primarySwatch: Colors.purple,
+      ),
+      debugShowCheckedModeBanner: false,
+      routerDelegate: appRouter.delegate(),
+      routeInformationParser: appRouter.defaultRouteParser(),
+//      routerConfig: appRouter.config(),
+      /*
       routeInformationProvider: router.routeInformationProvider,
       routeInformationParser: router.routeInformationParser,
-      routerDelegate: router.routerDelegate,
+      routerDelegate: router.routerDelegate, */
     );
   }
 }

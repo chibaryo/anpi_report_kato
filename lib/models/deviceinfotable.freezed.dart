@@ -31,8 +31,12 @@ mixin _$DeviceInfoTable {
   @TimestampConverter()
   DateTime? get updatedAt => throw _privateConstructorUsedError;
 
+  /// Serializes this DeviceInfoTable to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of DeviceInfoTable
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $DeviceInfoTableCopyWith<DeviceInfoTable> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -64,6 +68,8 @@ class _$DeviceInfoTableCopyWithImpl<$Res, $Val extends DeviceInfoTable>
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of DeviceInfoTable
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -140,6 +146,8 @@ class __$$DeviceInfoTableImplCopyWithImpl<$Res>
       _$DeviceInfoTableImpl _value, $Res Function(_$DeviceInfoTableImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of DeviceInfoTable
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -274,12 +282,14 @@ class _$DeviceInfoTableImpl
                 other.updatedAt == updatedAt));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(runtimeType, systemName, osVersion,
       localizedModel, productName, udId, fcmToken, createdAt, updatedAt);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of DeviceInfoTable
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$DeviceInfoTableImplCopyWith<_$DeviceInfoTableImpl> get copyWith =>
@@ -326,8 +336,11 @@ abstract class _DeviceInfoTable implements DeviceInfoTable {
   @override
   @TimestampConverter()
   DateTime? get updatedAt;
+
+  /// Create a copy of DeviceInfoTable
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$DeviceInfoTableImplCopyWith<_$DeviceInfoTableImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

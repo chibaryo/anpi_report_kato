@@ -26,8 +26,12 @@ mixin _$NotiTemplate {
   @TimestampConverter()
   DateTime? get createdAt => throw _privateConstructorUsedError;
 
+  /// Serializes this NotiTemplate to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of NotiTemplate
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $NotiTemplateCopyWith<NotiTemplate> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -55,6 +59,8 @@ class _$NotiTemplateCopyWithImpl<$Res, $Val extends NotiTemplate>
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of NotiTemplate
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -107,6 +113,8 @@ class __$$NotiTemplateImplCopyWithImpl<$Res>
       _$NotiTemplateImpl _value, $Res Function(_$NotiTemplateImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of NotiTemplate
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -192,12 +200,14 @@ class _$NotiTemplateImpl with DiagnosticableTreeMixin implements _NotiTemplate {
                 other.createdAt == createdAt));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode =>
       Object.hash(runtimeType, notiTemplateId, notiTitle, notiBody, createdAt);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of NotiTemplate
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$NotiTemplateImplCopyWith<_$NotiTemplateImpl> get copyWith =>
@@ -230,8 +240,11 @@ abstract class _NotiTemplate implements NotiTemplate {
   @override
   @TimestampConverter()
   DateTime? get createdAt;
+
+  /// Create a copy of NotiTemplate
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$NotiTemplateImplCopyWith<_$NotiTemplateImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

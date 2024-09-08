@@ -3,63 +3,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
-
-
-Future<String?> initFCMAndroid(String uid, String udid) async {
-  final serverDate = DateTime.now();
-  // Init FirebaseAuth
-  final messaging = FirebaseMessaging.instance;
-
-  final settings = await messaging.requestPermission(
-    alert: true,
-    announcement: false,
-    badge: true,
-    carPlay: false,
-    criticalAlert: false,
-    provisional: false,
-    sound: true,
-  );
-  if (kDebugMode) {
-    print("FCM Permission granted: ${settings.authorizationStatus}");
-  }
-
-  try {
-    // Delete Token
-    await messaging.unsubscribeFromTopic("notice_all");
-    await messaging.deleteToken();
-    // Get token
-    final fcmToken = await messaging.getToken(
-        vapidKey:
-            "BHFm_plXBmh3r0yAnBVKjQ8Hg7UXgkyq5sghEKGu2-ZTKYiVxjrR53vo-WwIL-B_9q0ScF5t8Mkj1Ws-dPlLSqI");
-    print("got new fcmToken: $fcmToken");
-
-    // Save fcmToken to Firestore
-      await FirebaseFirestore.instance
-        .collection("tokens")
-        .doc(uid)
-        .collection("platforms")
-        .doc(udid)
-        .update({ // update
-          "fcmToken": fcmToken,
-          "updatedAt": serverDate,
-      });
-
-//    final fcmNotifier = ref.read(fcmTokenDataProvider.notifier);
-
-//    fcmNotifier.state = fcmToken!;
-    await messaging.subscribeToTopic("notice_all");
-//        print("watch: ${ref.watch(fcmTokenDataProvider)}");
-  return fcmToken;
-
-//        FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
-    // FCM foreground
-  } catch (err) {
-    throw Exception(err);
-  }
-}
-
-
-Future<void> showLocalNotification(RemoteMessage message) async {
+Future<void> showAndroidLocalNotification(RemoteMessage message) async {
   final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
     FlutterLocalNotificationsPlugin();
 
@@ -70,7 +14,7 @@ Future<void> showLocalNotification(RemoteMessage message) async {
   await flutterLocalNotificationsPlugin.initialize(
     initializationSettings,
 
-    onDidReceiveNotificationResponse: 
+    onDidReceiveNotificationResponse:
       (NotificationResponse notificationResponse) async {
         print("id=${notificationResponse.id}");
       }
@@ -78,29 +22,35 @@ Future<void> showLocalNotification(RemoteMessage message) async {
 
   const notificationDetails = NotificationDetails(
     android: AndroidNotificationDetails(
-      'your_channel_id', // チャンネルID
-      'your_channel_name', // チャンネル名
-    )
+      'my_channel_id',
+      'my_channel_name'
+    ),
   );
+
   const AndroidNotificationDetails androidPlatformChannelSpecifics =
     AndroidNotificationDetails(
-      'your_channel_id', // チャンネルID
-      'your_channel_name', // チャンネル名
-//    'your_channel_description', // チャンネルの説明
-    importance: Importance.max,
-    priority: Priority.high,
-    showWhen: false,
-//    icon: "アイコン名",
-  );
+      'my_channel_id',
+      'my_channel_name',
+      importance: Importance.max,
+      priority: Priority.high,
+      showWhen: false,
+      ticker: 'ticker',
+      number: 1,
+    );
+  
   const NotificationDetails platformChannelSpecifics =
-      NotificationDetails(android: androidPlatformChannelSpecifics);
-  print("title: ${message.data["title"]}");
-  print("body: ${message.data["body"]}");
+    NotificationDetails(
+      android: androidPlatformChannelSpecifics,
+    );
+  
+  debugPrint("fore title: ${message.notification?.title}");
+  debugPrint("fore body: ${message.notification?.body}");
+
+  // Send Local Notification
   await flutterLocalNotificationsPlugin.show(
-    0, // 通知ID
-    message.data["title"], // 通知のタイトル
-    message.data["body"], // 通知の本文
-//    notificationDetails,
+    0, // Notification Id
+    message.notification?.title,
+    message.notification?.body,
     platformChannelSpecifics,
   );
 }

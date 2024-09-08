@@ -43,6 +43,25 @@ class GeocodingController extends _$GeocodingController {
 //      return await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
   }
 
+  Future<void> requestLocationPermission() async {
+    bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      throw Exception("Location services are disabled");
+    }
+
+    LocationPermission permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        throw Exception("Location permissions are denied");
+      }
+    }
+
+    if (permission == LocationPermission.deniedForever) {
+      throw Exception("Location permissions are permanently denied");
+    }
+  }
+
   Future<Position> getCurrentPosition() async {
     return await Geolocator.getCurrentPosition();
   }
@@ -81,6 +100,12 @@ class GeocodingController extends _$GeocodingController {
       street: placeMark.street ?? '',
     );
     return address;
+  }
+
+  Future<void> resetLocationPermissions() async {
+    // Simulate resetting location permissions
+    // You may need to implement the actual logic depending on your use case
+    print('Location permissions have been reset.');
   }
 }
 

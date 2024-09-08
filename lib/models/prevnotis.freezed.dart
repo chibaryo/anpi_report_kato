@@ -26,8 +26,12 @@ mixin _$PrevNotis {
   @TimestampConverter()
   DateTime? get createdAt => throw _privateConstructorUsedError;
 
+  /// Serializes this PrevNotis to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of PrevNotis
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $PrevNotisCopyWith<PrevNotis> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -54,6 +58,8 @@ class _$PrevNotisCopyWithImpl<$Res, $Val extends PrevNotis>
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of PrevNotis
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -106,6 +112,8 @@ class __$$PrevNotisImplCopyWithImpl<$Res>
       _$PrevNotisImpl _value, $Res Function(_$PrevNotisImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of PrevNotis
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -190,12 +198,14 @@ class _$PrevNotisImpl with DiagnosticableTreeMixin implements _PrevNotis {
                 other.createdAt == createdAt));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode =>
       Object.hash(runtimeType, notificationId, uid, isMeResponded, createdAt);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of PrevNotis
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$PrevNotisImplCopyWith<_$PrevNotisImpl> get copyWith =>
@@ -228,8 +238,11 @@ abstract class _PrevNotis implements PrevNotis {
   @override
   @TimestampConverter()
   DateTime? get createdAt;
+
+  /// Create a copy of PrevNotis
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$PrevNotisImplCopyWith<_$PrevNotisImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

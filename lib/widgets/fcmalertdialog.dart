@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../platform-dependent/fcm/initfcm_android.dart';
@@ -24,23 +23,23 @@ class FcmAlertDialog extends HookConsumerWidget {
               GestureDetector(
                 child: const Text("いいえ"),
                 onTap: () async {
-                  context.pop();
+                  //context.pop();
                 }
               ),
               GestureDetector(
                 child: const Text("はい"),
                 onTap: () {
-                  context.pop();
+                  //context.pop();
                   if (Platform.isIOS) {
                     initFCMIOS(
                       authState.currentUser!.uid,
                       uDIDNotifier
                     );
                   } else if (Platform.isAndroid) {
-                    initFCMAndroid(
+/*                    initFCMAndroid(
                       authState.currentUser!.uid,
                       uDIDNotifier
-                    );
+                    );*/
                   }
                   //await initAndroidFCM(authState.currentUser!.uid);
                 }

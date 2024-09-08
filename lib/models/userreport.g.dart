@@ -10,7 +10,7 @@ _$UserReportImpl _$$UserReportImplFromJson(Map<String, dynamic> json) =>
     _$UserReportImpl(
       uid: json['uid'] as String? ?? '',
       name: json['name'] as String? ?? '',
-      siteCode: json['siteCode'] as int? ?? 0,
+      siteCode: (json['siteCode'] as num?)?.toInt() ?? 0,
       anpiStatus: json['anpiStatus'] as String? ?? '',
       gotoOfficeStatus: json['gotoOfficeStatus'] as String? ?? '',
       message: json['message'] as String? ?? '',

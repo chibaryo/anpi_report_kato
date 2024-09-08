@@ -6,11 +6,14 @@ part 'bottomnav_provider.g.dart';
 @riverpod
 class BottomNavNotifier extends _$BottomNavNotifier {
   @override
-  int build () {
-    return 0;
+  bool build () {
+    return true;
   }
 
-  void update(int index) {
-    state = index;
+  void show() {
+    state = true;
+  }
+  void hide() {
+    state = false;
   }
 }

@@ -32,8 +32,12 @@ mixin _$UserReport {
   @TimestampConverter()
   DateTime? get createdAt => throw _privateConstructorUsedError;
 
+  /// Serializes this UserReport to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of UserReport
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $UserReportCopyWith<UserReport> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -66,6 +70,8 @@ class _$UserReportCopyWithImpl<$Res, $Val extends UserReport>
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of UserReport
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -148,6 +154,8 @@ class __$$UserReportImplCopyWithImpl<$Res>
       _$UserReportImpl _value, $Res Function(_$UserReportImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of UserReport
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -297,7 +305,7 @@ class _$UserReportImpl with DiagnosticableTreeMixin implements _UserReport {
                 other.createdAt == createdAt));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
       runtimeType,
@@ -311,7 +319,9 @@ class _$UserReportImpl with DiagnosticableTreeMixin implements _UserReport {
       const DeepCollectionEquality().hash(_position),
       createdAt);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of UserReport
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$UserReportImplCopyWith<_$UserReportImpl> get copyWith =>
@@ -355,12 +365,15 @@ abstract class _UserReport implements UserReport {
   @override
   bool get isLocationPermitted;
   @override
-  List<String> get position;
-  @override // latitude, longitude, altitude
+  List<String> get position; // latitude, longitude, altitude
+  @override
   @TimestampConverter()
   DateTime? get createdAt;
+
+  /// Create a copy of UserReport
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$UserReportImplCopyWith<_$UserReportImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
