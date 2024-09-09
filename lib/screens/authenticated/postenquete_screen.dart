@@ -23,6 +23,7 @@ class PostEnqueteScreen extends HookConsumerWidget {
     final isNewReport = useState<bool>(true);
     final moiUid = useState<String>("");
     final moiReport = useState<Report?>(null);
+    final isConfirmationChecked = useState<bool?>(false);
     final authAsyncValue = ref.watch(authStateChangesProvider);
 
     final currentNoti = useState<Noti?>(null);
@@ -47,18 +48,19 @@ class PostEnqueteScreen extends HookConsumerWidget {
 
       notificationNotifier.getNotificationByNotiId(notificationId).then((value) {
         currentNoti.value = value;
+        debugPrint("currentNoti value: ${currentNoti.value}");
 
         // Get moiUid
         final user = authAsyncValue.asData?.value;
         if (user != null) {
           moiUid.value = user.uid;
-          debugPrint("moiUid: ${moiUid.value}");
+          //debugPrint("moiUid: ${moiUid.value}");
 
           // Load injuryStatus
           reportNotifier.getReportByUid(moiUid.value, notificationId).then((result) {
             if (result != null) {
               moiReport.value = result;
-              debugPrint("moiReport: ${moiReport.value}");
+              //debugPrint("moiReport: ${moiReport.value}");
               // Apply moiReport.value to local states
               injuryStatus.value = moiReport.value!.injuryStatus;
               attendOfficeStatus.value = moiReport.value!.attendOfficeStatus;
@@ -108,9 +110,12 @@ class PostEnqueteScreen extends HookConsumerWidget {
           body: 
             currentNoti.value != null
             ?
-            Center(
-              child: SingleChildScrollView(
-                child: Column(
+            (() {
+              if (currentNoti.value!.notiType == 1) {
+                return Center(
+                  child: 
+                    SingleChildScrollView(
+                      child: Column(
                   children: [
                     SizedBox(
                       width: double.infinity,
@@ -310,7 +315,7 @@ class PostEnqueteScreen extends HookConsumerWidget {
                               ? null
                               : () async {
                               // Send report
-                              debugPrint("locationAddr: ${locationAddr.value.toString()}");
+                              //debugPrint("locationAddr: ${locationAddr.value.toString()}");
 
                               if (isNewReport.value == true) {
                               // Build newReport
@@ -362,11 +367,108 @@ class PostEnqueteScreen extends HookConsumerWidget {
                   ],
                 ),
               )
-            )
+                );
+              } else if (currentNoti.value!.notiType == 2) {
+                return Center(
+                  child: 
+                    SingleChildScrollView(
+                      child: Column(
+                  children: [
+                    SizedBox(
+                      width: double.infinity,
+                      child: Card(
+                        elevation: 4.0, // Adds shadow
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12), // Rounded corners
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(16.0), // Padding inside the card
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(currentNoti.value!.notiTitle, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                              const SizedBox(height: 8), // Space for action buttons or metadata
+                              Text(currentNoti.value!.notiBody, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w400)),
+                              const SizedBox(height: 12), // Space for action buttons or metadata
+                              // Enquete Contents
+                            ]
+                          ),
+                        )
+                      ),
+                    ),
+                    // Main slot
+                    Padding(
+                      padding: const EdgeInsets.all(8),
+                      child: (() {
+                          return SizedBox(
+                            height: 320,
+                            child: Column(
+                              children: [
+                                const Text("確認しました"),
+                                Checkbox(
+                                  value: isConfirmationChecked.value,
+                                  onChanged: (value) {
+                                    isConfirmationChecked.value = value;
+                                  }
+                                ),
+
+                              ],
+                            )
+                          );
+                      })(),
+                    ),
+                    // Page manipulation buttons (prev, next)
+                    ElevatedButton(onPressed: () async {
+                              if (isNewReport.value == true) {
+                              // Build newReport
+                                final newreport = Report(
+                                  uid: moiUid.value,
+                                  injuryStatus: 0,
+                                  attendOfficeStatus: 0,
+                                  location: "", //isChecked.value ? locationAddr.value : "",
+                                  message: "", //tFieldMessageController.text,
+                                  isConfirmed: isConfirmationChecked.value!,
+                                  createdAt: DateTime.now(),
+                                  updatedAt: DateTime.now(),
+                                );
+
+                                await reportNotifier.addReport(
+                                  notificationId,
+                                  moiUid.value,
+                                  newreport,
+                                );
+                              } else {
+                                final updates = {
+                                  "uid": moiUid.value,
+                                  "isConfirmed": isConfirmationChecked.value!,
+                                  "updatedAt": DateTime.now(),
+                                };
+                                await reportNotifier.updateReport(
+                                  notificationId,
+                                  moiUid.value,
+                                  updates,
+                                );
+                              }
+
+
+                              // Go back to AppHome
+                              if (context.mounted) {
+                                context.router.replaceAll([const AppHomeRoute()]);
+                              }
+
+                    }, child: const Text("送信")),
+                  ],
+                ),
+              )
+                );
+              }
+            })()
             :
             const Center(
               child: CircularProgressIndicator(),
             ),
+            // confirmation : notiType == 2
         ),
     );
   }

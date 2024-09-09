@@ -81,7 +81,7 @@ class AppHomeScreen extends HookConsumerWidget {
                                       return const SizedBox.shrink(); // Skip un-answered notifications
                                     }
                                     //                                    final docId = notiMap["docId"].toString();
-                                    debugPrint("notiMap: ${notiMap.toString()}");
+                                    //debugPrint("notiMap: ${notiMap.toString()}");
                                     debugPrint("length");
 
                                     return Container(

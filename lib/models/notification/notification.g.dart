@@ -10,7 +10,7 @@ _$NotiImpl _$$NotiImplFromJson(Map<String, dynamic> json) => _$NotiImpl(
       notificationId: json['notificationId'] as String? ?? '',
       notiTitle: json['notiTitle'] as String? ?? '',
       notiBody: json['notiBody'] as String? ?? '',
-      notiType: (json['notiType'] as num?)?.toInt() ?? 1,
+      notiType: (json['notiType'] as num?)?.toInt() ?? 0,
       notiTopic: json['notiTopic'] as String? ?? '',
       createdAt:
           const TimestampConverter().fromJson(json['createdAt'] as Timestamp?),

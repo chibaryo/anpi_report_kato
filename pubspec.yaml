@@ -84,6 +84,7 @@ dependencies:
   permission_handler:
   flutter_secure_storage:
   auto_route: ^8.3.0
+  quickalert:
 
 dev_dependencies:
   flutter_test:

@@ -22,7 +22,7 @@ class Noti with _$Noti {
     @Default('') String notificationId,
     @Default('') String notiTitle,
     @Default('') String notiBody,
-    @Default(1) int notiType,
+    @Default(0) int notiType,
     @Default('') String notiTopic,
     @TimestampConverter() DateTime? createdAt,
     @TimestampConverter() DateTime? updatedAt,

@@ -1,5 +1,5 @@
 enum DepartmentType {
-  undefined(displayName: "未設定", sortNumber: -1),
+  undefined(displayName: "未設定", sortNumber: 0),
   candidate_01(displayName: "代表取締役社長", sortNumber: 1),
   candidate_02(displayName: "常務取締役", sortNumber: 2),
   candidate_03(displayName: "取締役", sortNumber: 4),

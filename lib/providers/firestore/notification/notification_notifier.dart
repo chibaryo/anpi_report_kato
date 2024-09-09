@@ -29,8 +29,10 @@ class StreamNotificationNotifier extends  _$StreamNotificationNotifier {
         .get();
     
       if (doc.exists) {
+        print("doc.data(): ${doc.data()}");
         return Noti.fromJson(doc.data()!);
       } else {
+        print("not dound");
         return null;
       }
     } catch (err) {

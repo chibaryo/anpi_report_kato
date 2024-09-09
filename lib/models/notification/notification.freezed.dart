@@ -187,7 +187,7 @@ class _$NotiImpl with DiagnosticableTreeMixin implements _Noti {
       {this.notificationId = '',
       this.notiTitle = '',
       this.notiBody = '',
-      this.notiType = 1,
+      this.notiType = 0,
       this.notiTopic = '',
       @TimestampConverter() this.createdAt,
       @TimestampConverter() this.updatedAt});

@@ -90,4 +90,56 @@ class StreamUserNotifier extends  _$StreamUserNotifier {
       //
     }
   }
+
+Future<void> deleteUserByUid(String uid) async {
+  try {
+    FirebaseFirestore firestore = FirebaseFirestore.instance;
+
+    // 1. Delete the user's reports from the notifications collection
+    WriteBatch batch = firestore.batch();  // Use a batch to ensure atomic operations
+
+    // Find all reports in the 'notifications' collection where the docId matches the user's uid
+    QuerySnapshot reportsSnapshot = await firestore
+      .collectionGroup('reports')
+      .where('uid', isEqualTo: uid)  // Assuming reports have an 'uid' field
+      .get();
+
+    for (DocumentSnapshot doc in reportsSnapshot.docs) {
+      batch.delete(doc.reference);  // Queue up the deletion of each report
+    }
+
+    // 2. Delete the user's deviceinfo subcollection documents
+    QuerySnapshot deviceinfoSnapshot = await firestore
+        .collection('users')  // Target the specific user
+        .doc(uid)
+        .collection('deviceinfo')  // 'deviceinfo' subcollection
+        .get();
+
+    for (DocumentSnapshot doc in deviceinfoSnapshot.docs) {
+      batch.delete(doc.reference);  // Queue up the deletion
+    }
+
+    // 3. Delete the user's profiles subcollection documents
+    QuerySnapshot profilesSnapshot = await firestore
+        .collection('users')  // Target the specific user
+        .doc(uid)
+        .collection('profiles')  // 'profiles' subcollection
+        .get();
+
+    for (DocumentSnapshot doc in profilesSnapshot.docs) {
+      batch.delete(doc.reference);  // Queue up the deletion
+    }
+
+    // 4. Finally, delete the user's main document in the 'users' collection
+    DocumentReference userDocRef = firestore.collection("users").doc(uid);
+    batch.delete(userDocRef);
+
+    // Commit the batch
+    await batch.commit();
+    
+  } catch (e) {
+    print("Error deleting user by UID: $e");
+    // Handle any errors such as logging or showing user feedback
+  }
+  }
 }

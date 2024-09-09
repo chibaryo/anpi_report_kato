@@ -1,4 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 
 class AuthService {
   final _firebaseAuth = FirebaseAuth.instance;
@@ -68,4 +70,26 @@ class AuthService {
       await _firebaseAuth.signOut();
   }
 
+  Future<void> deleteAccount(String uid) async {
+    // POST v1 https://anpi-fcm-2024-test.vercel.app/api/firebase/deleteaccount
+    const apiUrl = "https://anpi-fcm-2024-test.vercel.app/api/firebase/deleteaccount";
+    Uri url = Uri.parse(apiUrl);
+    Map<String, String> headers = {'Content-Type': 'application/json'};
+    String body = json.encode({'uid': uid});
+
+    http.Response resp = await http.post(url, headers: headers, body: body);
+    if (resp.statusCode != 200) {
+      final int statusCode = resp.statusCode;
+      print("failed");
+      return;
+    } else {
+      // Ok
+      final int statusCode = resp.statusCode;
+      print("resp.body: ${resp.body}");
+
+      await _firebaseAuth.signOut();
+      print("Account deleted");
+    }
+
+  }
 }

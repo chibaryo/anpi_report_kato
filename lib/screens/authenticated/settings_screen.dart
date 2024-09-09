@@ -11,11 +11,13 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:uuid/uuid.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:quickalert/quickalert.dart';
 
 import '../../entity/userattr/department.dart';
 import '../../entity/userattr/joblevel.dart';
 import '../../models/notification/notification.dart';
 import '../../models/profile.dart';
+import '../../repository/firebase/authrepo.dart';
 import 'admins/notiadmin_screen.dart';
 import 'topicselect_screen.dart';
 
@@ -38,6 +40,8 @@ class SettingsScreen extends HookConsumerWidget {
     final authAsyncValue = ref.watch(authStateChangesProvider);
     final userNotifier = ref.watch(streamUserNotifierProvider.notifier);
     final profileNotifier = ref.watch(streamProfileNotifierProvider.notifier);
+
+    final AuthService authService = AuthService();
 
     useEffect(() {
       final user = authAsyncValue.asData?.value;
@@ -100,6 +104,7 @@ class SettingsScreen extends HookConsumerWidget {
       }
     ); */
 
+
     Widget buildProfilePanel () {
       return Column(
         children: <Widget>[
@@ -157,10 +162,17 @@ class SettingsScreen extends HookConsumerWidget {
                 const SizedBox(width: 16,),
                 moiProfile.value != null
                 ? Text(
-                  getDepartmentTypeDetailsBySortNumber(moiProfile.value!.userAttr["department"])
+              getDepartmentTypeDetailsBySortNumber(moiProfile.value!.userAttr["department"])
+                  .where((dept) => dept['displayName'] != "未設定") // Filter out '未設定'
                   .map((dept) => dept['displayName']) // Extract 'displayName' from each map
                   .join(', ') // Join them into a comma-separated string
-                )
+                  .isNotEmpty // If there's any valid department, display them
+                  ? getDepartmentTypeDetailsBySortNumber(moiProfile.value!.userAttr["department"])
+                      .where((dept) => dept['displayName'] != "未設定") // Filter again in case needed
+                      .map((dept) => dept['displayName'])
+                      .join(', ') 
+                  : "未設定", // Otherwise, show "未設定"
+                  )
                 : const Text(""),
               ],
             ),
@@ -304,6 +316,42 @@ class SettingsScreen extends HookConsumerWidget {
                     GestureDetector(
                       behavior: HitTestBehavior.opaque,
                       onTap: () async {
+                        // Show confirmation dialog
+                        showDialog(
+                          context: context,
+                          builder: (context) {
+                            return AlertDialog(
+                              title: const Text("アカウント削除"),
+                              content: const Text("アカウント削除します。よろしいですか？"),
+                              actions: <Widget> [
+                                TextButton(
+                                  child: const Text("キャンセル"),
+                                  onPressed: () async {
+                                    if (context.mounted) {
+                                      context.router.maybePop();
+                                    }
+                                  },
+                                ),
+                                TextButton(
+                                  child: const Text("削除", style: TextStyle(color: Colors.red),),
+                                  onPressed: () async {
+                                    // Delete from firestore
+                                    await userNotifier.deleteUserByUid(moiUid.value);
+
+                                    // Delete from FirebaseAuth
+                                    await authService.deleteAccount(moiUid.value);
+
+                                    //
+                                    if (context.mounted) {
+                                      context.router.replace(const SigninRoute());
+                                    }
+                                  },
+                                )
+                              ],
+                            );
+                          }
+                        );
+
                         if (context.mounted) {
                         }
                       },
