@@ -5,13 +5,14 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'firebase_options.dart';
 import 'package:timeago/timeago.dart' as timeago;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
-import 'platform-dependent/fcm/initfcm_android.dart';
+//import 'platform-dependent/fcm/initfcm_android.dart';
 import 'platform-dependent/fcm/initfcm_ios.dart';
 import 'router/app_router.dart';
 
@@ -79,56 +80,144 @@ class MyApp extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final notiId = ref.watch(notiIdProvider);
 
+    // Func defs
+Future<void> showAndroidLocalNotification(RemoteMessage message) async {
+  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+    FlutterLocalNotificationsPlugin();
+
+  const initializationSettings = InitializationSettings(
+    android: AndroidInitializationSettings('@mipmap/ic_launcher')
+  );
+
+  await flutterLocalNotificationsPlugin.initialize(
+    initializationSettings,
+
+    onDidReceiveNotificationResponse: (NotificationResponse notificationResponse) async {
+      final String? receivedNotiId = notificationResponse.payload;
+
+      if (receivedNotiId != null) {
+        debugPrint("### Notification clicked! ###");
+        debugPrint("receivedNotiId notiId: ${receivedNotiId.toString()}");
+
+        // SecureStorageに保存
+        await secureStorage.write(key: "notiId", value: receivedNotiId);
+        // Access the provider and update the state
+        ref.read(notiIdProvider.notifier).state = receivedNotiId;
+        // アプリが起動してからページ遷移を行うための処理
+        // ここではデータ保存のみを行います
+
+      }
+    },
+  );
+
+  const notificationDetails = NotificationDetails(
+    android: AndroidNotificationDetails(
+      'my_channel_id',
+      'my_channel_name'
+    ),
+  );
+
+  const AndroidNotificationDetails androidPlatformChannelSpecifics =
+    AndroidNotificationDetails(
+      'my_channel_id',
+      'my_channel_name',
+      importance: Importance.max,
+      priority: Priority.high,
+      showWhen: false,
+      ticker: 'ticker',
+      number: 1,
+    );
+  
+  const NotificationDetails platformChannelSpecifics =
+    NotificationDetails(
+      android: androidPlatformChannelSpecifics,
+    );
+  
+  debugPrint("fore title: ${message.notification?.title}");
+  debugPrint("fore body: ${message.notification?.body}");
+
+  // Send Local Notification
+  await flutterLocalNotificationsPlugin.show(
+    0, // Notification Id
+    message.notification?.title,
+    message.notification?.body,
+    platformChannelSpecifics,
+    payload: message.data['notificationId'], // Include payload here
+  );
+}    // End func defs
+
     useEffect(() {
       Future<void> storeNotiIdToSecureStorage (String notiId) async {
         await secureStorage.write(key: notiIdStorageKey, value: notiId);
       }
+  // Handle foreground notification
+  FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+    debugPrint("### onMessage has come ### : ${message.toString()}");
+    inspect(message);
+    showAndroidLocalNotification(message);
 
-      FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-        debugPrint("### message has come ### : ${message.toString()}");
-        inspect(message);
-        showAndroidLocalNotification(message);
+    final receivedNotiId = message.data['notificationId'];
+  if (receivedNotiId != null) {
+    // Navigate to a new route or update the UI based on the notification
+    //ref.read(notiIdProvider.notifier).state = receivedNotiId;
+
+    // Optionally, clear the notification ID from SecureStorage if needed
+    secureStorage.delete(key: "notiId");
+  }
+  });
+
+  // Handle app opened from notification (in background or foreground)
+  FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+    final receivedNotiId = message.data['notificationId'];
+    if (receivedNotiId != null) {
+      debugPrint("### App opened from notification ###: ${message.toString()}");
+      storeNotiIdToSecureStorage(receivedNotiId).then((_) {
+        ref.read(notiIdProvider.notifier).state = receivedNotiId;
+
+        // Navigate to PostEnqueteRoute on notification click
+/*        WidgetsBinding.instance.addPostFrameCallback((_) {
+          final appRouter = ref.read(appRouterProvider);
+          appRouter.push(PostEnqueteRoute(notificationId: receivedNotiId));
+        }); */
       });
+    }
+  });
 
-      // Handle when the app is opened from a notification while in background or foreground
-      FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-        final receivedNotiId = message.data['notificationId'];
-        if (receivedNotiId != null) {
-          debugPrint("### App opened from notification ###: ${message.toString()}");
-          storeNotiIdToSecureStorage(receivedNotiId).then((_) {
-            ref.read(notiIdProvider.notifier).state = receivedNotiId;
-          });
-        }
-      });
+  // Handle app launched from terminated state
+  FirebaseMessaging.instance.getInitialMessage().then((RemoteMessage? message) {
+    if (message != null) {
+      final receivedNotiId = message.data['notificationId'];
+      if (receivedNotiId != null) {
+        debugPrint("### App launched from notification ###: ${message.toString()}");
+        storeNotiIdToSecureStorage(receivedNotiId).then((_) {
+          ref.read(notiIdProvider.notifier).state = receivedNotiId;
 
-      // Handle when the app is launched from a notification in terminated state
-      FirebaseMessaging.instance.getInitialMessage().then((RemoteMessage? message) {
-        if (message != null) {
-          final receivedNotiId = message.data['notificationId'];
-          if (receivedNotiId != null) {
-            debugPrint("### App launched from notification ###: ${message.toString()}");
-            storeNotiIdToSecureStorage(receivedNotiId).then((_) {
-              ref.read(notiIdProvider.notifier).state = receivedNotiId;
-            });
-          }
-        }
-      });
-
+          // Navigate to PostEnqueteRoute after launch
+         /* WidgetsBinding.instance.addPostFrameCallback((_) {
+            final appRouter = ref.read(appRouterProvider);
+            appRouter.push(PostEnqueteRoute(notificationId: receivedNotiId)); 
+          });*/
+        });
+      }
+    }
+  });
       return () {};
     }, const []);
 
     final appRouter = ref.watch(appRouterProvider);// appRouterProviderは、ルーティングの設定を管理する
 
-    // Navigate once the notiId is retrieved and the app is fully built
+//             appRouter.push(PostEnqueteRoute(notificationId: storedNotiId));
     useEffect(() {
       if (notiId != null) {
         WidgetsBinding.instance.addPostFrameCallback((_) {
-          // Assuming PostEnqueteRoute takes a `notiId` as a parameter
-          appRouter.push(PostEnqueteRoute(notificationId: notiId));
+             appRouter.push(PostEnqueteRoute(notificationId: notiId));
+          ref.read(notiIdProvider.notifier).state = null; // Reset the ID
         });
       }
       return null;
     }, [notiId]);
+
+
 
     return MaterialApp.router(
       localizationsDelegates: const [
