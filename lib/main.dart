@@ -15,6 +15,8 @@ import 'platform-dependent/fcm/initfcm_android.dart';
 import 'platform-dependent/fcm/initfcm_ios.dart';
 import 'router/app_router.dart';
 
+const secureStorage = FlutterSecureStorage();
+
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   // If you're going to use other Firebase services in the background, such as Firestore,
   // make sure you call `initializeApp` before using other Firebase services.
@@ -50,7 +52,6 @@ Future<void> main() async {
     await messaging.subscribeToTopic("notice_all");
 
     // Save to secure storage
-    const secureStorage = FlutterSecureStorage();
     await secureStorage.write(
       key: "fcmToken",
       value: fcmToken,
@@ -67,22 +68,67 @@ Future<void> main() async {
   runApp(const ProviderScope(child: MyApp()));
 }
 
+const notiIdStorageKey = "notiId";
+
+final notiIdProvider = StateProvider<String?>((ref) => null);
+
 class MyApp extends HookConsumerWidget {
   const MyApp({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final notiId = ref.watch(notiIdProvider);
+
     useEffect(() {
+      Future<void> storeNotiIdToSecureStorage (String notiId) async {
+        await secureStorage.write(key: notiIdStorageKey, value: notiId);
+      }
+
+      FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+        debugPrint("### message has come ### : ${message.toString()}");
+        inspect(message);
+        showAndroidLocalNotification(message);
+      });
+
+      // Handle when the app is opened from a notification while in background or foreground
+      FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+        final receivedNotiId = message.data['notificationId'];
+        if (receivedNotiId != null) {
+          debugPrint("### App opened from notification ###: ${message.toString()}");
+          storeNotiIdToSecureStorage(receivedNotiId).then((_) {
+            ref.read(notiIdProvider.notifier).state = receivedNotiId;
+          });
+        }
+      });
+
+      // Handle when the app is launched from a notification in terminated state
+      FirebaseMessaging.instance.getInitialMessage().then((RemoteMessage? message) {
+        if (message != null) {
+          final receivedNotiId = message.data['notificationId'];
+          if (receivedNotiId != null) {
+            debugPrint("### App launched from notification ###: ${message.toString()}");
+            storeNotiIdToSecureStorage(receivedNotiId).then((_) {
+              ref.read(notiIdProvider.notifier).state = receivedNotiId;
+            });
+          }
+        }
+      });
+
       return () {};
     }, const []);
 
-    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      debugPrint("### message has come ### : ${message.toString()}");
-      inspect(message);
-      showAndroidLocalNotification(message);
-    });
-
     final appRouter = ref.watch(appRouterProvider);// appRouterProviderは、ルーティングの設定を管理する
+
+    // Navigate once the notiId is retrieved and the app is fully built
+    useEffect(() {
+      if (notiId != null) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          // Assuming PostEnqueteRoute takes a `notiId` as a parameter
+          appRouter.push(PostEnqueteRoute(notificationId: notiId));
+        });
+      }
+      return null;
+    }, [notiId]);
 
     return MaterialApp.router(
       localizationsDelegates: const [
