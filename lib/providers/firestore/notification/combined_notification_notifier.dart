@@ -9,59 +9,31 @@ part 'combined_notification_notifier.g.dart';
 class StreamNotificationCombinedNotifier extends _$StreamNotificationCombinedNotifier {
   @override
   Stream<List<Map<String, dynamic>>> build(String uid) {
-    final answeredStream = FirebaseFirestore.instance
+    return FirebaseFirestore.instance
         .collection("notifications")
         .snapshots()
         .asyncMap((notificationSnapshot) async {
-          List<Map<String, dynamic>> notificationsWithReports = [];
+          List<Map<String, dynamic>> combinedNotifications = [];
 
           for (var notificationDoc in notificationSnapshot.docs) {
+            // Check if the report exists for this notification
             final reportsSnapshot = await notificationDoc.reference
                 .collection("reports")
                 .doc(uid)
                 .get();
 
-            if (reportsSnapshot.exists) {
-              final noti = Noti.fromJson(notificationDoc.data());
-              notificationsWithReports.add({
-                'noti': noti,
-                'docId': notificationDoc.id,
-                'answered': true, // Mark as answered
-              });
-            }
+            // Parse the notification
+            final noti = Noti.fromJson(notificationDoc.data());
+
+            // Add the notification to the list, marking it as answered or not answered
+            combinedNotifications.add({
+              'noti': noti,
+              'docId': notificationDoc.id,
+              'answered': reportsSnapshot.exists, // Mark as answered if the report exists
+            });
           }
-          return notificationsWithReports;
+          
+          return combinedNotifications;
         });
-
-    final notAnsweredStream = FirebaseFirestore.instance
-        .collection("notifications")
-        .snapshots()
-        .asyncMap((notificationSnapshot) async {
-          List<Map<String, dynamic>> notificationsWithoutReports = [];
-
-          for (var notificationDoc in notificationSnapshot.docs) {
-            final reportsSnapshot = await notificationDoc.reference
-                .collection("reports")
-                .doc(uid)
-                .get();
-
-            if (!reportsSnapshot.exists) {
-              final noti = Noti.fromJson(notificationDoc.data());
-              notificationsWithoutReports.add({
-                'noti': noti,
-                'docId': notificationDoc.id,
-                'answered': false, // Mark as not answered
-              });
-            }
-          }
-          return notificationsWithoutReports;
-        });
-
-    // Use Rx.combineLatest to combine both streams
-    return CombineLatestStream.combine2<List<Map<String, dynamic>>, List<Map<String, dynamic>>, List<Map<String, dynamic>>>(
-      answeredStream,
-      notAnsweredStream,
-      (answered, notAnswered) => [...answered, ...notAnswered], // Combine both into one list
-    );
   }
 }

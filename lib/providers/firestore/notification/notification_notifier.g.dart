@@ -7,7 +7,7 @@ part of 'notification_notifier.dart';
 // **************************************************************************
 
 String _$streamNotificationNotifierHash() =>
-    r'1c025be0b672e9316f9ac0fe11fd367f290b6120';
+    r'3279416efb3aa39cfee54a7776a92e966a92823e';
 
 /// See also [StreamNotificationNotifier].
 @ProviderFor(StreamNotificationNotifier)

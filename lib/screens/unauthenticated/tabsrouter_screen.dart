@@ -31,7 +31,7 @@ class TabsRouterScreen extends HookConsumerWidget {
               ),
               NavigationDestination(
                 icon: Icon(Icons.settings),
-                label: "setti",
+                label: "settings",
               ),
             ],
             onDestinationSelected: tabsRouter.setActiveIndex,
