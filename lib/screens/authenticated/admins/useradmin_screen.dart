@@ -33,6 +33,14 @@ class UserAdminScreen extends HookConsumerWidget {
     final profileNotifier = ref.watch(streamProfileNotifierProvider.notifier);
 
     useEffect(() {
+      Future.microtask(() {
+        ref.read(bottomNavNotifierProvider.notifier).hide();
+      });
+
+      return () {};
+    }, const []);
+
+    useEffect(() {
       final user = authAsyncValue.asData?.value;
       if (user != null) {
         moiUid.value = user.uid;

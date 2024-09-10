@@ -7,6 +7,7 @@ enum TopicType {
   candidateHiroshima(displayName: "通知_広島", topic: "notice_hiroshima", sortNumber: 16),
   candidateOkayama(displayName: "通知_岡山", topic: "notice_okayama", sortNumber: 32),
   candidateKyushu(displayName: "通知_九州", topic: "notice_kyushu", sortNumber: 64),
+  candidateTestAdm2024(displayName: "管理用テスト2024", topic: "test_adm_2024", sortNumber: 128),
   ;
 
   final String displayName;

@@ -13,6 +13,7 @@ import 'package:uuid/uuid.dart';
 import '../../models/notification/notification.dart';
 import '../../models/report/report.dart';
 import '../../providers/bottomnav/bottomnav_provider.dart';
+import '../../providers/firestore/notification/combined_notification_notifier.dart';
 
 @RoutePage()
 class PostEnqueteScreen extends HookConsumerWidget {
@@ -91,7 +92,7 @@ class PostEnqueteScreen extends HookConsumerWidget {
     }
 
     // Custom Widgets
-    Widget buildRadioCandidate(String label, int value) {
+    Widget buildinjuryRadioCandidate(String label, int value) {
       return                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Material(
@@ -108,6 +109,32 @@ class PostEnqueteScreen extends HookConsumerWidget {
                             groupValue: injuryStatus.value,
                             onChanged: (value) {
                               injuryStatus.value = value!;
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                );
+    }
+
+    Widget buildattendOfficeRadioCandidate(String label, int value) {
+      return                 Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Material(
+                    elevation: 10.0,
+                    borderRadius: BorderRadius.circular(10.0),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: <Widget>[
+                          Text(label),
+                          Radio(
+                            value: value,
+                            groupValue: attendOfficeStatus.value,
+                            onChanged: (value) {
+                              attendOfficeStatus.value = value!;
                             },
                           ),
                         ],
@@ -155,77 +182,11 @@ class PostEnqueteScreen extends HookConsumerWidget {
                 const Text("怪我の状態", style: TextStyle(fontSize: 24),),
       
                 // Choice 1
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Material(
-                    elevation: 10.0,
-                    borderRadius: BorderRadius.circular(10.0),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: <Widget>[
-                          const Text("無事"),
-                          Radio(
-                            value: 1,
-                            groupValue: injuryStatus.value,
-                            onChanged: (value) {
-                              injuryStatus.value = value!;
-                            },
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
+                buildinjuryRadioCandidate("無事", 1),
                 // Choice 2
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Material(
-                    elevation: 10.0,
-                    borderRadius: BorderRadius.circular(10.0),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: <Widget>[
-                          const Text("怪我"),
-                          Radio(
-                            value: 2,
-                            groupValue: injuryStatus.value,
-                            onChanged: (value) {
-                              injuryStatus.value = value!;
-                            },
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
+                buildinjuryRadioCandidate("怪我", 2),
                 // Choice 3
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Material(
-                    elevation: 10.0,
-                    borderRadius: BorderRadius.circular(10.0),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: <Widget>[
-                          const Text("その他"),
-                          Radio(
-                            value: 3,
-                            groupValue: injuryStatus.value,
-                            onChanged: (value) {
-                              injuryStatus.value = value!;
-                            },
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
+                buildinjuryRadioCandidate("その他", 3),
               ],
             );
             //const Text("AAA", style: TextStyle(fontSize: 32),);
@@ -237,9 +198,9 @@ class PostEnqueteScreen extends HookConsumerWidget {
                   Text("Page ${stepperCount.value.toString()} / 4"),
                   const Text("出社の可否", style: TextStyle(fontSize: 24),),
                   // Choice 1
-                  buildRadioCandidate("出社可", 1),
-                  buildRadioCandidate("出社不可", 2),
-                  buildRadioCandidate("出社済み", 3),
+                  buildattendOfficeRadioCandidate("出社可", 1),
+                  buildattendOfficeRadioCandidate("出社不可", 2),
+                  buildattendOfficeRadioCandidate("出社済み", 3),
                 ],
               )
             );
@@ -318,6 +279,9 @@ class PostEnqueteScreen extends HookConsumerWidget {
               child: (() {
                 if (stepperCount.value >= 2) {
                   return ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      elevation: 8,
+                    ),
                     onPressed: () {
                       if (stepperCount.value >= 2) {
                         stepperCount.value -= 1;
@@ -336,7 +300,6 @@ class PostEnqueteScreen extends HookConsumerWidget {
                 if (stepperCount.value <= 3) {
                   return ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.teal[200],
                       elevation: 8,
                     ),
                     onPressed: () {
@@ -358,56 +321,71 @@ class PostEnqueteScreen extends HookConsumerWidget {
         padding: const EdgeInsets.all(4.0),
         child: (() {
           if (stepperCount.value == 4) {
-            return ElevatedButton(
-              onPressed: isChecked.value && locationAddr.value == ""
-                ? null
-                : () async {
-                // Send report
-                //debugPrint("locationAddr: ${locationAddr.value.toString()}");
-      
-                if (isNewReport.value == true) {
-                // Build newReport
-                  final newreport = Report(
-                    uid: moiUid.value,
-                    injuryStatus: injuryStatus.value,
-                    attendOfficeStatus: attendOfficeStatus.value,
-                    location: isChecked.value ? locationAddr.value : "",
-                    message: tFieldMessageController.text,
-                    isConfirmed: true,
-                    createdAt: DateTime.now(),
-                    updatedAt: DateTime.now(),
-                  );
-      
-                  await reportNotifier.addReport(
-                    notificationId,
-                    moiUid.value,
-                    newreport,
-                  );
-                } else {
-                  final updates = {
-                    "uid": moiUid.value,
-                    "injuryStatus": injuryStatus.value,
-                    "attendOfficeStatus": attendOfficeStatus.value,
-                    "location": isChecked.value ? locationAddr.value : "",
-                    "message": tFieldMessageController.text,
-                    "isConfirmed": true,
-                    "updatedAt": DateTime.now(),
-                  };
-                  await reportNotifier.updateReport(
-                    notificationId,
-                    moiUid.value,
-                    updates,
-                  );
-                }
-      
-      
-                // Go back to AppHome
-                if (context.mounted) {
-                  context.router.replaceAll([const AppHomeRoute()]);
-                }
-              },
-              child: // Wait until locationAddr if checked
-                const Text("送信") // kakuninn button?
+            return Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 32.0),
+              child: Row(
+                children: <Widget>[
+                  Expanded(
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.teal[300],
+                        foregroundColor: Colors.white,
+                        elevation: 8,
+                      ),
+                      onPressed: isChecked.value && locationAddr.value == ""
+                        ? null
+                        : () async {
+                        // Send report
+                        //debugPrint("locationAddr: ${locationAddr.value.toString()}");
+                          
+                        if (isNewReport.value == true) {
+                        // Build newReport
+                          final newreport = Report(
+                            uid: moiUid.value,
+                            injuryStatus: injuryStatus.value,
+                            attendOfficeStatus: attendOfficeStatus.value,
+                            location: isChecked.value ? locationAddr.value : "",
+                            message: tFieldMessageController.text,
+                            isConfirmed: true,
+                            createdAt: DateTime.now(),
+                            updatedAt: DateTime.now(),
+                          );
+                          
+                          await reportNotifier.addReport(
+                            notificationId,
+                            moiUid.value,
+                            newreport,
+                          );
+                        } else {
+                          final updates = {
+                            "uid": moiUid.value,
+                            "injuryStatus": injuryStatus.value,
+                            "attendOfficeStatus": attendOfficeStatus.value,
+                            "location": isChecked.value ? locationAddr.value : "",
+                            "message": tFieldMessageController.text,
+                            "isConfirmed": true,
+                            "updatedAt": DateTime.now(),
+                          };
+                          await reportNotifier.updateReport(
+                            notificationId,
+                            moiUid.value,
+                            updates,
+                          );
+                        }
+                          
+                          
+                        // Go back to AppHome
+                        if (context.mounted) {
+                          ref.read(bottomNavNotifierProvider.notifier).show();
+                          context.router.replaceAll([const AppHomeRoute()]);
+                        }
+                      },
+                      child: // Wait until locationAddr if checked
+                        const Text("送信") // kakuninn button?
+                    ),
+                  ),
+                ],
+              ),
             );
           }
         })(),
@@ -532,6 +510,10 @@ class PostEnqueteScreen extends HookConsumerWidget {
               
                         // Go back to AppHome
                         if (context.mounted) {
+                          // Invalidate list
+                          ref.read(bottomNavNotifierProvider.notifier).show();
+                          ref.invalidate(streamNotificationCombinedNotifierProvider(moiUid.value));
+
                           context.router.replaceAll([const AppHomeRoute()]);
                         }
               

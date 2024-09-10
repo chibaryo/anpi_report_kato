@@ -23,9 +23,14 @@ class TopicSelectScreen extends HookConsumerWidget {
     final isHiroshimaFlagOn = useState<bool>(false);
     final isOkayamaFlagOn = useState<bool>(false);
     final isKyushuFlagOn = useState<bool>(false);
+    final isTestAdm2024FlagOn = useState<bool>(false);
     const storage = FlutterSecureStorage();
 
     useEffect(() {
+      Future.microtask(() {
+        ref.read(bottomNavNotifierProvider.notifier).hide();
+      });
+
       Future<void> getNotiTopicFlagsFromStorage() async {
         // Tokyo
         final tokyoFlagStr = await storage.read(key: 'tokyoFlagStr');
@@ -69,6 +74,13 @@ class TopicSelectScreen extends HookConsumerWidget {
           isKyushuFlagOn.value = true;
         } else {
           isKyushuFlagOn.value = false;
+        }
+        // test_adm_2024
+        final testadm2024FlagStr = await storage.read(key: 'testadm2024FlagStr');
+        if (testadm2024FlagStr != null && testadm2024FlagStr == "on") {
+          isTestAdm2024FlagOn.value = true;
+        } else {
+          isTestAdm2024FlagOn.value = false;
         }
       }
 
@@ -183,6 +195,23 @@ class TopicSelectScreen extends HookConsumerWidget {
                     await storage.write(key: "kyushuFlagStr", value: "off");
                     await messaging.unsubscribeFromTopic("notice_kyushu");
                     isKyushuFlagOn.value = value;
+                  }
+                }
+              ),
+              SwitchListTile(
+                title: const Text("管理用テスト2024"),
+                value: isTestAdm2024FlagOn.value,
+                onChanged: (bool? value) async {
+                  final messaging = FirebaseMessaging.instance;
+                  if (value!) {
+                    // When true
+                    await storage.write(key: "testadm2024FlagStr", value: "on");
+                    await messaging.subscribeToTopic("test_adm_2024");
+                    isTestAdm2024FlagOn.value = value;
+                  } else {
+                    await storage.write(key: "testadm2024FlagStr", value: "off");
+                    await messaging.unsubscribeFromTopic("test_adm_2024");
+                    isTestAdm2024FlagOn.value = value;
                   }
                 }
               ),

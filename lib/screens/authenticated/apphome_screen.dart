@@ -29,6 +29,19 @@ class AppHomeScreen extends HookConsumerWidget {
     final notificationStream = ref.watch(streamNotificationCombinedNotifierProvider(moiUid.value));
 
     useEffect(() {
+      Future.microtask(() {
+        ref.read(
+          bottomNavNotifierProvider.notifier
+        ).show();
+        ref.invalidate(
+          streamNotificationCombinedNotifierProvider(moiUid.value)
+        );
+      });
+
+      return () {};
+    }, const []);
+
+    useEffect(() {
       final user = authAsyncValue.asData?.value;
       if (user != null) {
         moiUid.value = user.uid;

@@ -3,6 +3,7 @@ enum JobLevelStatusType {
   candidate_01(displayName: "社員", sortNumber: 1),
   candidate_02(displayName: "責任者", sortNumber: 2),
   candidate_03(displayName: "管理者", sortNumber: 4),
+  candidate_04(displayName: "開発者", sortNumber: 8),
   ;
 
   final String displayName;

@@ -1,9 +1,8 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/foundation.dart';
 
-part "notitemplate.freezed.dart";
-part "notitemplate.g.dart";
+part "template.freezed.dart";
+part "template.g.dart";
 
 class TimestampConverter implements JsonConverter<DateTime?, Timestamp?> {
   const TimestampConverter();
@@ -17,27 +16,27 @@ class TimestampConverter implements JsonConverter<DateTime?, Timestamp?> {
 }
 
 @freezed
-class NotiTemplate with _$NotiTemplate {
-  const factory NotiTemplate({
-    @Default('') String notiTemplateId,
-    @Default('') String notiTitle,
-    @Default('') String notiBody,
+class Template with _$Template {
+  const factory Template({
+    @Default('') String title,
+    @Default('') String body,
     @TimestampConverter() DateTime? createdAt,
-  }) = _NotiTemplate;
+     @TimestampConverter() DateTime? updatedAt,
+ }) = _Template;
 
   // Tagからデータを取得する際の変換処理
-  @override
-  factory NotiTemplate.fromJson(Map<String, dynamic> json) =>
-    _$NotiTemplateFromJson(json).copyWith(
+  factory Template.fromJson(Map<String, dynamic> json) =>
+    _$TemplateFromJson(json).copyWith(
       createdAt: (json['createdAt'] as Timestamp?)?.toDate(),
+      updatedAt: (json['updatedAt'] as Timestamp?)?.toDate(),
     );
 
   // DartのオブジェクトからFirebaseへ渡す際の変換処理
   @override
   Map<String, dynamic> toJson() => {
-    'notiTemplateId': notiTemplateId,
-    'notiTitle': notiTitle,
-    'notiBody': notiBody,
+    'title': title,
+    'body': body,
     'createdAt': createdAt != null ? Timestamp.fromDate(createdAt!) : null,
+    'updatedAt': updatedAt != null ? Timestamp.fromDate(updatedAt!) : null,
   };
 }
