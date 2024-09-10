@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>destination</key>
+	<string>export</string>
+	<key>manageAppVersionAndBuildNumber</key>
+	<true/>
+	<key>method</key>
+	<string>app-store-connect</string>
+	<key>provisioningProfiles</key>
+	<dict>
+		<key>com.example.anpiReportIos</key>
+		<string>Anpi App Flutter Appstore Dist</string>
+	</dict>
+	<key>signingCertificate</key>
+	<string>A6BA67C527FE1D58DB6C80962518025FD523B150</string>
+	<key>signingStyle</key>
+	<string>manual</string>
+	<key>stripSwiftSymbols</key>
+	<true/>
+	<key>teamID</key>
+	<string>75JH8UC5BA</string>
+	<key>uploadSymbols</key>
+	<true/>
+</dict>
+</plist>

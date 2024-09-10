@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -81,6 +82,58 @@ class MyApp extends HookConsumerWidget {
     final notiId = ref.watch(notiIdProvider);
 
     // Func defs
+    Future<void> showIosLocalNotification(RemoteMessage message) async {
+  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+    FlutterLocalNotificationsPlugin();
+
+  var initializationSettings = InitializationSettings(
+    android: const AndroidInitializationSettings('@mipmap/ic_launcher'),
+    iOS: DarwinInitializationSettings(
+      requestAlertPermission: true,
+      requestBadgePermission: true,
+      requestSoundPermission: true,
+      onDidReceiveLocalNotification: (id, title, body, payload) async {
+        print("payload: $payload");
+        print("id: $id");
+                // SecureStorageに保存
+        //await secureStorage.write(key: "notiId", value: receivedNotiId);
+        // Access the provider and update the state
+        //ref.read(notiIdProvider.notifier).state = receivedNotiId;
+      },
+    )
+  );
+
+  await flutterLocalNotificationsPlugin.initialize(
+    initializationSettings,
+    onDidReceiveNotificationResponse: (NotificationResponse notificationResponse) async {
+        debugPrint("### Notification clicked! ###");
+      final String? receivedNotiId = notificationResponse.payload;
+      if (receivedNotiId != null) {
+        debugPrint("receivedNotiId notiId: ${receivedNotiId.toString()}");
+
+      }
+    }
+  );
+
+  var androidDetails = const AndroidNotificationDetails(
+      'your_channel_id', // チャンネルID
+      'your_channel_name', // チャンネル名
+//    'your_channel_description', // チャンネルの説明
+    importance: Importance.max,
+    priority: Priority.high,
+    showWhen: false,
+  );
+  var iOSDetails = DarwinNotificationDetails();
+  var generalNotificationDetails = NotificationDetails(android: androidDetails, iOS: iOSDetails);
+
+  flutterLocalNotificationsPlugin.show(
+    0, // 通知ID
+    message.notification?.title,
+    message.notification?.body,
+    generalNotificationDetails,
+  );
+}
+
 Future<void> showAndroidLocalNotification(RemoteMessage message) async {
   final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
     FlutterLocalNotificationsPlugin();
@@ -154,7 +207,11 @@ Future<void> showAndroidLocalNotification(RemoteMessage message) async {
   FirebaseMessaging.onMessage.listen((RemoteMessage message) {
     debugPrint("### onMessage has come ### : ${message.toString()}");
     inspect(message);
-    showAndroidLocalNotification(message);
+    if (Platform.isAndroid) {
+      showAndroidLocalNotification(message);
+    } else if (Platform.isIOS) {
+      showIosLocalNotification(message);
+    }
 
     final receivedNotiId = message.data['notificationId'];
   if (receivedNotiId != null) {

@@ -2,7 +2,6 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>FLTEnableImpeller</key><false />
 	<key>CADisableMinimumFrameDurationOnPhone</key>
 	<true/>
 	<key>CFBundleDevelopmentRegion</key>
@@ -25,8 +24,21 @@
 	<string>????</string>
 	<key>CFBundleVersion</key>
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
+	<key>FLTEnableImpeller</key>
+	<false/>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>sms</string>
+		<string>tel</string>
+	</array>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>Get location to include each user's report if permitted.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Required to get location to include each user's report</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Request user's photo to show on application</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>UIBackgroundModes</key>
@@ -50,19 +62,6 @@
 		<string>UIInterfaceOrientationPortraitUpsideDown</string>
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
-	</array>
-    <!-- geolocator Section -->
-    <key>NSLocationWhenInUseUsageDescription</key>
-    <string>Required to get location to include each user's report</string>
-    <key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-    <string>Get location to include each user's report if permitted.</string>
-    <!-- End of the geolocator Section -->
-	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Request user's photo to show on application</string>
-	<key>LSApplicationQueriesSchemes</key>
-	<array>
-		<string>sms</string>
-		<string>tel</string>
 	</array>
 </dict>
 </plist>
