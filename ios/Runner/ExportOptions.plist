@@ -2,26 +2,26 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>compileBitcode</key>
+	<false/>
 	<key>destination</key>
 	<string>export</string>
-	<key>manageAppVersionAndBuildNumber</key>
-	<true/>
 	<key>method</key>
-	<string>app-store-connect</string>
+	<string>release-testing</string>
 	<key>provisioningProfiles</key>
 	<dict>
 		<key>com.example.anpiReportIos</key>
-		<string>Anpi App Flutter Appstore Dist</string>
+		<string>Anpi app test flutter Ad Hoc</string>
 	</dict>
 	<key>signingCertificate</key>
-	<string>A6BA67C527FE1D58DB6C80962518025FD523B150</string>
+	<string>66FE7824259A979FE17200362D5FDC6C088A6A7B</string>
 	<key>signingStyle</key>
 	<string>manual</string>
 	<key>stripSwiftSymbols</key>
 	<true/>
 	<key>teamID</key>
 	<string>75JH8UC5BA</string>
-	<key>uploadSymbols</key>
-	<true/>
+	<key>thinning</key>
+	<string>&lt;none&gt;</string>
 </dict>
 </plist>

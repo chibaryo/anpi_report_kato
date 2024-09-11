@@ -123,7 +123,7 @@ class MyApp extends HookConsumerWidget {
     priority: Priority.high,
     showWhen: false,
   );
-  var iOSDetails = DarwinNotificationDetails();
+  var iOSDetails = const DarwinNotificationDetails();
   var generalNotificationDetails = NotificationDetails(android: androidDetails, iOS: iOSDetails);
 
   flutterLocalNotificationsPlugin.show(
@@ -216,7 +216,7 @@ Future<void> showAndroidLocalNotification(RemoteMessage message) async {
     final receivedNotiId = message.data['notificationId'];
   if (receivedNotiId != null) {
     // Navigate to a new route or update the UI based on the notification
-    //ref.read(notiIdProvider.notifier).state = receivedNotiId;
+    ref.read(notiIdProvider.notifier).state = receivedNotiId;
 
     // Optionally, clear the notification ID from SecureStorage if needed
     secureStorage.delete(key: "notiId");
@@ -273,7 +273,7 @@ Future<void> showAndroidLocalNotification(RemoteMessage message) async {
       }
       return null;
     }, [notiId]);
-
+ 
 
 
     return MaterialApp.router(

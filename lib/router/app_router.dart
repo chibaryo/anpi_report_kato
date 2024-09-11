@@ -16,6 +16,7 @@ import '../screens/unauthenticated/tabsrouter_screen.dart';
 import '../screens/unauthenticated/signin_screen.dart';
 import '../screens/unauthenticated/signup_screen.dart';
 import '../screens/unauthenticated/root_screen.dart';
+import 'guard/noauthguard.dart';
 
 part 'app_router.g.dart';
 part 'app_router.gr.dart';
@@ -35,7 +36,8 @@ class AppRouter extends _$AppRouter {
     AutoRoute(
       page: RootRoute.page,
       path: '/',
-      initial: true
+      initial: true,
+      guards: [NoAuthGuard(ref: ref)],
     ),
     AutoRoute(
       page: SigninRoute.page,

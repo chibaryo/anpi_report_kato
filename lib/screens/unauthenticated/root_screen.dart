@@ -11,7 +11,7 @@ class RootScreen extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    ref.listen(streamAuthNotifierProvider, (previous, next) {
+/*    ref.listen(streamAuthNotifierProvider, (previous, next) {
       // Check the current route
       final currentRoute = context.router.current.name;
 
@@ -22,7 +22,7 @@ class RootScreen extends HookConsumerWidget {
           context.router.replace(const SigninRoute());
         }
       }
-    });
+    }); */
 
     return Scaffold(
         appBar: AppBar(
@@ -31,7 +31,8 @@ class RootScreen extends HookConsumerWidget {
           backgroundColor: Colors.purple[300],
         ),
         body: const Center(
-          child: CircularProgressIndicator(),
+//          child: CircularProgressIndicator(),
+          child: Text("Root!")
         )
     );
   }
