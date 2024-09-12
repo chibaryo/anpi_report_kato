@@ -18,18 +18,19 @@ class SigninScreen extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
 
-    ref.listen(streamAuthNotifierProvider, (previous, next) {
+/*    ref.listen(streamAuthNotifierProvider, (previous, next) {
       // Check the current route
       final currentRoute = context.router.current.name;
 
       if (currentRoute == SigninRoute.name) {
         if (next.asData?.value != null) {
-          context.router.replace(const AppHomeRoute());
+          context.router.replace(const SignupRoute());
+          // context.router.replace(const AppHomeRoute());
         } else {
-          context.router.replace(const SigninRoute());
+          context.router.replace(const SignupRoute());
         }
       }
-    });
+    }); */
 
     const storage = FlutterSecureStorage();
     final deviceInfoNotifier = ref.watch(streamDeviceInfoNotifierProvider.notifier);

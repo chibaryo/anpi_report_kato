@@ -26,16 +26,17 @@ class AppHomeScreen extends HookConsumerWidget {
     final tabController = useTabController(initialLength: 2);
     final authAsyncValue = ref.watch(authStateChangesProvider);
     //final answeredByMeNotificationStream = ref.watch(streamNotificationAnswerByMeNotifierProvider(moiUid.value));
-    final notificationStream = ref.watch(streamNotificationCombinedNotifierProvider(moiUid.value));
 
     useEffect(() {
       Future.microtask(() {
         ref.read(
           bottomNavNotifierProvider.notifier
         ).show();
-        ref.invalidate(
-          streamNotificationCombinedNotifierProvider(moiUid.value)
-        );
+        if (moiUid.value.isNotEmpty) {
+          ref.invalidate(
+            streamNotificationCombinedNotifierProvider(moiUid.value)
+          );
+        }
       });
 
       return () {};
@@ -50,7 +51,14 @@ class AppHomeScreen extends HookConsumerWidget {
 
       return () {};
     }, [authAsyncValue]);
-    
+
+    // Wait for authentication to be ready
+    if (authAsyncValue.isLoading || authAsyncValue.hasError || moiUid.value.isEmpty) {
+      return const Center(child: CircularProgressIndicator());
+    }
+    // Now it's safe
+    final notificationStream = ref.watch(streamNotificationCombinedNotifierProvider(moiUid.value));
+
     return Scaffold(
         appBar: AppBar(
           centerTitle: true,
@@ -69,11 +77,13 @@ class AppHomeScreen extends HookConsumerWidget {
             // TabBarView
             Expanded(
               child: 
-                notificationStream.asData?.value != null && notificationStream.asData!.value.isNotEmpty
-                ?
+                //notificationStream.asData?.value != null && notificationStream.asData!.value.isNotEmpty
+                //?
                 TabBarView(
                   controller: tabController,
                   children: [
+                    /* Center(child: Text("mikaitou")),
+                    Center(child: Text("zumi")), */
                   Center(
                     child: switch(notificationStream) {
                       AsyncData(:final value) =>
@@ -184,7 +194,7 @@ class AppHomeScreen extends HookConsumerWidget {
                   )
                 ],
               )
-              : const Center(child: CircularProgressIndicator()),
+              //: const Center(child: CircularProgressIndicator()),
             )
           ],
         )

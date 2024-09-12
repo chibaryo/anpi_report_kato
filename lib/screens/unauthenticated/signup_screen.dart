@@ -82,6 +82,7 @@ class SignupScreen extends HookConsumerWidget {
       return null;
     }, []); */
 
+/*
     ref.listen(streamAuthNotifierProvider, (previous, next) {
       // Check the current route
       final currentRoute = context.router.current.name;
@@ -94,6 +95,7 @@ class SignupScreen extends HookConsumerWidget {
         }
       }
     });
+*/
 
 // Helper method to get options for DropdownButton
 List<DropdownMenuItem<int>> getJobLevelDropdownItems() {
