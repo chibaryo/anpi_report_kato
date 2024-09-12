@@ -1,27 +1,4 @@
-import 'package:anpi_report_ios/router/app_router.dart';
-import 'package:auto_route/auto_route.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 
-class NoAuthGuard extends AutoRouteGuard {
-  @override
-  Future<void> onNavigation(
-    NavigationResolver resolver,
-    StackRouter router,
-  ) async {
-    final isAuthenticated = FirebaseAuth.instance.currentUser != null;
-
-    if (isAuthenticated) {
-      router.replaceAll([const TabsRouterRoute()]);
-      resolver.next(false);
-    } else {
-      //
-      router.replaceAll([const SigninRoute()]);
-      resolver.next(false);
-    }
-  }
-}
-
-/*
 import 'package:auto_route/auto_route.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -50,13 +27,14 @@ class NoAuthGuard extends AutoRouteGuard {
     //
     if (isAuth) {
       // If logged in, skip Signin
-      resolver.redirect(const SignupRoute());
+      router.replaceAll([const AppHomeRoute()]);
+      resolver.next(false);
     } else {
-      resolver.redirect(const SignupRoute());
+      router.replaceAll([const SigninRoute()]);
+      resolver.next(false);
       // If not logged in, goto Signin
       // resolver.next(true);
     }
   }
 }
-*/
 

@@ -423,14 +423,14 @@ class PostEnqueteScreen extends HookConsumerWidget {
         ),
       ),
       // Empty container for padding
-      Expanded(
+      /* Expanded(
         child: Padding(
           padding: const EdgeInsets.all(8),
           child: Container(
             child: const Text(""),
           ),
         ),
-      ),
+      ), */
       // Main slot
       Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),

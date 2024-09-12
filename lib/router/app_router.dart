@@ -37,7 +37,7 @@ class AppRouter extends _$AppRouter {
       page: RootRoute.page,
       path: '/',
       initial: true,
-      //guards: [NoAuthGuard()],
+      guards: [NoAuthGuard(ref: ref)],
     ),
     AutoRoute(
       page: SigninRoute.page,
