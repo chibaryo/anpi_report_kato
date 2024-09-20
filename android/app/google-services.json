@@ -7,28 +7,9 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:482610373416:android:ad3385db5c9dbb6bd5661d",
+        "mobilesdk_app_id": "1:482610373416:android:c6def2ff3e2cf8c4d5661d",
         "android_client_info": {
-          "package_name": "com.example.anpi_report"
-        }
-      },
-      "oauth_client": [],
-      "api_key": [
-        {
-          "current_key": "AIzaSyDIGcFbtC8zZ2PaFX9gneKo07mh2IoT_DM"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": []
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:482610373416:android:cccdf94b92f63edcd5661d",
-        "android_client_info": {
-          "package_name": "com.example.anpi_report_ios"
+          "package_name": "com.katoanpireport.flutter.app"
         }
       },
       "oauth_client": [],

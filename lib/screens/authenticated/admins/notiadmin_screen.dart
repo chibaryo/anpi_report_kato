@@ -1,7 +1,7 @@
 
 import 'dart:convert';
 
-import 'package:anpi_report_ios/providers/firestore/notification/notification_notifier.dart';
+import 'package:anpi_report_flutter/providers/firestore/notification/notification_notifier.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:custom_text_form_field_plus/custom_text_form_field_plus.dart';
 import 'package:flutter/foundation.dart';

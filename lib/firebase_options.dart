@@ -63,6 +63,6 @@ class DefaultFirebaseOptions {
     messagingSenderId: '482610373416',
     projectId: 'anpi-report-2024',
     storageBucket: 'anpi-report-2024.appspot.com',
-    iosBundleId: 'K5JH8UC5BA.com.example.anpiReportIos',
+    iosBundleId: 'com.katoanpireport.flutter.app',
   );
 }

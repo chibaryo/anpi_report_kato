@@ -1,25 +1,21 @@
-import 'package:anpi_report_ios/entity/userattr/office_location.dart';
-import 'package:anpi_report_ios/models/firestoreuser.dart';
-import 'package:anpi_report_ios/providers/firebaseauth/auth_provider.dart';
-import 'package:anpi_report_ios/providers/firestore/firestoreuser/firestoreuser_notifier.dart';
-import 'package:anpi_report_ios/providers/firestore/notification/notification_notifier.dart';
-import 'package:anpi_report_ios/providers/firestore/profile/profile_notifier.dart';
-import 'package:anpi_report_ios/router/app_router.dart';
+import 'package:anpi_report_flutter/entity/userattr/office_location.dart';
+import 'package:anpi_report_flutter/models/firestoreuser.dart';
+import 'package:anpi_report_flutter/providers/firebaseauth/auth_provider.dart';
+import 'package:anpi_report_flutter/providers/firestore/firestoreuser/firestoreuser_notifier.dart';
+import 'package:anpi_report_flutter/providers/firestore/notification/notification_notifier.dart';
+import 'package:anpi_report_flutter/providers/firestore/profile/profile_notifier.dart';
+import 'package:anpi_report_flutter/router/app_router.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:uuid/uuid.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:quickalert/quickalert.dart';
 
 import '../../entity/userattr/department.dart';
 import '../../entity/userattr/joblevel.dart';
-import '../../models/notification/notification.dart';
 import '../../models/profile.dart';
 import '../../repository/firebase/authrepo.dart';
-import 'admins/notiadmin_screen.dart';
-import 'topicselect_screen.dart';
 
 @RoutePage()
 class SettingsRouterScreen extends AutoRouter {

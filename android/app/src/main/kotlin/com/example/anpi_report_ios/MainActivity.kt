@@ -1,4 +1,4 @@
-package com.example.anpi_report_ios
+package com.katoanpireport.flutter.app
 
 import io.flutter.embedding.android.FlutterActivity
 

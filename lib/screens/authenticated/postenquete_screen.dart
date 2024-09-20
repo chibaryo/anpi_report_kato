@@ -1,8 +1,8 @@
-import 'package:anpi_report_ios/providers/firebaseauth/auth_provider.dart';
-import 'package:anpi_report_ios/providers/firestore/notification/notification_notifier.dart';
-import 'package:anpi_report_ios/providers/firestore/report/report_notifier.dart';
-import 'package:anpi_report_ios/providers/geolocator/location_provider.dart';
-import 'package:anpi_report_ios/router/app_router.dart';
+import 'package:anpi_report_flutter/providers/firebaseauth/auth_provider.dart';
+import 'package:anpi_report_flutter/providers/firestore/notification/notification_notifier.dart';
+import 'package:anpi_report_flutter/providers/firestore/report/report_notifier.dart';
+import 'package:anpi_report_flutter/providers/geolocator/location_provider.dart';
+import 'package:anpi_report_flutter/router/app_router.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:custom_text_form_field_plus/custom_text_form_field_plus.dart';
 import 'package:flutter/gestures.dart';
@@ -432,37 +432,25 @@ class PostEnqueteScreen extends HookConsumerWidget {
         ),
       ), */
       // Main slot
-      Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-        child: (() {
-            return Material(
-              elevation: 10.0,
-              borderRadius: BorderRadius.circular(10.0),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-                child: Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: Expanded(
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        const Text("確認しました"),
-                        Checkbox(
-                          value: isConfirmationChecked.value,
-                          onChanged: (value) {
-                            isConfirmationChecked.value = value;
-                          }
-                        ),
-                      ],
-                    ),
-                  ),
+      (() {
+          return Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text("確認しました"),
+                Checkbox(
+                  value: isConfirmationChecked.value,
+                  onChanged: (value) {
+                    isConfirmationChecked.value = value;
+                  }
                 ),
-              ),
-            );
-        })(),
-      ),
+              ],
+            ),
+          );
+      })(),
       // Submit button
       Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 32.0),

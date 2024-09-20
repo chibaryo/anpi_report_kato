@@ -1,8 +1,8 @@
-import 'package:anpi_report_ios/providers/firebaseauth/auth_provider.dart';
-import 'package:anpi_report_ios/providers/firestore/notification/notification_notifier.dart';
-import 'package:anpi_report_ios/providers/firestore/report/report_notifier.dart';
-import 'package:anpi_report_ios/providers/geolocator/location_provider.dart';
-import 'package:anpi_report_ios/router/app_router.dart';
+import 'package:anpi_report_flutter/providers/firebaseauth/auth_provider.dart';
+import 'package:anpi_report_flutter/providers/firestore/notification/notification_notifier.dart';
+import 'package:anpi_report_flutter/providers/firestore/report/report_notifier.dart';
+import 'package:anpi_report_flutter/providers/geolocator/location_provider.dart';
+import 'package:anpi_report_flutter/router/app_router.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:custom_text_form_field_plus/custom_text_form_field_plus.dart';
 import 'package:flutter/material.dart';

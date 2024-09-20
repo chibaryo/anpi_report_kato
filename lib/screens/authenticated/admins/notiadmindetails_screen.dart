@@ -1,9 +1,8 @@
 
-import 'package:anpi_report_ios/entity/userattr/joblevel.dart';
-import 'package:anpi_report_ios/providers/firestore/firestoreuser/users_who_did_not_answered_notifier.dart';
-import 'package:anpi_report_ios/providers/firestore/notification/notification_notifier.dart';
+import 'package:anpi_report_flutter/entity/userattr/joblevel.dart';
+import 'package:anpi_report_flutter/providers/firestore/firestoreuser/users_who_did_not_answered_notifier.dart';
+import 'package:anpi_report_flutter/providers/firestore/notification/notification_notifier.dart';
 import 'package:auto_route/auto_route.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';

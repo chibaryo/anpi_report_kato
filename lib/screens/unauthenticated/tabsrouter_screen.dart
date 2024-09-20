@@ -1,4 +1,4 @@
-import 'package:anpi_report_ios/router/app_router.dart';
+import 'package:anpi_report_flutter/router/app_router.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';

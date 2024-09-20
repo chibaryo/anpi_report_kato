@@ -1,8 +1,7 @@
-import 'package:anpi_report_ios/entity/userattr/joblevel.dart';
-import 'package:anpi_report_ios/entity/userattr/office_location.dart';
-import 'package:anpi_report_ios/providers/firestore/firestoreuser/firestoreuser_notifier.dart';
-import 'package:anpi_report_ios/providers/firestore/profile/profile_notifier.dart';
-import 'package:anpi_report_ios/router/app_router.dart';
+import 'package:anpi_report_flutter/entity/userattr/joblevel.dart';
+import 'package:anpi_report_flutter/entity/userattr/office_location.dart';
+import 'package:anpi_report_flutter/providers/firestore/firestoreuser/firestoreuser_notifier.dart';
+import 'package:anpi_report_flutter/providers/firestore/profile/profile_notifier.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:custom_text_form_field_plus/custom_text_form_field_plus.dart';
 import 'package:flutter/material.dart';
@@ -14,11 +13,10 @@ import '../../entity/userattr/department.dart';
 import '../../models/deviceinfo.dart';
 import '../../models/firestoreuser.dart';
 import '../../models/profile.dart';
-import '../../providers/firebaseauth/auth_provider.dart';
 import '../../providers/firestore/deviceinfo/deviceinfo_notifier.dart';
 import '../../repository/firebase/authrepo.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
-import 'package:dropdown_button2/dropdown_button2.dart';
+//import 'package:dropdown_button2/dropdown_button2.dart';
 
 @RoutePage()
 class SignupScreen extends HookConsumerWidget {

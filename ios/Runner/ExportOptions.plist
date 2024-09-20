@@ -10,7 +10,7 @@
 	<string>release-testing</string>
 	<key>provisioningProfiles</key>
 	<dict>
-		<key>com.example.anpiReportIos</key>
+		<key>com.katoanpireport.flutter.app</key>
 		<string>Anpi app test flutter Ad Hoc</string>
 	</dict>
 	<key>signingCertificate</key>

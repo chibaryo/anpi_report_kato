@@ -1,5 +1,6 @@
 plugins {
     id "com.android.application"
+    //id 'com.google.gms.google-services'
     id "kotlin-android"
     id "dev.flutter.flutter-gradle-plugin"
 }
@@ -22,14 +23,21 @@ if (flutterVersionName == null) {
     flutterVersionName = '1.0'
 }
 
-android {
-    namespace "com.example.anpi_report_ios"
-    compileSdk 34 // flutter.compileSdkVersion
-    ndkVersion flutter.ndkVersion
+def keystoreProperties = new Properties()
+def keystorePropertiesFile = rootProject.file('key.properties')
+if (keystorePropertiesFile.exists()) {
+    keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+}
 
+android {
+    namespace "com.katoanpireport.flutter.app"
+    compileSdk flutter.compileSdkVersion
+    //ndkVersion flutter.ndkVersion
+    ndkVersion = "25.1.8937393"
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
+        coreLibraryDesugaringEnabled true
     }
 
     kotlinOptions {
@@ -40,29 +48,78 @@ android {
         main.java.srcDirs += 'src/main/kotlin'
     }
 
+    signingConfigs {
+        release {
+            keyAlias keystoreProperties['keyAlias']
+            keyPassword keystoreProperties['keyPassword']
+            storeFile keystoreProperties['storeFile'] ? file(keystoreProperties['storeFile']) : null
+            storePassword keystoreProperties['storePassword']
+        }
+    }
+
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId "com.example.anpi_report_ios"
+        applicationId "com.katoanpireport.flutter.app"
         // You can update the following values to match your application needs.
         // For more information, see: https://docs.flutter.dev/deployment/android#reviewing-the-gradle-build-configuration.
         minSdkVersion 24 // flutter.minSdkVersion
-        targetSdkVersion 34 // flutter.targetSdkVersion
+        targetSdkVersion flutter.targetSdkVersion
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
         multiDexEnabled true
+        resValue "string", "default_notification_channel_id", "my_channel_id"
+    }
+
+    // Build flavorを設定している場合
+    flavorDimensions "default"
+    productFlavors {
+
+        develop {
+            dimension "default"
+            applicationIdSuffix ".dev"
+            //applicationId "com.katoanpireport.flutter.app"
+        }
+ 
+        staging {
+            dimension "default"
+            applicationIdSuffix ".stg"
+            //applicationId "com.hoge.fuga.staging"
+        }
+
+        production {
+            dimension "default"
+            applicationIdSuffix ".prod"
+            //applicationId "com.hoge.fuga"
+        }
     }
 
     buildTypes {
         release {
             // TODO: Add your own signing config for the release build.
             // Signing with the debug keys for now, so `flutter run --release` works.
-            signingConfig signingConfigs.debug
+            signingConfig signingConfigs.release
         }
     }
+    dependencies {
+        //classpath 'com.android.tools.build:gradle:8.3.0'
+        coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.0.3'
+        //implementation 'androidx.window:window:1.0.0'
+        //implementation 'androidx.window:window-java:1.0.0'
+    }
+
 }
 
 flutter {
     source '../..'
 }
 
-dependencies {}
+//dependencies {}
+configurations.all {
+    resolutionStrategy {
+        eachDependency {
+            if ((requested.group == "org.jetbrains.kotlin") && (requested.name.startsWith("kotlin-stdlib"))) {
+                useVersion("1.8.0")
+            }
+        }
+    }
+}
