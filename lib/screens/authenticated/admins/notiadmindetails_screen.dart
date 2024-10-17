@@ -177,6 +177,8 @@ class NotiAdminDetailsScreen extends HookConsumerWidget {
                     rows: value["notAnswered"]!.where((data) {
                                   final currentUserOfficeLocation = moiProfile.value!.userAttr["officeLocation"];
                                   final currentUserDepartments = moiProfile.value!.userAttr["department"];
+                                  final currentUserJobLevel = moiProfile.value!.userAttr["jobLevel"];
+
                                   debugPrint("### data[profile] : ### : ${data["profile"].userAttr["officeLocation"]}");
                                   final userOfficeLocation = data["profile"].userAttr["officeLocation"];
                                   final userDepartments = data["profile"].userAttr["department"];
@@ -185,7 +187,17 @@ class NotiAdminDetailsScreen extends HookConsumerWidget {
                                   final isSameOfficeLocation = (currentUserOfficeLocation == userOfficeLocation);
                                   final isDepartmentMatch = hasBitwiseOverlap(currentUserDepartments, userDepartments);
 
-                                  return isSameOfficeLocation && isDepartmentMatch;
+                                  // Determine the filtering logic based on currentUserJobLevel
+                                  if (currentUserJobLevel == 4) {
+                                    // Show all unanswered users
+                                    return true;
+                                  } else if (currentUserJobLevel == 2) {
+                                    // Show unanswered users with matching officeLocation and department
+                                    return isSameOfficeLocation && isDepartmentMatch;
+                                  }
+
+                                  // Default case if job level is not 2 or 4, return false
+                                  return false;
                     }).map<DataRow>((data) {
                       final rowRecordOfUser = data["user"];
                       final rowRecordOfProfile = data["profile"];

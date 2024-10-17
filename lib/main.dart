@@ -264,7 +264,8 @@ Future<void> showAndroidLocalNotification(RemoteMessage message) async {
     final appRouter = ref.watch(appRouterProvider);// appRouterProviderは、ルーティングの設定を管理する
 
 //             appRouter.push(PostEnqueteRoute(notificationId: storedNotiId));
-    useEffect(() {
+
+/*    useEffect(() {
       if (notiId != null) {
         WidgetsBinding.instance.addPostFrameCallback((_) {
              appRouter.push(PostEnqueteRoute(notificationId: notiId));
@@ -272,7 +273,7 @@ Future<void> showAndroidLocalNotification(RemoteMessage message) async {
         });
       }
       return null;
-    }, [notiId]);
+    }, [notiId]); */
  
 
 

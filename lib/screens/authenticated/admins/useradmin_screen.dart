@@ -103,6 +103,16 @@ class UserAdminScreen extends HookConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () async {
+            if (context.mounted) {
+              //
+              ref.read(bottomNavNotifierProvider.notifier).show();
+              context.router.maybePop();
+            }
+          },
+        ),
         centerTitle: true,
         title: const Text("Anpi"),
         backgroundColor: Colors.purple[300],

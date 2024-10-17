@@ -2,9 +2,11 @@ import 'package:anpi_report_flutter/providers/bottomnav/bottomnav_provider.dart'
 import 'package:anpi_report_flutter/providers/firestore/notification/notifications_answered_byme_notifier.dart';
 import 'package:anpi_report_flutter/screens/authenticated/postenquete_screen.dart';
 import 'package:auto_route/auto_route.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:intl/intl.dart';
 
 import '../../models/notification/notification.dart';
 import '../../providers/firebaseauth/auth_provider.dart';
@@ -25,6 +27,7 @@ class AppHomeScreen extends HookConsumerWidget {
     final moiUid = useState<String>("");
     final tabController = useTabController(initialLength: 2);
     final authAsyncValue = ref.watch(authStateChangesProvider);
+    final unAnsweredNotiBadgeCount = useState<int>(0);
     //final answeredByMeNotificationStream = ref.watch(streamNotificationAnswerByMeNotifierProvider(moiUid.value));
 
     useEffect(() {
@@ -58,6 +61,11 @@ class AppHomeScreen extends HookConsumerWidget {
     }
     // Now it's safe
     final notificationStream = ref.watch(streamNotificationCombinedNotifierProvider(moiUid.value));
+    // Count the number of unanswered notis
+    notificationStream.whenData((notifications) {
+      final unansweredCount = notifications.where((notification) => notification['answered'] == false).length;
+      unAnsweredNotiBadgeCount.value = unansweredCount;
+    });
 
     return Scaffold(
         appBar: AppBar(
@@ -95,9 +103,21 @@ class AppHomeScreen extends HookConsumerWidget {
                                 delegate: SliverChildBuilderDelegate(
                                   childCount: value.length,
                                   (BuildContext context, int index) {
-                                    final notiMap = value[index];
+
+                                    //
+                                    final notiMap = value[index]; 
                                     final noti = notiMap["noti"] as Noti;
                                     final answered = notiMap["answered"] as bool;
+                                    // hh:mm
+                                  // Check if 'createdAt' exists and is not null
+                                    final DateTime? createdAtTimestamp = noti.createdAt;
+
+                                    debugPrint("**** createdAtTimestamp: ${createdAtTimestamp.toString()} ****");
+                                    debugPrint("**** notiMap **** : ${notiMap.toString()}");
+
+                                    final String formattedTime = createdAtTimestamp != null
+                                      ? DateFormat('M/d HH:mm').format(createdAtTimestamp) // Format 'createdAt' if it exists
+                                      : "Unknown Time"; // Fallback if 'createdAt' is null
 
                                     // Filter only answered notifications
                                     if (answered) {
@@ -126,7 +146,7 @@ class AppHomeScreen extends HookConsumerWidget {
                                           }
                                         },
                                         contentPadding: const EdgeInsets.all(4.0),
-                                        title: Text(noti.notiTitle), 
+                                        title: Text('[$formattedTime] ${noti.notiTitle}'), 
 
                                       ),
                                     );
@@ -162,7 +182,11 @@ class AppHomeScreen extends HookConsumerWidget {
                                     }
                                     //                                    final docId = notiMap["docId"].toString();
                                     debugPrint("notiMap: ${notiMap.toString()}");
-                                    debugPrint("length");
+
+                                    final DateTime? createdAtTimestamp = noti.createdAt;
+                                    final String formattedTime = createdAtTimestamp != null
+                                      ? DateFormat('M/d HH:mm').format(createdAtTimestamp) // Format 'createdAt' if it exists
+                                      : "Unknown Time"; // Fallback if 'createdAt' is null
 
                                     return Container(
                                       decoration: const BoxDecoration(
@@ -177,8 +201,7 @@ class AppHomeScreen extends HookConsumerWidget {
                                             await context.router.push(PostEnqueteRoute(notificationId: noti.notificationId));
                                         },
                                         contentPadding: const EdgeInsets.all(4.0),
-                                        title: Text(noti.notiTitle), 
-
+                                        title: Text('[$formattedTime] ${noti.notiTitle}'),
                                       ),
                                     );
 

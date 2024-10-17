@@ -8,8 +8,8 @@ part of 'template.dart';
 
 _$TemplateImpl _$$TemplateImplFromJson(Map<String, dynamic> json) =>
     _$TemplateImpl(
-      title: json['title'] as String? ?? '',
-      body: json['body'] as String? ?? '',
+      notiTitle: json['notiTitle'] as String? ?? '',
+      notiBody: json['notiBody'] as String? ?? '',
       createdAt:
           const TimestampConverter().fromJson(json['createdAt'] as Timestamp?),
       updatedAt:
@@ -18,8 +18,8 @@ _$TemplateImpl _$$TemplateImplFromJson(Map<String, dynamic> json) =>
 
 Map<String, dynamic> _$$TemplateImplToJson(_$TemplateImpl instance) =>
     <String, dynamic>{
-      'title': instance.title,
-      'body': instance.body,
+      'notiTitle': instance.notiTitle,
+      'notiBody': instance.notiBody,
       'createdAt': const TimestampConverter().toJson(instance.createdAt),
       'updatedAt': const TimestampConverter().toJson(instance.updatedAt),
     };

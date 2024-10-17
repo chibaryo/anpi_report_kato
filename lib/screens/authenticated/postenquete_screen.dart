@@ -64,9 +64,9 @@ class PostEnqueteScreen extends HookConsumerWidget {
               moiReport.value = result;
               //debugPrint("moiReport: ${moiReport.value}");
               // Apply moiReport.value to local states
-              injuryStatus.value = moiReport.value!.injuryStatus;
-              attendOfficeStatus.value = moiReport.value!.attendOfficeStatus;
-              tFieldMessageController.text = moiReport.value!.message;
+              injuryStatus.value = moiReport.value!.reportContents["injuryStatus"];
+              attendOfficeStatus.value = moiReport.value!.reportContents["attendOfficeStatus"];
+              tFieldMessageController.text = moiReport.value!.reportContents["message"];
               // Flag on
               isNewReport.value = false;
             }
@@ -342,11 +342,14 @@ class PostEnqueteScreen extends HookConsumerWidget {
                         // Build newReport
                           final newreport = Report(
                             uid: moiUid.value,
-                            injuryStatus: injuryStatus.value,
-                            attendOfficeStatus: attendOfficeStatus.value,
-                            location: isChecked.value ? locationAddr.value : "",
-                            message: tFieldMessageController.text,
-                            isConfirmed: true,
+                            notificationId: notificationId,
+                            reportContents: {
+                              "injuryStatus": injuryStatus.value,
+                              "attendOfficeStatus": attendOfficeStatus.value,
+                              "location": isChecked.value ? locationAddr.value : "",
+                              "message": tFieldMessageController.text,
+                              "isConfirmed": true,
+                            },
                             createdAt: DateTime.now(),
                             updatedAt: DateTime.now(),
                           );
@@ -359,11 +362,13 @@ class PostEnqueteScreen extends HookConsumerWidget {
                         } else {
                           final updates = {
                             "uid": moiUid.value,
-                            "injuryStatus": injuryStatus.value,
-                            "attendOfficeStatus": attendOfficeStatus.value,
-                            "location": isChecked.value ? locationAddr.value : "",
-                            "message": tFieldMessageController.text,
-                            "isConfirmed": true,
+                            "reportContents": {
+                              "injuryStatus": injuryStatus.value,
+                              "attendOfficeStatus": attendOfficeStatus.value,
+                              "location": isChecked.value ? locationAddr.value : "",
+                              "message": tFieldMessageController.text,
+                              "isConfirmed": true,
+                            },
                             "updatedAt": DateTime.now(),
                           };
                           await reportNotifier.updateReport(
@@ -468,11 +473,10 @@ class PostEnqueteScreen extends HookConsumerWidget {
                         // Build newReport
                           final newreport = Report(
                             uid: moiUid.value,
-                            injuryStatus: 0,
-                            attendOfficeStatus: 0,
-                            location: "", //isChecked.value ? locationAddr.value : "",
-                            message: "", //tFieldMessageController.text,
-                            isConfirmed: isConfirmationChecked.value!,
+                            notificationId: notificationId,
+                            reportContents: {
+                              "isConfirmed": isConfirmationChecked.value!,
+                            },
                             createdAt: DateTime.now(),
                             updatedAt: DateTime.now(),
                           );
@@ -485,7 +489,9 @@ class PostEnqueteScreen extends HookConsumerWidget {
                         } else {
                           final updates = {
                             "uid": moiUid.value,
-                            "isConfirmed": isConfirmationChecked.value!,
+                            "reportContents": {
+                              "isConfirmed": isConfirmationChecked.value!,
+                            },
                             "updatedAt": DateTime.now(),
                           };
                           await reportNotifier.updateReport(

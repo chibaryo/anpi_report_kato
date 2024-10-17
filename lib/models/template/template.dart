@@ -18,8 +18,8 @@ class TimestampConverter implements JsonConverter<DateTime?, Timestamp?> {
 @freezed
 class Template with _$Template {
   const factory Template({
-    @Default('') String title,
-    @Default('') String body,
+    @Default('') String notiTitle,
+    @Default('') String notiBody,
     @TimestampConverter() DateTime? createdAt,
      @TimestampConverter() DateTime? updatedAt,
  }) = _Template;
@@ -34,8 +34,8 @@ class Template with _$Template {
   // DartのオブジェクトからFirebaseへ渡す際の変換処理
   @override
   Map<String, dynamic> toJson() => {
-    'title': title,
-    'body': body,
+    'notiTitle': notiTitle,
+    'notiBody': notiBody,
     'createdAt': createdAt != null ? Timestamp.fromDate(createdAt!) : null,
     'updatedAt': updatedAt != null ? Timestamp.fromDate(updatedAt!) : null,
   };

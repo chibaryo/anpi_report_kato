@@ -19,13 +19,10 @@ class TimestampConverter implements JsonConverter<DateTime?, Timestamp?> {
 class Report with _$Report {
   const factory Report({
     @Default('') String uid,
-    @Default(0) int injuryStatus,
-    @Default(0) int attendOfficeStatus,
-    @Default('') String location,
-    @Default('') String message,
-    @Default(false) bool isConfirmed,
+    @Default('') String notificationId,
+    @Default(<String, dynamic>{}) Map<String, dynamic> reportContents,
     @TimestampConverter() DateTime? createdAt,
-     @TimestampConverter() DateTime? updatedAt,
+    @TimestampConverter() DateTime? updatedAt,
  }) = _Report;
 
   // Tagからデータを取得する際の変換処理
@@ -39,11 +36,8 @@ class Report with _$Report {
   @override
   Map<String, dynamic> toJson() => {
     'uid': uid,
-    'injuryStatus': injuryStatus,
-    'attendOfficeStatus': attendOfficeStatus,
-    'location': location,
-    'message': message,
-    'isConfirmed': isConfirmed,
+    'notificationId': notificationId,
+    'reportContents': reportContents,
     'createdAt': createdAt != null ? Timestamp.fromDate(createdAt!) : null,
     'updatedAt': updatedAt != null ? Timestamp.fromDate(updatedAt!) : null,
   };

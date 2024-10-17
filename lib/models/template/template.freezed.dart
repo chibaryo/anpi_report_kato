@@ -20,8 +20,8 @@ Template _$TemplateFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$Template {
-  String get title => throw _privateConstructorUsedError;
-  String get body => throw _privateConstructorUsedError;
+  String get notiTitle => throw _privateConstructorUsedError;
+  String get notiBody => throw _privateConstructorUsedError;
   @TimestampConverter()
   DateTime? get createdAt => throw _privateConstructorUsedError;
   @TimestampConverter()
@@ -43,8 +43,8 @@ abstract class $TemplateCopyWith<$Res> {
       _$TemplateCopyWithImpl<$Res, Template>;
   @useResult
   $Res call(
-      {String title,
-      String body,
+      {String notiTitle,
+      String notiBody,
       @TimestampConverter() DateTime? createdAt,
       @TimestampConverter() DateTime? updatedAt});
 }
@@ -64,19 +64,19 @@ class _$TemplateCopyWithImpl<$Res, $Val extends Template>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? title = null,
-    Object? body = null,
+    Object? notiTitle = null,
+    Object? notiBody = null,
     Object? createdAt = freezed,
     Object? updatedAt = freezed,
   }) {
     return _then(_value.copyWith(
-      title: null == title
-          ? _value.title
-          : title // ignore: cast_nullable_to_non_nullable
+      notiTitle: null == notiTitle
+          ? _value.notiTitle
+          : notiTitle // ignore: cast_nullable_to_non_nullable
               as String,
-      body: null == body
-          ? _value.body
-          : body // ignore: cast_nullable_to_non_nullable
+      notiBody: null == notiBody
+          ? _value.notiBody
+          : notiBody // ignore: cast_nullable_to_non_nullable
               as String,
       createdAt: freezed == createdAt
           ? _value.createdAt
@@ -99,8 +99,8 @@ abstract class _$$TemplateImplCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {String title,
-      String body,
+      {String notiTitle,
+      String notiBody,
       @TimestampConverter() DateTime? createdAt,
       @TimestampConverter() DateTime? updatedAt});
 }
@@ -118,19 +118,19 @@ class __$$TemplateImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? title = null,
-    Object? body = null,
+    Object? notiTitle = null,
+    Object? notiBody = null,
     Object? createdAt = freezed,
     Object? updatedAt = freezed,
   }) {
     return _then(_$TemplateImpl(
-      title: null == title
-          ? _value.title
-          : title // ignore: cast_nullable_to_non_nullable
+      notiTitle: null == notiTitle
+          ? _value.notiTitle
+          : notiTitle // ignore: cast_nullable_to_non_nullable
               as String,
-      body: null == body
-          ? _value.body
-          : body // ignore: cast_nullable_to_non_nullable
+      notiBody: null == notiBody
+          ? _value.notiBody
+          : notiBody // ignore: cast_nullable_to_non_nullable
               as String,
       createdAt: freezed == createdAt
           ? _value.createdAt
@@ -148,8 +148,8 @@ class __$$TemplateImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$TemplateImpl implements _Template {
   const _$TemplateImpl(
-      {this.title = '',
-      this.body = '',
+      {this.notiTitle = '',
+      this.notiBody = '',
       @TimestampConverter() this.createdAt,
       @TimestampConverter() this.updatedAt});
 
@@ -158,10 +158,10 @@ class _$TemplateImpl implements _Template {
 
   @override
   @JsonKey()
-  final String title;
+  final String notiTitle;
   @override
   @JsonKey()
-  final String body;
+  final String notiBody;
   @override
   @TimestampConverter()
   final DateTime? createdAt;
@@ -171,7 +171,7 @@ class _$TemplateImpl implements _Template {
 
   @override
   String toString() {
-    return 'Template(title: $title, body: $body, createdAt: $createdAt, updatedAt: $updatedAt)';
+    return 'Template(notiTitle: $notiTitle, notiBody: $notiBody, createdAt: $createdAt, updatedAt: $updatedAt)';
   }
 
   @override
@@ -179,8 +179,10 @@ class _$TemplateImpl implements _Template {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$TemplateImpl &&
-            (identical(other.title, title) || other.title == title) &&
-            (identical(other.body, body) || other.body == body) &&
+            (identical(other.notiTitle, notiTitle) ||
+                other.notiTitle == notiTitle) &&
+            (identical(other.notiBody, notiBody) ||
+                other.notiBody == notiBody) &&
             (identical(other.createdAt, createdAt) ||
                 other.createdAt == createdAt) &&
             (identical(other.updatedAt, updatedAt) ||
@@ -190,7 +192,7 @@ class _$TemplateImpl implements _Template {
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode =>
-      Object.hash(runtimeType, title, body, createdAt, updatedAt);
+      Object.hash(runtimeType, notiTitle, notiBody, createdAt, updatedAt);
 
   /// Create a copy of Template
   /// with the given fields replaced by the non-null parameter values.
@@ -210,8 +212,8 @@ class _$TemplateImpl implements _Template {
 
 abstract class _Template implements Template {
   const factory _Template(
-      {final String title,
-      final String body,
+      {final String notiTitle,
+      final String notiBody,
       @TimestampConverter() final DateTime? createdAt,
       @TimestampConverter() final DateTime? updatedAt}) = _$TemplateImpl;
 
@@ -219,9 +221,9 @@ abstract class _Template implements Template {
       _$TemplateImpl.fromJson;
 
   @override
-  String get title;
+  String get notiTitle;
   @override
-  String get body;
+  String get notiBody;
   @override
   @TimestampConverter()
   DateTime? get createdAt;

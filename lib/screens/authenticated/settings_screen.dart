@@ -200,11 +200,45 @@ class SettingsScreen extends HookConsumerWidget {
       return const Text("buildPrivacy");
     }
 
+    Widget buildTemplateAdminButton() {
+      return 
+          GestureDetector(
+            behavior: HitTestBehavior.opaque,
+            onTap: () async {
+              if (context.mounted) {
+                context.router.push(const TemplateAdminRoute());
+              }
+            },
+            child: const Padding(
+              padding: EdgeInsets.all(16.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text("テンプレート管理"),
+                  Icon(Icons.chevron_right),
+                ],
+              ),
+            ),
+      );
+    }
+
     return Scaffold(
         appBar: AppBar(
           centerTitle: true,
           title: const Text("設定"),
           backgroundColor: Colors.purple[300],
+          actions: [
+            IconButton(
+              onPressed: () async {
+                // SignOut
+                await ref.read(firebaseAuthProvider).signOut();
+                if (context.mounted) {
+                  context.router.replace(const SigninRoute());
+                }
+              },
+              icon: const Icon(Icons.logout)
+            ),
+          ],
         ),
         body: SafeArea(
           child: SingleChildScrollView(
@@ -239,6 +273,7 @@ class SettingsScreen extends HookConsumerWidget {
                               ),
                             ),
                           ),
+                          buildTemplateAdminButton(),
                           GestureDetector(
                             behavior: HitTestBehavior.opaque,
                             onTap: () async {
@@ -278,7 +313,7 @@ class SettingsScreen extends HookConsumerWidget {
                         ),
                       ),
                     ),
-                    GestureDetector(
+                    /* GestureDetector(
                       behavior: HitTestBehavior.opaque,
                       onTap: () async {
                         if (context.mounted) {
@@ -308,7 +343,7 @@ class SettingsScreen extends HookConsumerWidget {
                               Text("Log out"),
                             ],))
                       ),
-                    ),
+                    ), */
                     GestureDetector(
                       behavior: HitTestBehavior.opaque,
                       onTap: () async {

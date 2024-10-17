@@ -21,11 +21,8 @@ Report _$ReportFromJson(Map<String, dynamic> json) {
 /// @nodoc
 mixin _$Report {
   String get uid => throw _privateConstructorUsedError;
-  int get injuryStatus => throw _privateConstructorUsedError;
-  int get attendOfficeStatus => throw _privateConstructorUsedError;
-  String get location => throw _privateConstructorUsedError;
-  String get message => throw _privateConstructorUsedError;
-  bool get isConfirmed => throw _privateConstructorUsedError;
+  String get notificationId => throw _privateConstructorUsedError;
+  Map<String, dynamic> get reportContents => throw _privateConstructorUsedError;
   @TimestampConverter()
   DateTime? get createdAt => throw _privateConstructorUsedError;
   @TimestampConverter()
@@ -47,11 +44,8 @@ abstract class $ReportCopyWith<$Res> {
   @useResult
   $Res call(
       {String uid,
-      int injuryStatus,
-      int attendOfficeStatus,
-      String location,
-      String message,
-      bool isConfirmed,
+      String notificationId,
+      Map<String, dynamic> reportContents,
       @TimestampConverter() DateTime? createdAt,
       @TimestampConverter() DateTime? updatedAt});
 }
@@ -72,11 +66,8 @@ class _$ReportCopyWithImpl<$Res, $Val extends Report>
   @override
   $Res call({
     Object? uid = null,
-    Object? injuryStatus = null,
-    Object? attendOfficeStatus = null,
-    Object? location = null,
-    Object? message = null,
-    Object? isConfirmed = null,
+    Object? notificationId = null,
+    Object? reportContents = null,
     Object? createdAt = freezed,
     Object? updatedAt = freezed,
   }) {
@@ -85,26 +76,14 @@ class _$ReportCopyWithImpl<$Res, $Val extends Report>
           ? _value.uid
           : uid // ignore: cast_nullable_to_non_nullable
               as String,
-      injuryStatus: null == injuryStatus
-          ? _value.injuryStatus
-          : injuryStatus // ignore: cast_nullable_to_non_nullable
-              as int,
-      attendOfficeStatus: null == attendOfficeStatus
-          ? _value.attendOfficeStatus
-          : attendOfficeStatus // ignore: cast_nullable_to_non_nullable
-              as int,
-      location: null == location
-          ? _value.location
-          : location // ignore: cast_nullable_to_non_nullable
+      notificationId: null == notificationId
+          ? _value.notificationId
+          : notificationId // ignore: cast_nullable_to_non_nullable
               as String,
-      message: null == message
-          ? _value.message
-          : message // ignore: cast_nullable_to_non_nullable
-              as String,
-      isConfirmed: null == isConfirmed
-          ? _value.isConfirmed
-          : isConfirmed // ignore: cast_nullable_to_non_nullable
-              as bool,
+      reportContents: null == reportContents
+          ? _value.reportContents
+          : reportContents // ignore: cast_nullable_to_non_nullable
+              as Map<String, dynamic>,
       createdAt: freezed == createdAt
           ? _value.createdAt
           : createdAt // ignore: cast_nullable_to_non_nullable
@@ -126,11 +105,8 @@ abstract class _$$ReportImplCopyWith<$Res> implements $ReportCopyWith<$Res> {
   @useResult
   $Res call(
       {String uid,
-      int injuryStatus,
-      int attendOfficeStatus,
-      String location,
-      String message,
-      bool isConfirmed,
+      String notificationId,
+      Map<String, dynamic> reportContents,
       @TimestampConverter() DateTime? createdAt,
       @TimestampConverter() DateTime? updatedAt});
 }
@@ -149,11 +125,8 @@ class __$$ReportImplCopyWithImpl<$Res>
   @override
   $Res call({
     Object? uid = null,
-    Object? injuryStatus = null,
-    Object? attendOfficeStatus = null,
-    Object? location = null,
-    Object? message = null,
-    Object? isConfirmed = null,
+    Object? notificationId = null,
+    Object? reportContents = null,
     Object? createdAt = freezed,
     Object? updatedAt = freezed,
   }) {
@@ -162,26 +135,14 @@ class __$$ReportImplCopyWithImpl<$Res>
           ? _value.uid
           : uid // ignore: cast_nullable_to_non_nullable
               as String,
-      injuryStatus: null == injuryStatus
-          ? _value.injuryStatus
-          : injuryStatus // ignore: cast_nullable_to_non_nullable
-              as int,
-      attendOfficeStatus: null == attendOfficeStatus
-          ? _value.attendOfficeStatus
-          : attendOfficeStatus // ignore: cast_nullable_to_non_nullable
-              as int,
-      location: null == location
-          ? _value.location
-          : location // ignore: cast_nullable_to_non_nullable
+      notificationId: null == notificationId
+          ? _value.notificationId
+          : notificationId // ignore: cast_nullable_to_non_nullable
               as String,
-      message: null == message
-          ? _value.message
-          : message // ignore: cast_nullable_to_non_nullable
-              as String,
-      isConfirmed: null == isConfirmed
-          ? _value.isConfirmed
-          : isConfirmed // ignore: cast_nullable_to_non_nullable
-              as bool,
+      reportContents: null == reportContents
+          ? _value._reportContents
+          : reportContents // ignore: cast_nullable_to_non_nullable
+              as Map<String, dynamic>,
       createdAt: freezed == createdAt
           ? _value.createdAt
           : createdAt // ignore: cast_nullable_to_non_nullable
@@ -199,13 +160,11 @@ class __$$ReportImplCopyWithImpl<$Res>
 class _$ReportImpl implements _Report {
   const _$ReportImpl(
       {this.uid = '',
-      this.injuryStatus = 0,
-      this.attendOfficeStatus = 0,
-      this.location = '',
-      this.message = '',
-      this.isConfirmed = false,
+      this.notificationId = '',
+      final Map<String, dynamic> reportContents = const <String, dynamic>{},
       @TimestampConverter() this.createdAt,
-      @TimestampConverter() this.updatedAt});
+      @TimestampConverter() this.updatedAt})
+      : _reportContents = reportContents;
 
   factory _$ReportImpl.fromJson(Map<String, dynamic> json) =>
       _$$ReportImplFromJson(json);
@@ -215,19 +174,16 @@ class _$ReportImpl implements _Report {
   final String uid;
   @override
   @JsonKey()
-  final int injuryStatus;
+  final String notificationId;
+  final Map<String, dynamic> _reportContents;
   @override
   @JsonKey()
-  final int attendOfficeStatus;
-  @override
-  @JsonKey()
-  final String location;
-  @override
-  @JsonKey()
-  final String message;
-  @override
-  @JsonKey()
-  final bool isConfirmed;
+  Map<String, dynamic> get reportContents {
+    if (_reportContents is EqualUnmodifiableMapView) return _reportContents;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableMapView(_reportContents);
+  }
+
   @override
   @TimestampConverter()
   final DateTime? createdAt;
@@ -237,7 +193,7 @@ class _$ReportImpl implements _Report {
 
   @override
   String toString() {
-    return 'Report(uid: $uid, injuryStatus: $injuryStatus, attendOfficeStatus: $attendOfficeStatus, location: $location, message: $message, isConfirmed: $isConfirmed, createdAt: $createdAt, updatedAt: $updatedAt)';
+    return 'Report(uid: $uid, notificationId: $notificationId, reportContents: $reportContents, createdAt: $createdAt, updatedAt: $updatedAt)';
   }
 
   @override
@@ -246,15 +202,10 @@ class _$ReportImpl implements _Report {
         (other.runtimeType == runtimeType &&
             other is _$ReportImpl &&
             (identical(other.uid, uid) || other.uid == uid) &&
-            (identical(other.injuryStatus, injuryStatus) ||
-                other.injuryStatus == injuryStatus) &&
-            (identical(other.attendOfficeStatus, attendOfficeStatus) ||
-                other.attendOfficeStatus == attendOfficeStatus) &&
-            (identical(other.location, location) ||
-                other.location == location) &&
-            (identical(other.message, message) || other.message == message) &&
-            (identical(other.isConfirmed, isConfirmed) ||
-                other.isConfirmed == isConfirmed) &&
+            (identical(other.notificationId, notificationId) ||
+                other.notificationId == notificationId) &&
+            const DeepCollectionEquality()
+                .equals(other._reportContents, _reportContents) &&
             (identical(other.createdAt, createdAt) ||
                 other.createdAt == createdAt) &&
             (identical(other.updatedAt, updatedAt) ||
@@ -263,8 +214,13 @@ class _$ReportImpl implements _Report {
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, uid, injuryStatus,
-      attendOfficeStatus, location, message, isConfirmed, createdAt, updatedAt);
+  int get hashCode => Object.hash(
+      runtimeType,
+      uid,
+      notificationId,
+      const DeepCollectionEquality().hash(_reportContents),
+      createdAt,
+      updatedAt);
 
   /// Create a copy of Report
   /// with the given fields replaced by the non-null parameter values.
@@ -285,11 +241,8 @@ class _$ReportImpl implements _Report {
 abstract class _Report implements Report {
   const factory _Report(
       {final String uid,
-      final int injuryStatus,
-      final int attendOfficeStatus,
-      final String location,
-      final String message,
-      final bool isConfirmed,
+      final String notificationId,
+      final Map<String, dynamic> reportContents,
       @TimestampConverter() final DateTime? createdAt,
       @TimestampConverter() final DateTime? updatedAt}) = _$ReportImpl;
 
@@ -298,15 +251,9 @@ abstract class _Report implements Report {
   @override
   String get uid;
   @override
-  int get injuryStatus;
+  String get notificationId;
   @override
-  int get attendOfficeStatus;
-  @override
-  String get location;
-  @override
-  String get message;
-  @override
-  bool get isConfirmed;
+  Map<String, dynamic> get reportContents;
   @override
   @TimestampConverter()
   DateTime? get createdAt;

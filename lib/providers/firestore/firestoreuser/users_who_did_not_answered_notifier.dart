@@ -30,8 +30,8 @@ final answeredStream = FirebaseFirestore.instance
         final reportData = reportDoc.data();
         final report = Report.fromJson(reportData);
 
-        final injuryStatusDetails = getInjuryStatusTypeDetailsBySortNumber(report.injuryStatus);
-        final attendOfficeStatusDetails = getAttendOfficeStatusTypeDetailsBySortNumber(report.attendOfficeStatus);
+        final injuryStatusDetails = getInjuryStatusTypeDetailsBySortNumber(report.reportContents["injuryStatus"]);
+        final attendOfficeStatusDetails = getAttendOfficeStatusTypeDetailsBySortNumber(report.reportContents["attendOfficeStatus"]);
 
         // Retrieve the user details for the report
         final userDoc = await FirebaseFirestore.instance
@@ -58,9 +58,9 @@ final answeredStream = FirebaseFirestore.instance
               'uid': report.uid,
               'injuryStatus': injuryStatusDetails?['displayName'],
               'attendOfficeStatus': attendOfficeStatusDetails?['displayName'],
-              'location': report.location,
-              'message': report.message,
-              'isConfirmed': report.isConfirmed,
+              'location': report.reportContents["location"],
+              'message': report.reportContents["message"],
+              'isConfirmed': report.reportContents["isConfirmed"],
               'createdAt': report.createdAt,
               'updatedAt': report.updatedAt,
             }
