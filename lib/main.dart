@@ -1,6 +1,7 @@
 import 'dart:developer';
 import 'dart:io';
 
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -16,6 +17,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 //import 'platform-dependent/fcm/initfcm_android.dart';
 import 'platform-dependent/fcm/initfcm_ios.dart';
 import 'router/app_router.dart';
+import 'screens/authenticated/postenquete_screen.dart';
 
 const secureStorage = FlutterSecureStorage();
 
@@ -80,6 +82,7 @@ class MyApp extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final notiId = ref.watch(notiIdProvider);
+    final isNotiClicked = useState<bool>(false);
 
     // Func defs
     Future<void> showIosLocalNotification(RemoteMessage message) async {
@@ -156,9 +159,9 @@ Future<void> showAndroidLocalNotification(RemoteMessage message) async {
         await secureStorage.write(key: "notiId", value: receivedNotiId);
         // Access the provider and update the state
         ref.read(notiIdProvider.notifier).state = receivedNotiId;
+        isNotiClicked.value = true;
         // アプリが起動してからページ遷移を行うための処理
         // ここではデータ保存のみを行います
-
       }
     },
   );
@@ -265,15 +268,19 @@ Future<void> showAndroidLocalNotification(RemoteMessage message) async {
 
 //             appRouter.push(PostEnqueteRoute(notificationId: storedNotiId));
 
-/*    useEffect(() {
+
+    useEffect(() {
       if (notiId != null) {
         WidgetsBinding.instance.addPostFrameCallback((_) {
-             appRouter.push(PostEnqueteRoute(notificationId: notiId));
+          if (isNotiClicked.value) {
+            appRouter.push(PostEnqueteRoute(notificationId: notiId));
+          }
           ref.read(notiIdProvider.notifier).state = null; // Reset the ID
+          isNotiClicked.value = false;
         });
       }
       return null;
-    }, [notiId]); */
+    }, [notiId]);
  
 
 
