@@ -6,6 +6,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../screens/authenticated/admins/notiadmin_screen.dart';
 import '../screens/authenticated/admins/notiadmindetails_screen.dart';
 import '../screens/authenticated/admins/templateadmin_screen.dart';
+import '../screens/authenticated/admins/theotherops_screen.dart';
 import '../screens/authenticated/admins/useradmin_screen.dart';
 import '../screens/authenticated/apphome_screen.dart';
 import '../screens/authenticated/editreport_screen.dart';
@@ -99,6 +100,9 @@ class AppRouter extends _$AppRouter {
             ),
             AutoRoute(
               page: TopicSelectRoute.page,
+            ),
+            AutoRoute(
+              page: TheOtherOpsRoute.page,
             ),
           ]
         ),

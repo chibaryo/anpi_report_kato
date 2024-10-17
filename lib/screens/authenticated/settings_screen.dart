@@ -347,6 +347,24 @@ class SettingsScreen extends HookConsumerWidget {
                     GestureDetector(
                       behavior: HitTestBehavior.opaque,
                       onTap: () async {
+                        if (context.mounted) {
+                          context.router.push(const TheOtherOpsRoute());
+                        }
+                      },
+                      child: const Padding(
+                        padding: EdgeInsets.all(16.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text("その他の操作"),
+                            Icon(Icons.chevron_right),
+                          ],
+                        ),
+                      ),
+                    ),
+/*                    GestureDetector(
+                      behavior: HitTestBehavior.opaque,
+                      onTap: () async {
                         // Show confirmation dialog
                         showDialog(
                           context: context,
@@ -396,7 +414,7 @@ class SettingsScreen extends HookConsumerWidget {
                           ],
                         ),
                       ),
-                    ),
+                    ), */
                   ],
                 ),
               ),

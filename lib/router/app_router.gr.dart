@@ -111,6 +111,12 @@ abstract class _$AppRouter extends RootStackRouter {
         child: const TemplateAdminScreen(),
       );
     },
+    TheOtherOpsRoute.name: (routeData) {
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: const TheOtherOpsScreen(),
+      );
+    },
     TopicSelectRoute.name: (routeData) {
       return AutoRoutePage<dynamic>(
         routeData: routeData,
@@ -390,6 +396,20 @@ class TemplateAdminRoute extends PageRouteInfo<void> {
         );
 
   static const String name = 'TemplateAdminRoute';
+
+  static const PageInfo<void> page = PageInfo<void>(name);
+}
+
+/// generated route for
+/// [TheOtherOpsScreen]
+class TheOtherOpsRoute extends PageRouteInfo<void> {
+  const TheOtherOpsRoute({List<PageRouteInfo>? children})
+      : super(
+          TheOtherOpsRoute.name,
+          initialChildren: children,
+        );
+
+  static const String name = 'TheOtherOpsRoute';
 
   static const PageInfo<void> page = PageInfo<void>(name);
 }

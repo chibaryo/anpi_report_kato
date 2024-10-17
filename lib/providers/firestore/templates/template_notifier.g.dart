@@ -7,7 +7,7 @@ part of 'template_notifier.dart';
 // **************************************************************************
 
 String _$streamTemplateNotifierHash() =>
-    r'c3d6a64665668e634839ff013d8fcfecca42d432';
+    r'a0d18750827ced0f99ef62fc51719f698493d656';
 
 /// See also [StreamTemplateNotifier].
 @ProviderFor(StreamTemplateNotifier)
