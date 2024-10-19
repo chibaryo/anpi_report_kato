@@ -77,6 +77,7 @@ class TopicSelectScreen extends HookConsumerWidget {
         }
         // test_adm_2024
         final testadm2024FlagStr = await storage.read(key: 'testadm2024FlagStr');
+        debugPrint("testadm2024FlagStr: $testadm2024FlagStr");
         if (testadm2024FlagStr != null && testadm2024FlagStr == "on") {
           isTestAdm2024FlagOn.value = true;
         } else {

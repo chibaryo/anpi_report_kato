@@ -112,8 +112,8 @@ class AppHomeScreen extends HookConsumerWidget {
                                   // Check if 'createdAt' exists and is not null
                                     final DateTime? createdAtTimestamp = noti.createdAt;
 
-                                    debugPrint("**** createdAtTimestamp: ${createdAtTimestamp.toString()} ****");
-                                    debugPrint("**** notiMap **** : ${notiMap.toString()}");
+                                    //debugPrint("**** createdAtTimestamp: ${createdAtTimestamp.toString()} ****");
+                                    //debugPrint("**** notiMap **** : ${notiMap.toString()}");
 
                                     final String formattedTime = createdAtTimestamp != null
                                       ? DateFormat('M/d HH:mm').format(createdAtTimestamp) // Format 'createdAt' if it exists
@@ -125,7 +125,6 @@ class AppHomeScreen extends HookConsumerWidget {
                                     }
                                     //                                    final docId = notiMap["docId"].toString();
                                     //debugPrint("notiMap: ${notiMap.toString()}");
-                                    debugPrint("length");
 
                                     return Container(
                                       decoration: const BoxDecoration(

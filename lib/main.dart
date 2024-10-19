@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 
@@ -6,6 +7,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter_app_badger/flutter_app_badger.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -13,21 +15,63 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'firebase_options.dart';
 import 'package:timeago/timeago.dart' as timeago;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:logger/logger.dart';
+import 'package:path_provider/path_provider.dart';
 
 //import 'platform-dependent/fcm/initfcm_android.dart';
 import 'platform-dependent/fcm/initfcm_ios.dart';
 import 'router/app_router.dart';
 import 'screens/authenticated/postenquete_screen.dart';
+final Logger logger = Logger();
 
 const secureStorage = FlutterSecureStorage();
+
+Future<void> logToFile(String message) async {
+  final directory = await getApplicationDocumentsDirectory();
+  final logFile = File('${directory.path}/app.log');
+
+  // Append the log message to the file
+  await logFile.writeAsString('$message\n', mode: FileMode.append);
+}
 
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   // If you're going to use other Firebase services in the background, such as Firestore,
   // make sure you call `initializeApp` before using other Firebase services.
-  await Firebase.initializeApp();
+  await Firebase.initializeApp(
+    //options: DefaultFirebaseOptions.currentPlatform,
+  );
 
-  print("Handling a background message: ${message.messageId}");
-  showLocalNotification(message);
+  String logMessage = "Handling a background message: ${message.messageId}";
+  logger.i(logMessage);
+  await logToFile(logMessage); // Log to file
+
+  // Increment badge count
+  await incrementBadge();
+  //await forceBadge();
+
+  //showLocalNotification(message);
+}
+
+Future<void> incrementBadge() async {
+    String? currentAppBadgeCountStr = await secureStorage.read(key: "currentAppBadgeCount");
+  if (currentAppBadgeCountStr != null) {
+    final nextAppBadgeCount = int.parse(currentAppBadgeCountStr) + 1;
+    if (Platform.isIOS) {
+      if (await FlutterAppBadger.isAppBadgeSupported()) {
+          FlutterAppBadger.updateBadgeCount(nextAppBadgeCount); // <-引数の`number`が`null`だった場合は`0`
+          // SecureStorageに保存
+          await secureStorage.write(key: "currentAppBadgeCount", value: nextAppBadgeCount.toString());
+      }
+    }
+  }
+}
+
+Future<void> forceBadge() async {
+    if (Platform.isIOS) {
+      if (await FlutterAppBadger.isAppBadgeSupported()) {
+          FlutterAppBadger.updateBadgeCount(78); // <-引数の`number`が`null`だった場合は`0`
+      }
+    }
 }
 
 Future<void> main() async {
@@ -109,11 +153,15 @@ class MyApp extends HookConsumerWidget {
   await flutterLocalNotificationsPlugin.initialize(
     initializationSettings,
     onDidReceiveNotificationResponse: (NotificationResponse notificationResponse) async {
-        debugPrint("### Notification clicked! ###");
-      final String? receivedNotiId = notificationResponse.payload;
+        debugPrint("***### Notification clicked! ***");
+        Map notificationPayload =
+          (jsonDecode(notificationResponse.payload!));
+        debugPrint("notificationId: ${notificationPayload["notificationId"].toString()}");
+      final String? receivedNotiId = notificationPayload["notificationId"];
       if (receivedNotiId != null) {
-        debugPrint("receivedNotiId notiId: ${receivedNotiId.toString()}");
-
+        debugPrint("receivedNotiId notiId: $receivedNotiId");
+        ref.read(notiIdProvider.notifier).state = receivedNotiId;
+        isNotiClicked.value = true;
       }
     }
   );
@@ -134,6 +182,7 @@ class MyApp extends HookConsumerWidget {
     message.notification?.title,
     message.notification?.body,
     generalNotificationDetails,
+    payload: jsonEncode(message.data),
   );
 }
 
@@ -152,7 +201,7 @@ Future<void> showAndroidLocalNotification(RemoteMessage message) async {
       final String? receivedNotiId = notificationResponse.payload;
 
       if (receivedNotiId != null) {
-        debugPrint("### Notification clicked! ###");
+        debugPrint("*** Notification clicked! ****");
         debugPrint("receivedNotiId notiId: ${receivedNotiId.toString()}");
 
         // SecureStorageに保存
@@ -160,6 +209,7 @@ Future<void> showAndroidLocalNotification(RemoteMessage message) async {
         // Access the provider and update the state
         ref.read(notiIdProvider.notifier).state = receivedNotiId;
         isNotiClicked.value = true;
+        debugPrint("### isNotiCliced フラグをONにしました ###");
         // アプリが起動してからページ遷移を行うための処理
         // ここではデータ保存のみを行います
       }
@@ -202,12 +252,14 @@ Future<void> showAndroidLocalNotification(RemoteMessage message) async {
   );
 }    // End func defs
 
+    final appRouter = ref.watch(appRouterProvider);// appRouterProviderは、ルーティングの設定を管理する
+
     useEffect(() {
       Future<void> storeNotiIdToSecureStorage (String notiId) async {
         await secureStorage.write(key: notiIdStorageKey, value: notiId);
       }
-  // Handle foreground notification
-  FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      // Handle foreground notification
+      FirebaseMessaging.onMessage.listen((RemoteMessage message) {
     debugPrint("### onMessage has come ### : ${message.toString()}");
     inspect(message);
     if (Platform.isAndroid) {
@@ -226,13 +278,16 @@ Future<void> showAndroidLocalNotification(RemoteMessage message) async {
   }
   });
 
-  // Handle app opened from notification (in background or foreground)
-  FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+      // Handle app opened from notification (in background or foreground)
+      FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
     final receivedNotiId = message.data['notificationId'];
     if (receivedNotiId != null) {
       debugPrint("### App opened from notification ###: ${message.toString()}");
+
       storeNotiIdToSecureStorage(receivedNotiId).then((_) {
+        debugPrint("store noti id to storage:");
         ref.read(notiIdProvider.notifier).state = receivedNotiId;
+        isNotiClicked.value = true;
 
         // Navigate to PostEnqueteRoute on notification click
 /*        WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -243,30 +298,45 @@ Future<void> showAndroidLocalNotification(RemoteMessage message) async {
     }
   });
 
-  // Handle app launched from terminated state
-  FirebaseMessaging.instance.getInitialMessage().then((RemoteMessage? message) {
+      // Handle app launched from terminated state
+      FirebaseMessaging.instance.getInitialMessage().then((RemoteMessage? message) {
+          //appRouter.replaceAll([PostEnqueteRoute(notificationId: "176fc56e-9ab6-44f5-9517-e0cc88a32619")]);
+
     if (message != null) {
+      logToFile("message not null : ${message.data['notificationId']}").then((value) {
       final receivedNotiId = message.data['notificationId'];
       if (receivedNotiId != null) {
         debugPrint("### App launched from notification ###: ${message.toString()}");
+ 
         storeNotiIdToSecureStorage(receivedNotiId).then((_) {
           ref.read(notiIdProvider.notifier).state = receivedNotiId;
-
-          // Navigate to PostEnqueteRoute after launch
-         /* WidgetsBinding.instance.addPostFrameCallback((_) {
-            final appRouter = ref.read(appRouterProvider);
-            appRouter.push(PostEnqueteRoute(notificationId: receivedNotiId)); 
-          });*/
+          debugPrint("### notiId: ### $notiId");
+          //appRouter.replaceAll([const RootRoute()]);
+          appRouter.push(PostEnqueteRoute(notificationId: receivedNotiId));
+          //appRouter.replaceAll([PostEnqueteRoute(notificationId: "176fc56e-9ab6-44f5-9517-e0cc88a32619")]);
+          // isNotiClicked.value = true;
         });
       }
+      });
+
+      final receivedNotiId = message.data['notificationId'];
+/*      if (receivedNotiId != null) {
+        debugPrint("### App launched from notification ###: ${message.toString()}");
+
+        storeNotiIdToSecureStorage(receivedNotiId).then((_) {
+          ref.read(notiIdProvider.notifier).state = receivedNotiId;
+          debugPrint("### notiId: ### $notiId");
+          appRouter.replaceAll([const RootRoute()]);
+          //appRouter.replaceAll([PostEnqueteRoute(notificationId: receivedNotiId)]);
+          //appRouter.replaceAll([PostEnqueteRoute(notificationId: "176fc56e-9ab6-44f5-9517-e0cc88a32619")]);
+          // isNotiClicked.value = true;
+        });
+      } */
     }
+
   });
       return () {};
     }, const []);
-
-    final appRouter = ref.watch(appRouterProvider);// appRouterProviderは、ルーティングの設定を管理する
-
-//             appRouter.push(PostEnqueteRoute(notificationId: storedNotiId));
 
 
     useEffect(() {
