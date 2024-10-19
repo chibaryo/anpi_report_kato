@@ -27,7 +27,26 @@ final Logger logger = Logger();
 const secureStorage = FlutterSecureStorage();
 
 Future<void> logToFile(String message) async {
-  final directory = await getApplicationDocumentsDirectory();
+  Directory? directory;
+  if (Platform.isAndroid) {
+    // Get the external cache directory for Android
+    final List<Directory>? tempDirs = await getExternalCacheDirectories();
+    if (tempDirs != null && tempDirs.isNotEmpty) {
+      directory = tempDirs.first; // Assign the first available directory
+    } else {
+      throw Exception("No cache directory found");
+    }
+  } else if (Platform.isIOS) {
+    // Get the application documents directory for iOS
+    directory = await getApplicationDocumentsDirectory();
+  } else {
+    throw Exception("Unsupported platform");
+  }
+
+  if (directory == null) {
+    throw Exception("Directory is null");
+  }
+
   final logFile = File('${directory.path}/app.log');
 
   // Append the log message to the file
@@ -38,12 +57,13 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   // If you're going to use other Firebase services in the background, such as Firestore,
   // make sure you call `initializeApp` before using other Firebase services.
   await Firebase.initializeApp(
-    //options: DefaultFirebaseOptions.currentPlatform,
+    options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  String logMessage = "Handling a background message: ${message.messageId}";
+  String logMessage = "ハンドリング a background message: ${message.data['notificationId']}";
   logger.i(logMessage);
   await logToFile(logMessage); // Log to file
+  await logToFile("message.notification : ${message.notification.toString()})"); // Log to file
 
   // Increment badge count
   await incrementBadge();
@@ -56,6 +76,8 @@ Future<void> incrementBadge() async {
     String? currentAppBadgeCountStr = await secureStorage.read(key: "currentAppBadgeCount");
   if (currentAppBadgeCountStr != null) {
     final nextAppBadgeCount = int.parse(currentAppBadgeCountStr) + 1;
+    await logToFile("nextAppBadgeCount: ${nextAppBadgeCount.toString()}"); // Log to file
+
     if (Platform.isIOS) {
       if (await FlutterAppBadger.isAppBadgeSupported()) {
           FlutterAppBadger.updateBadgeCount(nextAppBadgeCount); // <-引数の`number`が`null`だった場合は`0`
@@ -248,7 +270,8 @@ Future<void> showAndroidLocalNotification(RemoteMessage message) async {
     message.notification?.title,
     message.notification?.body,
     platformChannelSpecifics,
-    payload: message.data['notificationId'], // Include payload here
+    payload: jsonEncode(message.data),
+    //payload: message.data['notificationId'], // Include payload here
   );
 }    // End func defs
 
@@ -310,7 +333,7 @@ Future<void> showAndroidLocalNotification(RemoteMessage message) async {
  
         storeNotiIdToSecureStorage(receivedNotiId).then((_) {
           ref.read(notiIdProvider.notifier).state = receivedNotiId;
-          debugPrint("### notiId: ### $notiId");
+          debugPrint("### notiId: (getInitialMessage) ### $notiId");
           //appRouter.replaceAll([const RootRoute()]);
           appRouter.push(PostEnqueteRoute(notificationId: receivedNotiId));
           //appRouter.replaceAll([PostEnqueteRoute(notificationId: "176fc56e-9ab6-44f5-9517-e0cc88a32619")]);
