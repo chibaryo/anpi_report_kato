@@ -1,8 +1,11 @@
 
+import 'package:anpi_report_flutter/models/template/template.dart';
 import 'package:anpi_report_flutter/providers/firestore/templates/template_notifier.dart';
 import 'package:auto_route/auto_route.dart';
+import 'package:custom_text_form_field_plus/custom_text_form_field_plus.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_settings_screens/flutter_settings_screens.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -28,8 +31,12 @@ class TemplateAdminScreen extends HookConsumerWidget {
 
     final authAsyncValue = ref.watch(authStateChangesProvider);
     final asyncTemplates = ref.watch(streamTemplateNotifierProvider);
+    final templateNotifier = ref.watch(streamTemplateNotifierProvider.notifier);
     final profileNotifier = ref.watch(streamProfileNotifierProvider.notifier);
     final userNotifier = ref.watch(streamUserNotifierProvider.notifier);
+
+    final tFieldTitleController = useTextEditingController();
+    final tFieldBodyController = useTextEditingController();
 
     useEffect(() {
       // Hide bottomnav
@@ -68,6 +75,65 @@ class TemplateAdminScreen extends HookConsumerWidget {
       isLoading.value = false;
     }, [asyncTemplates]);
 
+    // Dialog
+    Future<void> openSendNotiDialog(BuildContext context, WidgetRef ref) async {
+      return showDialog<void>(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text("テンプレート追加"),
+            content: FormBuilder(
+              key: GlobalKey<FormBuilderState>(),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  CustomTextFormField(
+                    hintText: "タイトル",
+                    controller: tFieldTitleController,
+                    autofocus: true,
+                  ),
+                  CustomTextFormField(
+                    hintText: "本文",
+                    controller: tFieldBodyController,
+                    autofocus: true,
+                  ),
+                ]
+              )
+            ),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: const Text("キャンセル"),
+              ),
+              TextButton(
+                onPressed: () async {
+                  // Save template
+                  final notiTitle = tFieldTitleController.text;
+                  final notiBody = tFieldBodyController.text;
+                  final newTemplate = Template(
+                    notiTitle: notiTitle,
+                    notiBody: notiBody,
+                    createdAt: DateTime.now(),
+                    updatedAt: DateTime.now(),
+                  );
+
+                  await templateNotifier.addTemplate(newTemplate);
+                  // Back
+                  if (context.mounted) {
+                    Navigator.pop(context);
+                  }
+                },
+                child: const Text("保存"),
+              )
+            ],
+          );
+        }
+      );
+    }
+
     return Scaffold(
         appBar: AppBar(
           leading: IconButton(
@@ -83,6 +149,14 @@ class TemplateAdminScreen extends HookConsumerWidget {
           centerTitle: true,
           title: const Text("Anpi"),
           backgroundColor: Colors.purple[300],
+          actions: <Widget>[
+            IconButton(
+              onPressed: () async {
+                  await openSendNotiDialog(context, ref);
+              },
+              icon: const Icon(Icons.add)
+            ),
+          ],
         ),
         body: isLoading.value
     ? const Center(child: CircularProgressIndicator())

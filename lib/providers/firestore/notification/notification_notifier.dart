@@ -53,4 +53,15 @@ class StreamNotificationNotifier extends  _$StreamNotificationNotifier {
     }
   }
 
+  Future<void> deleteNotificationById(String notificationId) async {
+    try {
+      await FirebaseFirestore.instance
+        .collection("notifications")
+        .doc(notificationId)
+        .delete();
+    } catch (e) {
+      // Handle any errors here, such as logging
+    }
+  }
+
 }

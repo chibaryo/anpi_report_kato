@@ -17,8 +17,11 @@ import 'package:http/http.dart' as http;
 
 import '../../../entity/notitype.dart';
 import '../../../entity/topictype.dart';
+import '../../../models/profile.dart';
 import '../../../models/template/template.dart';
 import '../../../providers/bottomnav/bottomnav_provider.dart';
+import '../../../providers/firebaseauth/auth_provider.dart';
+import '../../../providers/firestore/profile/profile_notifier.dart';
 import '../../../router/app_router.dart';
 
 @RoutePage()
@@ -35,6 +38,11 @@ class NotiAdminScreen extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final asyncNotis = ref.watch(streamNotificationNotifierProvider);
     //final asyncTemplates = ref.watch(streamTemplateNotifierProvider);
+    final authAsyncValue = ref.watch(authStateChangesProvider);
+    final moiUid = useState<String>("");
+    final moiProfile = useState<Profile?>(null);
+    final profileNotifier = ref.watch(streamProfileNotifierProvider.notifier);
+    final notiStreamNotifier = ref.watch(streamNotificationNotifierProvider.notifier);
 
     final formKey = useMemoized(() => GlobalKey<FormBuilderState>());
     final tFieldTitleController = useTextEditingController();
@@ -281,6 +289,23 @@ Future<void> openSendNotiDialog(BuildContext context, WidgetRef ref) async {
       };
     }, []);
 
+
+    useEffect(() {
+      final user = authAsyncValue.asData?.value;
+      if (user != null) {
+        moiUid.value = user.uid;
+        debugPrint("moiUid: ${moiUid.value}");
+
+        // Get profile by uid
+        profileNotifier.getProfileByUid(moiUid.value).then((profile) {
+          moiProfile.value = profile;
+        });
+
+      }
+
+      return () {};
+    }, [authAsyncValue]);    
+
     return Scaffold(
         appBar: AppBar(
           leading: IconButton(
@@ -296,14 +321,19 @@ Future<void> openSendNotiDialog(BuildContext context, WidgetRef ref) async {
           centerTitle: true,
           foregroundColor: Colors.black,
           backgroundColor: Colors.purple[300],
-          actions: <Widget>[
-            IconButton(
-              onPressed: () async {
-                  await openSendNotiDialog(context, ref);
-              },
-              icon: const Icon(Icons.add)
-            ),
-          ],
+          actions: 
+            (() {
+              if (moiProfile.value != null && moiProfile.value!.userAttr["jobLevel"] == 4) {
+                return <Widget>[
+                  IconButton(
+                    onPressed: () async {
+                      await openSendNotiDialog(context, ref);
+                    },
+                    icon: const Icon(Icons.add)
+                  ),
+                ];
+              }
+            })()
         ),
         body: switch(asyncNotis) {
           AsyncData(:final value) => SingleChildScrollView(
@@ -314,14 +344,22 @@ Future<void> openSendNotiDialog(BuildContext context, WidgetRef ref) async {
                 children: <Widget>[
                   DataTable(
                     showCheckboxColumn: false,
-                    columns: const [
+                    columns: [
                       DataColumn(
+                        label:
+                          moiProfile.value != null && moiProfile.value!.userAttr["jobLevel"] == 4
+                          ?
+                          const Text("操作")
+                          :
+                          const Text(""),
+                      ),
+                      const DataColumn(
                         label: Text("日時"),
                       ),
-                      DataColumn(
+                      const DataColumn(
                         label: Text("タイトル"),
                       ),
-                      DataColumn(
+                      const DataColumn(
                         label: Text("本文"),
                       ),
                     ],
@@ -337,6 +375,47 @@ Future<void> openSendNotiDialog(BuildContext context, WidgetRef ref) async {
                           }
                         },
                         cells: [
+                        moiProfile.value != null && moiProfile.value!.userAttr["jobLevel"] == 4
+                        ?
+                        DataCell(
+                          TextButton(onPressed: () async {
+                            // Show Del noti confirmation dialog
+                            showDialog(
+                              context: context,
+                              builder: (context) {
+                                return AlertDialog(
+                                  title: const Text("通知削除"),
+                                  content: const Text("通知削除します。よろしいですか？"),
+                                  actions: [
+                                    TextButton(
+                                      child: const Text("キャンセル"),
+                                      onPressed: () async {
+                                        if (context.mounted) {
+                                          context.router.maybePop();
+                                        }
+                                      },
+                                    ),
+                                    TextButton(
+                                      child: const Text("削除", style: TextStyle(color: Colors.red),),
+                                      onPressed: () async {
+                                        // Delete notification
+                                        await notiStreamNotifier.deleteNotificationById(rowRecord.notificationId);
+                                        // Close modal
+                                        if (context.mounted) {
+                                          context.router.maybePop();
+                                        }
+                                      },
+                                    ),
+                                  ],
+                                );
+                              }
+                            );
+                          }, child: const Text("削除", style: TextStyle(color: Colors.red),))
+                          
+                        )
+                        :
+                        const DataCell(Text(""))
+                        ,
                         DataCell(Text(DateFormat('[M/d h:mm]').format(rowRecord.createdAt))),
                         DataCell(Text(rowRecord.notiTitle)),
                         DataCell(Text(rowRecord.notiBody)),

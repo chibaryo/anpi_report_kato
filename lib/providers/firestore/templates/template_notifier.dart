@@ -37,12 +37,11 @@ class StreamTemplateNotifier extends  _$StreamTemplateNotifier {
   }
 
   // Add a new record
-  Future<void> addTemplate(String id, Template template) async {
+  Future<void> addTemplate(Template template) async {
     try {
       await FirebaseFirestore.instance
         .collection("templates")
-        .doc(id)
-        .set(template.toJson());
+        .add(template.toJson());
     } catch (e) {
       // Handle any errors here, such as logging
     }
