@@ -85,6 +85,7 @@ dependencies:
   flutter_secure_storage:
   auto_route: ^8.3.0
   quickalert:
+  webview_flutter:
 
 dev_dependencies:
   flutter_test:

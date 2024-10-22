@@ -32,6 +32,11 @@ List<Map<String, dynamic>> getDepartmentTypeDetailsBySortNumber(int sortNumber) 
   List<Map<String, dynamic>> matchingDepartments = [];
 
   for (var department in DepartmentType.values) {
+    // Omit "未設定" if the sortNumber is not zero
+    if (department == DepartmentType.undefined && sortNumber != 0) {
+      continue;  // Skip "未設定"
+    }
+
     // Use bitwise AND to check if the department is part of the sortNumber
     if ((sortNumber & department.sortNumber) == department.sortNumber) {
       matchingDepartments.add({

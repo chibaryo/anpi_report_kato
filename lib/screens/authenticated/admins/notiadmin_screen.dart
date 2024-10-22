@@ -318,10 +318,11 @@ Future<void> openSendNotiDialog(BuildContext context, WidgetRef ref) async {
               }
             },
           ),
+          title: const Text("通知管理"),
           centerTitle: true,
           foregroundColor: Colors.black,
           backgroundColor: Colors.purple[300],
-          actions: 
+          actions:
             (() {
               if (moiProfile.value != null && moiProfile.value!.userAttr["jobLevel"] == 4) {
                 return <Widget>[

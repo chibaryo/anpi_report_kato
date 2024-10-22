@@ -11,7 +11,9 @@ import '../screens/authenticated/admins/useradmin_screen.dart';
 import '../screens/authenticated/apphome_screen.dart';
 import '../screens/authenticated/editreport_screen.dart';
 import '../screens/authenticated/postenquete_screen.dart';
+import '../screens/authenticated/privacypolicy_screen.dart';
 import '../screens/authenticated/settings_screen.dart';
+import '../screens/authenticated/terms_screen.dart';
 import '../screens/authenticated/topicselect_screen.dart';
 import '../screens/unauthenticated/tabsrouter_screen.dart';
 import '../screens/unauthenticated/signin_screen.dart';
@@ -103,6 +105,12 @@ class AppRouter extends _$AppRouter {
             ),
             AutoRoute(
               page: TheOtherOpsRoute.page,
+            ),
+            AutoRoute(
+              page: TermsWebViewRoute.page,
+            ),
+            AutoRoute(
+              page: PrivacyPolicyWebViewRoute.page,
             ),
           ]
         ),

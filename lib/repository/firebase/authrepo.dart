@@ -92,4 +92,32 @@ class AuthService {
     }
 
   }
+
+  Future<String?> createAccountViaServer(String displayName, String email, String password) async {
+    const apiUrl = "https://anpi-fcm-2024-test.vercel.app/api/firebase/createaccount";
+    Uri url = Uri.parse(apiUrl);
+    Map<String, String> headers = {'Content-Type': 'application/json'};
+    String body = json.encode(
+      {
+        'displayName': displayName,
+        'email': email,
+        'password': password,
+      }
+    );
+
+    http.Response resp = await http.post(url, headers: headers, body: body);
+    if (resp.statusCode != 200) {
+      final int statusCode = resp.statusCode;
+      final String result = resp.body;
+      return result;
+    } else {
+      // Ok
+      final int statusCode = resp.statusCode;
+      final String resultUid = json.decode(resp.body)["result"]["uid"];
+      print("resultUid: $resultUid");
+
+      print("Account created");
+      return resultUid;
+    }
+  }
 }

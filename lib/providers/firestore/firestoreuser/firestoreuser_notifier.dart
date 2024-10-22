@@ -8,6 +8,8 @@ part 'firestoreuser_notifier.g.dart';
 class StreamUserNotifier extends  _$StreamUserNotifier {
   @override
   Stream<List<Map<String, dynamic>>> build() async* {
+    print("begin retreiving users...");
+
     // Create a stream for user documents
     final userStream = FirebaseFirestore.instance
       .collection("users")

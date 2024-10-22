@@ -362,6 +362,42 @@ class SettingsScreen extends HookConsumerWidget {
                         ),
                       ),
                     ),
+                    GestureDetector(
+                      behavior: HitTestBehavior.opaque,
+                      onTap: () async {
+                        if (context.mounted) {
+                          context.router.push(const TermsWebViewRoute());
+                        }
+                      },
+                      child: const Padding(
+                        padding: EdgeInsets.all(16.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text("利用規約"),
+                            Icon(Icons.chevron_right),
+                          ],
+                        ),
+                      ),
+                    ),
+                    GestureDetector(
+                      behavior: HitTestBehavior.opaque,
+                      onTap: () async {
+                        if (context.mounted) {
+                          context.router.push(const PrivacyPolicyWebViewRoute());
+                        }
+                      },
+                      child: const Padding(
+                        padding: EdgeInsets.all(16.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text("プライバシーポリシー"),
+                            Icon(Icons.chevron_right),
+                          ],
+                        ),
+                      ),
+                    ),
 /*                    GestureDetector(
                       behavior: HitTestBehavior.opaque,
                       onTap: () async {

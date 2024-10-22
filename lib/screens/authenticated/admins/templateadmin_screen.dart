@@ -76,7 +76,7 @@ class TemplateAdminScreen extends HookConsumerWidget {
     }, [asyncTemplates]);
 
     // Dialog
-    Future<void> openSendNotiDialog(BuildContext context, WidgetRef ref) async {
+    Future<void> openAddTemplateDialog(BuildContext context, WidgetRef ref) async {
       return showDialog<void>(
         context: context,
         barrierDismissible: false,
@@ -147,16 +147,22 @@ class TemplateAdminScreen extends HookConsumerWidget {
             },
           ),
           centerTitle: true,
-          title: const Text("Anpi"),
+          title: const Text("テンプレート管理"),
           backgroundColor: Colors.purple[300],
-          actions: <Widget>[
-            IconButton(
-              onPressed: () async {
-                  await openSendNotiDialog(context, ref);
-              },
-              icon: const Icon(Icons.add)
-            ),
-          ],
+        actions:
+          (() {
+            if (moiProfile.value != null && moiProfile.value!.userAttr["jobLevel"] == 4) {
+              return <Widget>[
+                IconButton(
+                  onPressed: () async {
+                    // Add template
+                    await openAddTemplateDialog(context, ref);
+                  },
+                  icon: const Icon(Icons.add)
+                ),
+              ];
+            }
+          })()
         ),
         body: isLoading.value
     ? const Center(child: CircularProgressIndicator())

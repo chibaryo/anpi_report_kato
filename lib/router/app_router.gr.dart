@@ -69,6 +69,12 @@ abstract class _$AppRouter extends RootStackRouter {
         ),
       );
     },
+    PrivacyPolicyWebViewRoute.name: (routeData) {
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: const PrivacyPolicyWebViewScreen(),
+      );
+    },
     RootRoute.name: (routeData) {
       return AutoRoutePage<dynamic>(
         routeData: routeData,
@@ -109,6 +115,12 @@ abstract class _$AppRouter extends RootStackRouter {
       return AutoRoutePage<dynamic>(
         routeData: routeData,
         child: const TemplateAdminScreen(),
+      );
+    },
+    TermsWebViewRoute.name: (routeData) {
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: const TermsWebViewScreen(),
       );
     },
     TheOtherOpsRoute.name: (routeData) {
@@ -303,6 +315,20 @@ class PostEnqueteRouteArgs {
 }
 
 /// generated route for
+/// [PrivacyPolicyWebViewScreen]
+class PrivacyPolicyWebViewRoute extends PageRouteInfo<void> {
+  const PrivacyPolicyWebViewRoute({List<PageRouteInfo>? children})
+      : super(
+          PrivacyPolicyWebViewRoute.name,
+          initialChildren: children,
+        );
+
+  static const String name = 'PrivacyPolicyWebViewRoute';
+
+  static const PageInfo<void> page = PageInfo<void>(name);
+}
+
+/// generated route for
 /// [RootScreen]
 class RootRoute extends PageRouteInfo<void> {
   const RootRoute({List<PageRouteInfo>? children})
@@ -396,6 +422,20 @@ class TemplateAdminRoute extends PageRouteInfo<void> {
         );
 
   static const String name = 'TemplateAdminRoute';
+
+  static const PageInfo<void> page = PageInfo<void>(name);
+}
+
+/// generated route for
+/// [TermsWebViewScreen]
+class TermsWebViewRoute extends PageRouteInfo<void> {
+  const TermsWebViewRoute({List<PageRouteInfo>? children})
+      : super(
+          TermsWebViewRoute.name,
+          initialChildren: children,
+        );
+
+  static const String name = 'TermsWebViewRoute';
 
   static const PageInfo<void> page = PageInfo<void>(name);
 }
