@@ -71,7 +71,7 @@ android {
     }
 
     // Build flavorを設定している場合
-    flavorDimensions "default"
+/*    flavorDimensions "default"
     productFlavors {
 
         develop {
@@ -92,7 +92,7 @@ android {
             //applicationId "com.hoge.fuga"
         }
     }
-
+*/
     buildTypes {
         release {
             // TODO: Add your own signing config for the release build.

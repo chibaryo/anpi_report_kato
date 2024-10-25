@@ -32,6 +32,13 @@ class SignupScreen extends HookConsumerWidget {
     final profileNotifier = ref.watch(streamProfileNotifierProvider.notifier);
     //
     final tFieldUserNameController = useTextEditingController();
+    const targetCompanyCode = "C1040090==";
+    final tFieldCompanyCodeController = useTextEditingController();
+    final isValidCompanyCode = useListenableSelector(
+      tFieldCompanyCodeController,
+      () => tFieldCompanyCodeController.text == targetCompanyCode
+    );
+ 
 
     // ChoiceChip
     final selectedDepartments = useState<int>(DepartmentType.undefined.sortNumber); // Initially "未設定"
@@ -213,6 +220,30 @@ List<String> getSelectedDepartments(int selectedSum) {
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: <Widget>[
+                          FormBuilderTextField(
+                            name: "companyCode",
+                            controller: tFieldCompanyCodeController,
+                            decoration: const InputDecoration(labelText: "企業コード"),
+                            obscureText: false,
+                            autovalidateMode: AutovalidateMode.onUserInteraction,
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return "企業コードを入力してください";
+                              }
+                              if (value.length < 8) {
+                                return "企業コードは8文字以上である必要があります";
+                              }
+                              if (value != "C1040090==") {
+                                return "企業コードが正しくありません";
+                              }
+                              return null;
+                            },
+/*                            validator: FormBuilderValidators.compose([
+                              FormBuilderValidators.required(),
+                            ]), */
+                            keyboardType: TextInputType.text,
+                            textCapitalization: TextCapitalization.none,
+                          ),
                           // Email
                           CustomTextFormField(
                             hintText: "名前",
@@ -275,7 +306,7 @@ List<String> getSelectedDepartments(int selectedSum) {
                                       backgroundColor: Colors.indigo[300],
                                       foregroundColor: Colors.white,
                                     ),
-                                    onPressed: () async {
+                                    onPressed: !isValidCompanyCode ? null : () async {
                                       formKey.currentState?.saveAndValidate();
                                       //
                                       final displayName = tFieldUserNameController.text;

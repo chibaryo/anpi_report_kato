@@ -58,6 +58,14 @@ class TabsRouterScreen extends HookConsumerWidget {
           // SecureStorageに保存
           await secureStorage.write(key: "currentAppBadgeCount", value: number.toString());
         }
+      } else if (Platform.isAndroid) {
+        debugPrint("### android number : ${number.toString()}");
+
+        if (await FlutterAppBadger.isAppBadgeSupported()) {
+          FlutterAppBadger.updateBadgeCount(number ?? 0); // <-引数の`number`が`null`だった場合は`0`
+          // SecureStorageに保存
+          await secureStorage.write(key: "currentAppBadgeCount", value: number.toString());
+        }
       }
     }
 
