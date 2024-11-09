@@ -7,7 +7,7 @@ part of 'firestoreuser_notifier.dart';
 // **************************************************************************
 
 String _$streamUserNotifierHash() =>
-    r'4f5d5da9361395a678cd1c794eb24b2ee9bad46c';
+    r'cc57eb919779f15e75be5e6523f587f9717dcf81';
 
 /// See also [StreamUserNotifier].
 @ProviderFor(StreamUserNotifier)

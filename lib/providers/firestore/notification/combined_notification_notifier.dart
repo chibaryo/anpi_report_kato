@@ -11,6 +11,7 @@ class StreamNotificationCombinedNotifier extends _$StreamNotificationCombinedNot
   Stream<List<Map<String, dynamic>>> build(String uid) {
     return FirebaseFirestore.instance
         .collection("notifications")
+        .orderBy("createdAt", descending: true) // Order by descending directly here
         .snapshots()
         .asyncMap((notificationSnapshot) async {
           List<Map<String, dynamic>> combinedNotifications = [];
@@ -32,6 +33,15 @@ class StreamNotificationCombinedNotifier extends _$StreamNotificationCombinedNot
               'answered': reportsSnapshot.exists, // Mark as answered if the report exists
             });
           }
+
+          // Sort the combinedNotifications list by createdAt to maintain the correct order
+/*          combinedNotifications.sort((a, b) {
+            final aCreatedAt = (a['noti'] as Noti).createdAt;
+            final bCreatedAt = (b['noti'] as Noti).createdAt;
+            return bCreatedAt!.compareTo(aCreatedAt!); // Sort in ascending order
+          }); */
+
+          print("### combinedNotifications  ###: ${combinedNotifications.toString()}");
           
           return combinedNotifications;
         });

@@ -32,13 +32,13 @@ class SignupScreen extends HookConsumerWidget {
     final profileNotifier = ref.watch(streamProfileNotifierProvider.notifier);
     //
     final tFieldUserNameController = useTextEditingController();
-    const targetCompanyCode = "C1040090==";
+/*    const targetCompanyCode = "C1040090==";
     final tFieldCompanyCodeController = useTextEditingController();
     final isValidCompanyCode = useListenableSelector(
       tFieldCompanyCodeController,
       () => tFieldCompanyCodeController.text == targetCompanyCode
     );
- 
+*/ 
 
     // ChoiceChip
     final selectedDepartments = useState<int>(DepartmentType.undefined.sortNumber); // Initially "未設定"
@@ -220,7 +220,7 @@ List<String> getSelectedDepartments(int selectedSum) {
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: <Widget>[
-                          FormBuilderTextField(
+/*                          FormBuilderTextField(
                             name: "companyCode",
                             controller: tFieldCompanyCodeController,
                             decoration: const InputDecoration(labelText: "企業コード"),
@@ -243,7 +243,7 @@ List<String> getSelectedDepartments(int selectedSum) {
                             ]), */
                             keyboardType: TextInputType.text,
                             textCapitalization: TextCapitalization.none,
-                          ),
+                          ), */
                           // Email
                           CustomTextFormField(
                             hintText: "名前",
@@ -251,6 +251,7 @@ List<String> getSelectedDepartments(int selectedSum) {
                             autofocus: true,
                             padding: const EdgeInsets.all(8.0),
                             enabledBorder: const UnderlineInputBorder(),
+                            autocorrect: false,
                             border: const UnderlineInputBorder(),
                             focusedBorder: const UnderlineInputBorder(),
                             validator: (String? value) => Validations.emptyValidation(value),
@@ -262,6 +263,7 @@ List<String> getSelectedDepartments(int selectedSum) {
                             validator: FormBuilderValidators.compose([
                               FormBuilderValidators.required(),
                             ]),
+                            autocorrect: false,
                             keyboardType: TextInputType.emailAddress,
                             textCapitalization: TextCapitalization.none,
                           ),
@@ -306,7 +308,8 @@ List<String> getSelectedDepartments(int selectedSum) {
                                       backgroundColor: Colors.indigo[300],
                                       foregroundColor: Colors.white,
                                     ),
-                                    onPressed: !isValidCompanyCode ? null : () async {
+                                    //!isValidCompanyCode ? null :
+                                    onPressed: () async {
                                       formKey.currentState?.saveAndValidate();
                                       //
                                       final displayName = tFieldUserNameController.text;

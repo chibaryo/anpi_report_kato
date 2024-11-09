@@ -10,6 +10,7 @@ class StreamNotificationNotifier extends  _$StreamNotificationNotifier {
   Stream<List<Map<String, dynamic>>> build() async* {
     yield* FirebaseFirestore.instance
       .collection("notifications")
+      .orderBy("createdAt", descending: true) // Order by descending directly here
       .snapshots()
       .map((snapshot) => snapshot.docs.map((doc) {
         final noti = Noti.fromJson(doc.data());

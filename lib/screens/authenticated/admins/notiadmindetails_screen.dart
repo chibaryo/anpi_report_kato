@@ -103,126 +103,134 @@ class NotiAdminDetailsScreen extends HookConsumerWidget {
                     children: [
                       // Answered
                       Center(
-                        child: SingleChildScrollView(
-                          scrollDirection: Axis.horizontal,
-                          child: Column(
-                            children: <Widget>[
-                              DataTable(
-                                showCheckboxColumn: false,
-                                columns: const [
-                                  DataColumn(label: Text("名前")),
-                                  DataColumn(label: Text("アドレス")),
-                                  DataColumn(label: Text("支社")),
-                                  DataColumn(label: Text("部署名")),
-                                  DataColumn(label: Text("役職")),
-                                  DataColumn(label: Text("怪我")),
-                                  DataColumn(label: Text("出社")),
-                                ],
-                                rows: value["answered"]!.where((data) {
-                                  final currentUserOfficeLocation = moiProfile.value!.userAttr["officeLocation"];
-                                  final currentUserDepartments = moiProfile.value!.userAttr["department"];
-                                  debugPrint("### data[profile] : ### : ${data["profile"].userAttr["officeLocation"]}");
-                                  final userOfficeLocation = data["profile"].userAttr["officeLocation"];
-                                  final userDepartments = data["profile"].userAttr["department"];
-                                  debugPrint("### userDepartment ### : $userDepartments");
-
-                                  final isSameOfficeLocation = (currentUserOfficeLocation == userOfficeLocation);
-                                  final isDepartmentMatch = hasBitwiseOverlap(currentUserDepartments, userDepartments);
-
-                                  return isSameOfficeLocation && isDepartmentMatch;
-                                }).map<DataRow>((data) {
-                                  final rowRecordOfUser = data["user"];
-                                  final rowRecordOfProfile = data["profile"];
-                                  final rowRecordOfReport = data["report"];
-
-                                  return DataRow(
-                                    cells: [
-                                      DataCell(Text(rowRecordOfUser.username)),
-                                      DataCell(Text(rowRecordOfUser.email)),
-                                      DataCell(Text(getOfficeLocationStatusTypeDetailsBySortNumber(
-                                        rowRecordOfProfile.userAttr["officeLocation"])
-                                          ?["displayName"])),
-                                      DataCell(Text(getDepartmentTypeDetailsBySortNumber(
-                                        rowRecordOfProfile.userAttr["department"])
-                                          .map((dept) => dept['displayName'])
-                                          .join(', '))),
-                                      DataCell(Text(getJobLevelStatusTypeDetailsBySortNumber(
-                                        rowRecordOfProfile.userAttr["jobLevel"])
-                                        ?["displayName"])),
-                                      DataCell(Text(rowRecordOfReport?["injuryStatus"] ?? 'N/A')),
-                                      DataCell(Text(rowRecordOfReport?["attendOfficeStatus"] ?? 'N/A')),
+                        child: ListView(
+                          children: [
+                            SingleChildScrollView(
+                              scrollDirection: Axis.horizontal,
+                              child: Column(
+                                children: <Widget>[
+                                  DataTable(
+                                    showCheckboxColumn: false,
+                                    columns: const [
+                                      DataColumn(label: Text("名前")),
+                                      DataColumn(label: Text("アドレス")),
+                                      DataColumn(label: Text("支社")),
+                                      DataColumn(label: Text("部署名")),
+                                      DataColumn(label: Text("役職")),
+                                      DataColumn(label: Text("怪我")),
+                                      DataColumn(label: Text("出社")),
                                     ],
-                                  );
-                                }).toList(),
+                                    rows: value["answered"]!.where((data) {
+                                      final currentUserOfficeLocation = moiProfile.value!.userAttr["officeLocation"];
+                                      final currentUserDepartments = moiProfile.value!.userAttr["department"];
+                                      debugPrint("### data[profile] : ### : ${data["profile"].userAttr["officeLocation"]}");
+                                      final userOfficeLocation = data["profile"].userAttr["officeLocation"];
+                                      final userDepartments = data["profile"].userAttr["department"];
+                                      debugPrint("### userDepartment ### : $userDepartments");
+                            
+                                      final isSameOfficeLocation = (currentUserOfficeLocation == userOfficeLocation);
+                                      final isDepartmentMatch = hasBitwiseOverlap(currentUserDepartments, userDepartments);
+                            
+                                      return isSameOfficeLocation && isDepartmentMatch;
+                                    }).map<DataRow>((data) {
+                                      final rowRecordOfUser = data["user"];
+                                      final rowRecordOfProfile = data["profile"];
+                                      final rowRecordOfReport = data["report"];
+                            
+                                      return DataRow(
+                                        cells: [
+                                          DataCell(Text(rowRecordOfUser.username)),
+                                          DataCell(Text(rowRecordOfUser.email)),
+                                          DataCell(Text(getOfficeLocationStatusTypeDetailsBySortNumber(
+                                            rowRecordOfProfile.userAttr["officeLocation"])
+                                              ?["displayName"])),
+                                          DataCell(Text(getDepartmentTypeDetailsBySortNumber(
+                                            rowRecordOfProfile.userAttr["department"])
+                                              .map((dept) => dept['displayName'])
+                                              .join(', '))),
+                                          DataCell(Text(getJobLevelStatusTypeDetailsBySortNumber(
+                                            rowRecordOfProfile.userAttr["jobLevel"])
+                                            ?["displayName"])),
+                                          DataCell(Text(rowRecordOfReport?["injuryStatus"] ?? 'N/A')),
+                                          DataCell(Text(rowRecordOfReport?["attendOfficeStatus"] ?? 'N/A')),
+                                        ],
+                                      );
+                                    }).toList(),
+                                  ),
+                                ],
                               ),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
                       ),
                       // Not Answered
                       Center(
-                        child: SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Column(
-                children: <Widget>[
-                  DataTable(
-                    showCheckboxColumn: false,
-                    columns: const [
-                      DataColumn(label: Text("名前")),
-                      DataColumn(label: Text("アドレス")),
-                      DataColumn(label: Text("支社")),
-                      DataColumn(label: Text("部署名")),
-                      DataColumn(label: Text("役職")),
-                    ],
-                    rows: value["notAnswered"]!.where((data) {
-                                  final currentUserOfficeLocation = moiProfile.value!.userAttr["officeLocation"];
-                                  final currentUserDepartments = moiProfile.value!.userAttr["department"];
-                                  final currentUserJobLevel = moiProfile.value!.userAttr["jobLevel"];
-
-                                  debugPrint("### data[profile] : ### : ${data["profile"].userAttr["officeLocation"]}");
-                                  final userOfficeLocation = data["profile"].userAttr["officeLocation"];
-                                  final userDepartments = data["profile"].userAttr["department"];
-                                  debugPrint("### userDepartment ### : $userDepartments");
-
-                                  final isSameOfficeLocation = (currentUserOfficeLocation == userOfficeLocation);
-                                  final isDepartmentMatch = hasBitwiseOverlap(currentUserDepartments, userDepartments);
-
-                                  // Determine the filtering logic based on currentUserJobLevel
-                                  if (currentUserJobLevel == 4) {
-                                    // Show all unanswered users
-                                    return true;
-                                  } else if (currentUserJobLevel == 2) {
-                                    // Show unanswered users with matching officeLocation and department
-                                    return isSameOfficeLocation && isDepartmentMatch;
-                                  }
-
-                                  // Default case if job level is not 2 or 4, return false
-                                  return false;
-                    }).map<DataRow>((data) {
-                      final rowRecordOfUser = data["user"];
-                      final rowRecordOfProfile = data["profile"];
-
-                      return DataRow(
-                        cells: [
-                          DataCell(Text(rowRecordOfUser.username)),
-                          DataCell(Text(rowRecordOfUser.email)),
-                          DataCell(Text(getOfficeLocationStatusTypeDetailsBySortNumber(
-                                  rowRecordOfProfile.userAttr["officeLocation"])
-                              ?["displayName"])),
-                          DataCell(Text(getDepartmentTypeDetailsBySortNumber(
-                                  rowRecordOfProfile.userAttr["department"])
-                              .map((dept) => dept['displayName'])
-                              .join(', '))),
-                          DataCell(Text(getJobLevelStatusTypeDetailsBySortNumber(
-                                  rowRecordOfProfile.userAttr["jobLevel"])
-                              ?["displayName"])),
-                        ],
-                      );
-                    }).toList(),
-                  ),
-                ],
-              ),
-            ),
+                        child: ListView(
+                          children: [
+                            SingleChildScrollView(
+                                          scrollDirection: Axis.horizontal,
+                                          child: Column(
+                                            children: <Widget>[
+                                              DataTable(
+                                                showCheckboxColumn: false,
+                                                columns: const [
+                                                  DataColumn(label: Text("名前")),
+                                                  DataColumn(label: Text("アドレス")),
+                                                  DataColumn(label: Text("支社")),
+                                                  DataColumn(label: Text("部署名")),
+                                                  DataColumn(label: Text("役職")),
+                                                ],
+                                                rows: value["notAnswered"]!.where((data) {
+                                      final currentUserOfficeLocation = moiProfile.value!.userAttr["officeLocation"];
+                                      final currentUserDepartments = moiProfile.value!.userAttr["department"];
+                                      final currentUserJobLevel = moiProfile.value!.userAttr["jobLevel"];
+                            
+                                      debugPrint("### data[profile] : ### : ${data["profile"].userAttr["officeLocation"]}");
+                                      final userOfficeLocation = data["profile"].userAttr["officeLocation"];
+                                      final userDepartments = data["profile"].userAttr["department"];
+                                      debugPrint("### userDepartment ### : $userDepartments");
+                            
+                                      final isSameOfficeLocation = (currentUserOfficeLocation == userOfficeLocation);
+                                      final isDepartmentMatch = hasBitwiseOverlap(currentUserDepartments, userDepartments);
+                            
+                                      // Determine the filtering logic based on currentUserJobLevel
+                                      if (currentUserJobLevel == 4) {
+                                        // Show all unanswered users
+                                        return true;
+                                      } else if (currentUserJobLevel == 2) {
+                                        // Show unanswered users with matching officeLocation and department
+                                        return isSameOfficeLocation && isDepartmentMatch;
+                                      }
+                            
+                                      // Default case if job level is not 2 or 4, return false
+                                      return false;
+                                                }).map<DataRow>((data) {
+                                                  final rowRecordOfUser = data["user"];
+                                                  final rowRecordOfProfile = data["profile"];
+                            
+                                                  return DataRow(
+                            cells: [
+                              DataCell(Text(rowRecordOfUser.username)),
+                              DataCell(Text(rowRecordOfUser.email)),
+                              DataCell(Text(getOfficeLocationStatusTypeDetailsBySortNumber(
+                                      rowRecordOfProfile.userAttr["officeLocation"])
+                                  ?["displayName"])),
+                              DataCell(Text(getDepartmentTypeDetailsBySortNumber(
+                                      rowRecordOfProfile.userAttr["department"])
+                                  .map((dept) => dept['displayName'])
+                                  .join(', '))),
+                              DataCell(Text(getJobLevelStatusTypeDetailsBySortNumber(
+                                      rowRecordOfProfile.userAttr["jobLevel"])
+                                  ?["displayName"])),
+                            ],
+                                                  );
+                                                }).toList(),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                          ],
+                        ),
                       ),
                     ],
                   );

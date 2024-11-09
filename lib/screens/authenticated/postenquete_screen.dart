@@ -176,23 +176,24 @@ class PostEnqueteScreen extends HookConsumerWidget {
         padding: const EdgeInsets.all(8),
         child: (() {
           if (stepperCount.value == 1) {
-            return Column(
-              children: [
-                Text("Page ${stepperCount.value.toString()} / 4"),
-                const Text("怪我の状態", style: TextStyle(fontSize: 24),),
-      
-                // Choice 1
-                buildinjuryRadioCandidate("無事", 1),
-                // Choice 2
-                buildinjuryRadioCandidate("怪我", 2),
-                // Choice 3
-                buildinjuryRadioCandidate("その他", 3),
-              ],
+            return SingleChildScrollView(
+              child: Column(
+                children: [
+                  Text("Page ${stepperCount.value.toString()} / 4"),
+                  const Text("怪我の状態", style: TextStyle(fontSize: 24),),
+                    
+                  // Choice 1
+                  buildinjuryRadioCandidate("無事", 1),
+                  // Choice 2
+                  buildinjuryRadioCandidate("怪我", 2),
+                  // Choice 3
+                  buildinjuryRadioCandidate("その他", 3),
+                ],
+              ),
             );
             //const Text("AAA", style: TextStyle(fontSize: 32),);
           } else if (stepperCount.value == 2) {
-            return SizedBox(
-              height: 320,
+            return SingleChildScrollView(
               child: Column(
                 children: [
                   Text("Page ${stepperCount.value.toString()} / 4"),
@@ -206,31 +207,27 @@ class PostEnqueteScreen extends HookConsumerWidget {
             );
           } else if (stepperCount.value == 3) {
             return SingleChildScrollView(
-              child: SizedBox(
-                height: 160,
-                child: Column(
-                  children: [
-                    Text("Page ${stepperCount.value.toString()} / 4"),
-                    const Text("メッセージを残す（任意）", style: TextStyle(fontSize: 24),),
-                    CustomTextFormField(
-                      hintText: "メッセージ",
-                      controller: tFieldMessageController,
-                      autofocus: true,
-                      padding: const EdgeInsets.symmetric(vertical: 8.0),
-                      enabledBorder: const UnderlineInputBorder(),
-                      border: const UnderlineInputBorder(),
-                      focusedBorder: const UnderlineInputBorder(),
-                      /* validator: (String? value) {
-                    
-                      }, */
-                    )
-                  ],
-                )
+              child: Column(
+                children: [
+                  Text("Page ${stepperCount.value.toString()} / 4"),
+                  const Text("メッセージを残す（任意）", style: TextStyle(fontSize: 24),),
+                  CustomTextFormField(
+                    hintText: "メッセージ",
+                    controller: tFieldMessageController,
+                    autofocus: true,
+                    padding: const EdgeInsets.symmetric(vertical: 8.0),
+                    enabledBorder: const UnderlineInputBorder(),
+                    border: const UnderlineInputBorder(),
+                    focusedBorder: const UnderlineInputBorder(),
+                    /* validator: (String? value) {
+                  
+                    }, */
+                  )
+                ],
               ),
             );
           } else if (stepperCount.value == 4) {
-            return SizedBox(
-              height: 320,
+            return SingleChildScrollView(
               child: Column(
                 children: [
                   Text("Page ${stepperCount.value.toString()} / 4"),
@@ -322,7 +319,7 @@ class PostEnqueteScreen extends HookConsumerWidget {
         child: (() {
           if (stepperCount.value == 4) {
             return Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 32.0),
+              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
               child: Row(
                 children: <Widget>[
                   Expanded(

@@ -364,105 +364,109 @@ class UserAdminScreen extends HookConsumerWidget {
       body: isLoading.value
           ? const Center(child: CircularProgressIndicator())
           : hasFilteredData.value
-              ? SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: filteredUsers.value.isEmpty
-                      ? const Center(child: Text('No data available.'))
-                      : DataTable(
-                          showCheckboxColumn: false,
-                          columns: [
-                            moiProfile.value != null && moiProfile.value!.userAttr["jobLevel"] == 4
-                            ? const DataColumn(label: Text("操作"))
-                            : const DataColumn(label: Text(""))
-                            ,
-                            const DataColumn(label: Text("名前")),
-                            const DataColumn(label: Text("アドレス")),
-                            const DataColumn(label: Text("支社")),
-                            const DataColumn(label: Text("部署名")),
-                            const DataColumn(label: Text("役職")),
-                          ],
-                          rows: filteredUsers.value.map<DataRow>((data) {
-                            final rowRecordOfUser = data["user"];
-                            final rowRecordOfProfile = data["profile"];
-                            debugPrint("###??? rowRecordOfProfile: $rowRecordOfProfile");
-
-                            return DataRow(
-                              cells: [
+              ? ListView(
+                children: [
+                  SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: filteredUsers.value.isEmpty
+                          ? const Center(child: Text('No data available.'))
+                          : DataTable(
+                              showCheckboxColumn: false,
+                              columns: [
                                 moiProfile.value != null && moiProfile.value!.userAttr["jobLevel"] == 4
-                                ? DataCell(
-                                    TextButton(
-                                      onPressed: () async {
-                                        // Del user confirm dialog
-                                        showDialog(
-                                          context: context,
-                                          builder: (context) {
-                                            return AlertDialog(
-                                              title: const Text("ユーザ削除"),
-                                              content: Text("ユーザ ${rowRecordOfUser.username}さんを削除します。よろしいですか？"),
-                                              actions: [
-                                                TextButton(
-                                                  child: const Text("キャンセル"),
-                                                  onPressed: () async {
-                                                    if (context.mounted) {
-                                                      context.router.maybePop();
-                                                    }
-                                                  },
-                                                ),
-                                                TextButton(
-                                                  child: const Text("削除", style: TextStyle(color: Colors.red),),
-                                                  onPressed: () async {
-
-                                                    // Delete user from Firebase
-                                                    await authService.deleteAccount(rowRecordOfProfile["uid"]);
-                                                    // Delete user from Firestore
-                                                    await userNotifier.deleteUserByUid(rowRecordOfProfile["uid"]);
-
-                                                    // Close modal
-                                                    if (context.mounted) {
-                                                      context.router.maybePop();
-                                                    }
-                                                  },
-                                                ),
-                                              ],
-                                            );
-                                          }
-                                        );
-                                      },
-                                      child: const Text("削除", style: TextStyle(color: Colors.red)),
-                                    )
-                                  )
-                                : const DataCell(Text(""))
+                                ? const DataColumn(label: Text("操作"))
+                                : const DataColumn(label: Text(""))
                                 ,
-                                DataCell(Text(rowRecordOfUser.username)),
-                                DataCell(Text(rowRecordOfUser.email)),
-                                DataCell(
-                                  Text(
-                                    getOfficeLocationStatusTypeDetailsBySortNumber(
-                                      rowRecordOfProfile["userAttr"]["officeLocation"]
-                                    )?["displayName"] ?? 'Unknown'
-                                  ),
-                                ),
-                                DataCell(
-                                  Text(
-                                    getDepartmentTypeDetailsBySortNumber(
-                                      rowRecordOfProfile["userAttr"]["department"]
-                                    )
-                                      .map((dept) => dept['displayName'])
-                                      .join(', ')
-                                  ),
-                                ),
-                                DataCell(
-                                  Text(
-                                    getJobLevelStatusTypeDetailsBySortNumber(
-                                      rowRecordOfProfile["userAttr"]["jobLevel"]
-                                    )?["displayName"] ?? 'Unknown'
-                                  ),
-                                ),
+                                const DataColumn(label: Text("名前")),
+                                const DataColumn(label: Text("アドレス")),
+                                const DataColumn(label: Text("支社")),
+                                const DataColumn(label: Text("部署名")),
+                                const DataColumn(label: Text("役職")),
                               ],
-                            );
-                          }).toList(),
-                        ),
-                )
+                              rows: filteredUsers.value.map<DataRow>((data) {
+                                final rowRecordOfUser = data["user"];
+                                final rowRecordOfProfile = data["profile"];
+                                debugPrint("###??? rowRecordOfProfile: $rowRecordOfProfile");
+                  
+                                return DataRow(
+                                  cells: [
+                                    moiProfile.value != null && moiProfile.value!.userAttr["jobLevel"] == 4
+                                    ? DataCell(
+                                        TextButton(
+                                          onPressed: () async {
+                                            // Del user confirm dialog
+                                            showDialog(
+                                              context: context,
+                                              builder: (context) {
+                                                return AlertDialog(
+                                                  title: const Text("ユーザ削除"),
+                                                  content: Text("ユーザ ${rowRecordOfUser.username}さんを削除します。よろしいですか？"),
+                                                  actions: [
+                                                    TextButton(
+                                                      child: const Text("キャンセル"),
+                                                      onPressed: () async {
+                                                        if (context.mounted) {
+                                                          context.router.maybePop();
+                                                        }
+                                                      },
+                                                    ),
+                                                    TextButton(
+                                                      child: const Text("削除", style: TextStyle(color: Colors.red),),
+                                                      onPressed: () async {
+                  
+                                                        // Delete user from Firebase
+                                                        await authService.deleteAccount(rowRecordOfProfile["uid"]);
+                                                        // Delete user from Firestore
+                                                        await userNotifier.deleteUserByUid(rowRecordOfProfile["uid"]);
+                  
+                                                        // Close modal
+                                                        if (context.mounted) {
+                                                          context.router.maybePop();
+                                                        }
+                                                      },
+                                                    ),
+                                                  ],
+                                                );
+                                              }
+                                            );
+                                          },
+                                          child: const Text("削除", style: TextStyle(color: Colors.red)),
+                                        )
+                                      )
+                                    : const DataCell(Text(""))
+                                    ,
+                                    DataCell(Text(rowRecordOfUser.username)),
+                                    DataCell(Text(rowRecordOfUser.email)),
+                                    DataCell(
+                                      Text(
+                                        getOfficeLocationStatusTypeDetailsBySortNumber(
+                                          rowRecordOfProfile["userAttr"]["officeLocation"]
+                                        )?["displayName"] ?? 'Unknown'
+                                      ),
+                                    ),
+                                    DataCell(
+                                      Text(
+                                        getDepartmentTypeDetailsBySortNumber(
+                                          rowRecordOfProfile["userAttr"]["department"]
+                                        )
+                                          .map((dept) => dept['displayName'])
+                                          .join(', ')
+                                      ),
+                                    ),
+                                    DataCell(
+                                      Text(
+                                        getJobLevelStatusTypeDetailsBySortNumber(
+                                          rowRecordOfProfile["userAttr"]["jobLevel"]
+                                        )?["displayName"] ?? 'Unknown'
+                                      ),
+                                    ),
+                                  ],
+                                );
+                              }).toList(),
+                            ),
+                    ),
+                ],
+              )
               : const Center(child: Text('No data available.')),
     );
   }
