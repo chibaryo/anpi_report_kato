@@ -71,7 +71,7 @@ class AppHomeScreen extends HookConsumerWidget {
         appBar: AppBar(
           centerTitle: true,
           title: const Text("Anpi"),
-          backgroundColor: Colors.purple[300],
+          backgroundColor: Colors.purple[200],
         ),
         body: Column(
           children: [

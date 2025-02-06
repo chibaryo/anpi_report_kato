@@ -11,7 +11,7 @@
 	<key>provisioningProfiles</key>
 	<dict>
 		<key>com.applpsefew.comdcsd.anpireportapp</key>
-		<string>Kato Sansho Anpi FLutter MDM-Dist</string>
+		<string>kato anpi flutter mdm dist</string>
 	</dict>
 	<key>signingCertificate</key>
 	<string>66FE7824259A979FE17200362D5FDC6C088A6A7B</string>

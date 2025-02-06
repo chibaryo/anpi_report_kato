@@ -306,130 +306,133 @@ Future<void> openSendNotiDialog(BuildContext context, WidgetRef ref) async {
       return () {};
     }, [authAsyncValue]);    
 
-    return Scaffold(
-        appBar: AppBar(
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back),
-            onPressed: () async {
-              if (context.mounted) {
-                //
-                ref.read(bottomNavNotifierProvider.notifier).show();
-                context.router.maybePop();
-              }
-            },
+    return PopScope(
+      canPop: false,
+      child: Scaffold(
+          appBar: AppBar(
+            leading: IconButton(
+              icon: const Icon(Icons.arrow_back),
+              onPressed: () async {
+                if (context.mounted) {
+                  //
+                  ref.read(bottomNavNotifierProvider.notifier).show();
+                  context.router.back();
+                }
+              },
+            ),
+            title: const Text("通知管理"),
+            centerTitle: true,
+            foregroundColor: Colors.black,
+            backgroundColor: Colors.purple[300],
+            actions:
+              (() {
+                if (moiProfile.value != null && moiProfile.value!.userAttr["jobLevel"] == 4) {
+                  return <Widget>[
+                    IconButton(
+                      onPressed: () async {
+                        await openSendNotiDialog(context, ref);
+                      },
+                      icon: const Icon(Icons.add)
+                    ),
+                  ];
+                }
+              })()
           ),
-          title: const Text("通知管理"),
-          centerTitle: true,
-          foregroundColor: Colors.black,
-          backgroundColor: Colors.purple[300],
-          actions:
-            (() {
-              if (moiProfile.value != null && moiProfile.value!.userAttr["jobLevel"] == 4) {
-                return <Widget>[
-                  IconButton(
-                    onPressed: () async {
-                      await openSendNotiDialog(context, ref);
-                    },
-                    icon: const Icon(Icons.add)
-                  ),
-                ];
-              }
-            })()
-        ),
-        body: switch(asyncNotis) {
-          AsyncData(:final value) => SingleChildScrollView(
-            scrollDirection: Axis.vertical,
-            child: SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Column(
-                children: <Widget>[
-                  DataTable(
-                    showCheckboxColumn: false,
-                    columns: [
-                      DataColumn(
-                        label:
+          body: switch(asyncNotis) {
+            AsyncData(:final value) => SingleChildScrollView(
+              scrollDirection: Axis.vertical,
+              child: SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Column(
+                  children: <Widget>[
+                    DataTable(
+                      showCheckboxColumn: false,
+                      columns: [
+                        DataColumn(
+                          label:
+                            moiProfile.value != null && moiProfile.value!.userAttr["jobLevel"] == 4
+                            ?
+                            const Text("操作")
+                            :
+                            const Text(""),
+                        ),
+                        const DataColumn(
+                          label: Text("日時"),
+                        ),
+                        const DataColumn(
+                          label: Text("タイトル"),
+                        ),
+                        const DataColumn(
+                          label: Text("本文"),
+                        ),
+                      ],
+                      rows: asyncNotis.value.map<DataRow>((data) {
+                        final rowRecord = data["noti"];
+                        debugPrint("rowRecord: ${rowRecord.toString()}");
+                                
+                        return DataRow(
+                          onSelectChanged: (bool? selected) async {
+                            if (selected != null && selected) {
+                              // Goto individual noti
+                              context.router.push(NotiAdminDetailsRoute(notiId: rowRecord.notificationId));
+                            }
+                          },
+                          cells: [
                           moiProfile.value != null && moiProfile.value!.userAttr["jobLevel"] == 4
                           ?
-                          const Text("操作")
+                          DataCell(
+                            TextButton(onPressed: () async {
+                              // Show Del noti confirmation dialog
+                              showDialog(
+                                context: context,
+                                builder: (context) {
+                                  return AlertDialog(
+                                    title: const Text("通知削除"),
+                                    content: const Text("通知削除します。よろしいですか？"),
+                                    actions: [
+                                      TextButton(
+                                        child: const Text("キャンセル"),
+                                        onPressed: () async {
+                                          if (context.mounted) {
+                                            context.router.maybePop();
+                                          }
+                                        },
+                                      ),
+                                      TextButton(
+                                        child: const Text("削除", style: TextStyle(color: Colors.red),),
+                                        onPressed: () async {
+                                          // Delete notification
+                                          await notiStreamNotifier.deleteNotificationById(rowRecord.notificationId);
+                                          // Close modal
+                                          if (context.mounted) {
+                                            context.router.maybePop();
+                                          }
+                                        },
+                                      ),
+                                    ],
+                                  );
+                                }
+                              );
+                            }, child: const Text("削除", style: TextStyle(color: Colors.red),))
+                            
+                          )
                           :
-                          const Text(""),
-                      ),
-                      const DataColumn(
-                        label: Text("日時"),
-                      ),
-                      const DataColumn(
-                        label: Text("タイトル"),
-                      ),
-                      const DataColumn(
-                        label: Text("本文"),
-                      ),
-                    ],
-                    rows: asyncNotis.value.map<DataRow>((data) {
-                      final rowRecord = data["noti"];
-                      debugPrint("rowRecord: ${rowRecord.toString()}");
-                              
-                      return DataRow(
-                        onSelectChanged: (bool? selected) async {
-                          if (selected != null && selected) {
-                            // Goto individual noti
-                            context.router.push(NotiAdminDetailsRoute(notiId: rowRecord.notificationId));
-                          }
-                        },
-                        cells: [
-                        moiProfile.value != null && moiProfile.value!.userAttr["jobLevel"] == 4
-                        ?
-                        DataCell(
-                          TextButton(onPressed: () async {
-                            // Show Del noti confirmation dialog
-                            showDialog(
-                              context: context,
-                              builder: (context) {
-                                return AlertDialog(
-                                  title: const Text("通知削除"),
-                                  content: const Text("通知削除します。よろしいですか？"),
-                                  actions: [
-                                    TextButton(
-                                      child: const Text("キャンセル"),
-                                      onPressed: () async {
-                                        if (context.mounted) {
-                                          context.router.maybePop();
-                                        }
-                                      },
-                                    ),
-                                    TextButton(
-                                      child: const Text("削除", style: TextStyle(color: Colors.red),),
-                                      onPressed: () async {
-                                        // Delete notification
-                                        await notiStreamNotifier.deleteNotificationById(rowRecord.notificationId);
-                                        // Close modal
-                                        if (context.mounted) {
-                                          context.router.maybePop();
-                                        }
-                                      },
-                                    ),
-                                  ],
-                                );
-                              }
-                            );
-                          }, child: const Text("削除", style: TextStyle(color: Colors.red),))
-                          
-                        )
-                        :
-                        const DataCell(Text(""))
-                        ,
-                        DataCell(Text(DateFormat('[M/d h:mm]').format(rowRecord.createdAt))),
-                        DataCell(Text(rowRecord.notiTitle)),
-                        DataCell(Text(rowRecord.notiBody)),
-                      ]);
-                    }).toList(),
-                  )
-                ],
+                          const DataCell(Text(""))
+                          ,
+                          DataCell(Text(DateFormat('[M/d h:mm]').format(rowRecord.createdAt))),
+                          DataCell(Text(rowRecord.notiTitle)),
+                          DataCell(Text(rowRecord.notiBody)),
+                        ]);
+                      }).toList(),
+                    )
+                  ],
+                ),
               ),
             ),
-          ),
-          AsyncError(:final error) => Center(child: Text('エラーが発生しました: ${error.toString()}')),
-        _ => const Center(child: CircularProgressIndicator()),
-      }
+            AsyncError(:final error) => Center(child: Text('エラーが発生しました: ${error.toString()}')),
+          _ => const Center(child: CircularProgressIndicator()),
+        }
+      ),
     );
   }
 }
