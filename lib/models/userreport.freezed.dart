@@ -21,16 +21,17 @@ UserReport _$UserReportFromJson(Map<String, dynamic> json) {
 /// @nodoc
 mixin _$UserReport {
   String get uid => throw _privateConstructorUsedError;
-  String get name => throw _privateConstructorUsedError;
-  int get siteCode => throw _privateConstructorUsedError;
-  String get anpiStatus => throw _privateConstructorUsedError;
-  String get gotoOfficeStatus => throw _privateConstructorUsedError;
-  String get message => throw _privateConstructorUsedError;
-  bool get isLocationPermitted => throw _privateConstructorUsedError;
-  List<String> get position =>
-      throw _privateConstructorUsedError; // latitude, longitude, altitude
+  String get notificationId => throw _privateConstructorUsedError;
+  @DocumentReferenceConverter()
+  DocumentReference<Object?> get userRef => throw _privateConstructorUsedError;
+  @DocumentReferenceConverter()
+  DocumentReference<Object?> get profileRef =>
+      throw _privateConstructorUsedError;
+  Map<String, dynamic> get reportContents => throw _privateConstructorUsedError;
   @TimestampConverter()
   DateTime? get createdAt => throw _privateConstructorUsedError;
+  @TimestampConverter()
+  DateTime? get updatedAt => throw _privateConstructorUsedError;
 
   /// Serializes this UserReport to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -50,14 +51,12 @@ abstract class $UserReportCopyWith<$Res> {
   @useResult
   $Res call(
       {String uid,
-      String name,
-      int siteCode,
-      String anpiStatus,
-      String gotoOfficeStatus,
-      String message,
-      bool isLocationPermitted,
-      List<String> position,
-      @TimestampConverter() DateTime? createdAt});
+      String notificationId,
+      @DocumentReferenceConverter() DocumentReference<Object?> userRef,
+      @DocumentReferenceConverter() DocumentReference<Object?> profileRef,
+      Map<String, dynamic> reportContents,
+      @TimestampConverter() DateTime? createdAt,
+      @TimestampConverter() DateTime? updatedAt});
 }
 
 /// @nodoc
@@ -76,51 +75,41 @@ class _$UserReportCopyWithImpl<$Res, $Val extends UserReport>
   @override
   $Res call({
     Object? uid = null,
-    Object? name = null,
-    Object? siteCode = null,
-    Object? anpiStatus = null,
-    Object? gotoOfficeStatus = null,
-    Object? message = null,
-    Object? isLocationPermitted = null,
-    Object? position = null,
+    Object? notificationId = null,
+    Object? userRef = null,
+    Object? profileRef = null,
+    Object? reportContents = null,
     Object? createdAt = freezed,
+    Object? updatedAt = freezed,
   }) {
     return _then(_value.copyWith(
       uid: null == uid
           ? _value.uid
           : uid // ignore: cast_nullable_to_non_nullable
               as String,
-      name: null == name
-          ? _value.name
-          : name // ignore: cast_nullable_to_non_nullable
+      notificationId: null == notificationId
+          ? _value.notificationId
+          : notificationId // ignore: cast_nullable_to_non_nullable
               as String,
-      siteCode: null == siteCode
-          ? _value.siteCode
-          : siteCode // ignore: cast_nullable_to_non_nullable
-              as int,
-      anpiStatus: null == anpiStatus
-          ? _value.anpiStatus
-          : anpiStatus // ignore: cast_nullable_to_non_nullable
-              as String,
-      gotoOfficeStatus: null == gotoOfficeStatus
-          ? _value.gotoOfficeStatus
-          : gotoOfficeStatus // ignore: cast_nullable_to_non_nullable
-              as String,
-      message: null == message
-          ? _value.message
-          : message // ignore: cast_nullable_to_non_nullable
-              as String,
-      isLocationPermitted: null == isLocationPermitted
-          ? _value.isLocationPermitted
-          : isLocationPermitted // ignore: cast_nullable_to_non_nullable
-              as bool,
-      position: null == position
-          ? _value.position
-          : position // ignore: cast_nullable_to_non_nullable
-              as List<String>,
+      userRef: null == userRef
+          ? _value.userRef
+          : userRef // ignore: cast_nullable_to_non_nullable
+              as DocumentReference<Object?>,
+      profileRef: null == profileRef
+          ? _value.profileRef
+          : profileRef // ignore: cast_nullable_to_non_nullable
+              as DocumentReference<Object?>,
+      reportContents: null == reportContents
+          ? _value.reportContents
+          : reportContents // ignore: cast_nullable_to_non_nullable
+              as Map<String, dynamic>,
       createdAt: freezed == createdAt
           ? _value.createdAt
           : createdAt // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
+      updatedAt: freezed == updatedAt
+          ? _value.updatedAt
+          : updatedAt // ignore: cast_nullable_to_non_nullable
               as DateTime?,
     ) as $Val);
   }
@@ -136,14 +125,12 @@ abstract class _$$UserReportImplCopyWith<$Res>
   @useResult
   $Res call(
       {String uid,
-      String name,
-      int siteCode,
-      String anpiStatus,
-      String gotoOfficeStatus,
-      String message,
-      bool isLocationPermitted,
-      List<String> position,
-      @TimestampConverter() DateTime? createdAt});
+      String notificationId,
+      @DocumentReferenceConverter() DocumentReference<Object?> userRef,
+      @DocumentReferenceConverter() DocumentReference<Object?> profileRef,
+      Map<String, dynamic> reportContents,
+      @TimestampConverter() DateTime? createdAt,
+      @TimestampConverter() DateTime? updatedAt});
 }
 
 /// @nodoc
@@ -160,51 +147,41 @@ class __$$UserReportImplCopyWithImpl<$Res>
   @override
   $Res call({
     Object? uid = null,
-    Object? name = null,
-    Object? siteCode = null,
-    Object? anpiStatus = null,
-    Object? gotoOfficeStatus = null,
-    Object? message = null,
-    Object? isLocationPermitted = null,
-    Object? position = null,
+    Object? notificationId = null,
+    Object? userRef = null,
+    Object? profileRef = null,
+    Object? reportContents = null,
     Object? createdAt = freezed,
+    Object? updatedAt = freezed,
   }) {
     return _then(_$UserReportImpl(
       uid: null == uid
           ? _value.uid
           : uid // ignore: cast_nullable_to_non_nullable
               as String,
-      name: null == name
-          ? _value.name
-          : name // ignore: cast_nullable_to_non_nullable
+      notificationId: null == notificationId
+          ? _value.notificationId
+          : notificationId // ignore: cast_nullable_to_non_nullable
               as String,
-      siteCode: null == siteCode
-          ? _value.siteCode
-          : siteCode // ignore: cast_nullable_to_non_nullable
-              as int,
-      anpiStatus: null == anpiStatus
-          ? _value.anpiStatus
-          : anpiStatus // ignore: cast_nullable_to_non_nullable
-              as String,
-      gotoOfficeStatus: null == gotoOfficeStatus
-          ? _value.gotoOfficeStatus
-          : gotoOfficeStatus // ignore: cast_nullable_to_non_nullable
-              as String,
-      message: null == message
-          ? _value.message
-          : message // ignore: cast_nullable_to_non_nullable
-              as String,
-      isLocationPermitted: null == isLocationPermitted
-          ? _value.isLocationPermitted
-          : isLocationPermitted // ignore: cast_nullable_to_non_nullable
-              as bool,
-      position: null == position
-          ? _value._position
-          : position // ignore: cast_nullable_to_non_nullable
-              as List<String>,
+      userRef: null == userRef
+          ? _value.userRef
+          : userRef // ignore: cast_nullable_to_non_nullable
+              as DocumentReference<Object?>,
+      profileRef: null == profileRef
+          ? _value.profileRef
+          : profileRef // ignore: cast_nullable_to_non_nullable
+              as DocumentReference<Object?>,
+      reportContents: null == reportContents
+          ? _value._reportContents
+          : reportContents // ignore: cast_nullable_to_non_nullable
+              as Map<String, dynamic>,
       createdAt: freezed == createdAt
           ? _value.createdAt
           : createdAt // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
+      updatedAt: freezed == updatedAt
+          ? _value.updatedAt
+          : updatedAt // ignore: cast_nullable_to_non_nullable
               as DateTime?,
     ));
   }
@@ -212,18 +189,16 @@ class __$$UserReportImplCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _$UserReportImpl with DiagnosticableTreeMixin implements _UserReport {
+class _$UserReportImpl implements _UserReport {
   const _$UserReportImpl(
       {this.uid = '',
-      this.name = '',
-      this.siteCode = 0,
-      this.anpiStatus = '',
-      this.gotoOfficeStatus = '',
-      this.message = '',
-      this.isLocationPermitted = false,
-      final List<String> position = const [],
-      @TimestampConverter() this.createdAt})
-      : _position = position;
+      this.notificationId = '',
+      @DocumentReferenceConverter() required this.userRef,
+      @DocumentReferenceConverter() required this.profileRef,
+      final Map<String, dynamic> reportContents = const <String, dynamic>{},
+      @TimestampConverter() this.createdAt,
+      @TimestampConverter() this.updatedAt})
+      : _reportContents = reportContents;
 
   factory _$UserReportImpl.fromJson(Map<String, dynamic> json) =>
       _$$UserReportImplFromJson(json);
@@ -233,55 +208,32 @@ class _$UserReportImpl with DiagnosticableTreeMixin implements _UserReport {
   final String uid;
   @override
   @JsonKey()
-  final String name;
+  final String notificationId;
+  @override
+  @DocumentReferenceConverter()
+  final DocumentReference<Object?> userRef;
+  @override
+  @DocumentReferenceConverter()
+  final DocumentReference<Object?> profileRef;
+  final Map<String, dynamic> _reportContents;
   @override
   @JsonKey()
-  final int siteCode;
-  @override
-  @JsonKey()
-  final String anpiStatus;
-  @override
-  @JsonKey()
-  final String gotoOfficeStatus;
-  @override
-  @JsonKey()
-  final String message;
-  @override
-  @JsonKey()
-  final bool isLocationPermitted;
-  final List<String> _position;
-  @override
-  @JsonKey()
-  List<String> get position {
-    if (_position is EqualUnmodifiableListView) return _position;
+  Map<String, dynamic> get reportContents {
+    if (_reportContents is EqualUnmodifiableMapView) return _reportContents;
     // ignore: implicit_dynamic_type
-    return EqualUnmodifiableListView(_position);
+    return EqualUnmodifiableMapView(_reportContents);
   }
 
-// latitude, longitude, altitude
   @override
   @TimestampConverter()
   final DateTime? createdAt;
+  @override
+  @TimestampConverter()
+  final DateTime? updatedAt;
 
   @override
-  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'UserReport(uid: $uid, name: $name, siteCode: $siteCode, anpiStatus: $anpiStatus, gotoOfficeStatus: $gotoOfficeStatus, message: $message, isLocationPermitted: $isLocationPermitted, position: $position, createdAt: $createdAt)';
-  }
-
-  @override
-  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-    super.debugFillProperties(properties);
-    properties
-      ..add(DiagnosticsProperty('type', 'UserReport'))
-      ..add(DiagnosticsProperty('uid', uid))
-      ..add(DiagnosticsProperty('name', name))
-      ..add(DiagnosticsProperty('siteCode', siteCode))
-      ..add(DiagnosticsProperty('anpiStatus', anpiStatus))
-      ..add(DiagnosticsProperty('gotoOfficeStatus', gotoOfficeStatus))
-      ..add(DiagnosticsProperty('message', message))
-      ..add(DiagnosticsProperty('isLocationPermitted', isLocationPermitted))
-      ..add(DiagnosticsProperty('position', position))
-      ..add(DiagnosticsProperty('createdAt', createdAt));
+  String toString() {
+    return 'UserReport(uid: $uid, notificationId: $notificationId, userRef: $userRef, profileRef: $profileRef, reportContents: $reportContents, createdAt: $createdAt, updatedAt: $updatedAt)';
   }
 
   @override
@@ -290,19 +242,17 @@ class _$UserReportImpl with DiagnosticableTreeMixin implements _UserReport {
         (other.runtimeType == runtimeType &&
             other is _$UserReportImpl &&
             (identical(other.uid, uid) || other.uid == uid) &&
-            (identical(other.name, name) || other.name == name) &&
-            (identical(other.siteCode, siteCode) ||
-                other.siteCode == siteCode) &&
-            (identical(other.anpiStatus, anpiStatus) ||
-                other.anpiStatus == anpiStatus) &&
-            (identical(other.gotoOfficeStatus, gotoOfficeStatus) ||
-                other.gotoOfficeStatus == gotoOfficeStatus) &&
-            (identical(other.message, message) || other.message == message) &&
-            (identical(other.isLocationPermitted, isLocationPermitted) ||
-                other.isLocationPermitted == isLocationPermitted) &&
-            const DeepCollectionEquality().equals(other._position, _position) &&
+            (identical(other.notificationId, notificationId) ||
+                other.notificationId == notificationId) &&
+            (identical(other.userRef, userRef) || other.userRef == userRef) &&
+            (identical(other.profileRef, profileRef) ||
+                other.profileRef == profileRef) &&
+            const DeepCollectionEquality()
+                .equals(other._reportContents, _reportContents) &&
             (identical(other.createdAt, createdAt) ||
-                other.createdAt == createdAt));
+                other.createdAt == createdAt) &&
+            (identical(other.updatedAt, updatedAt) ||
+                other.updatedAt == updatedAt));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -310,14 +260,12 @@ class _$UserReportImpl with DiagnosticableTreeMixin implements _UserReport {
   int get hashCode => Object.hash(
       runtimeType,
       uid,
-      name,
-      siteCode,
-      anpiStatus,
-      gotoOfficeStatus,
-      message,
-      isLocationPermitted,
-      const DeepCollectionEquality().hash(_position),
-      createdAt);
+      notificationId,
+      userRef,
+      profileRef,
+      const DeepCollectionEquality().hash(_reportContents),
+      createdAt,
+      updatedAt);
 
   /// Create a copy of UserReport
   /// with the given fields replaced by the non-null parameter values.
@@ -338,14 +286,14 @@ class _$UserReportImpl with DiagnosticableTreeMixin implements _UserReport {
 abstract class _UserReport implements UserReport {
   const factory _UserReport(
       {final String uid,
-      final String name,
-      final int siteCode,
-      final String anpiStatus,
-      final String gotoOfficeStatus,
-      final String message,
-      final bool isLocationPermitted,
-      final List<String> position,
-      @TimestampConverter() final DateTime? createdAt}) = _$UserReportImpl;
+      final String notificationId,
+      @DocumentReferenceConverter()
+      required final DocumentReference<Object?> userRef,
+      @DocumentReferenceConverter()
+      required final DocumentReference<Object?> profileRef,
+      final Map<String, dynamic> reportContents,
+      @TimestampConverter() final DateTime? createdAt,
+      @TimestampConverter() final DateTime? updatedAt}) = _$UserReportImpl;
 
   factory _UserReport.fromJson(Map<String, dynamic> json) =
       _$UserReportImpl.fromJson;
@@ -353,22 +301,21 @@ abstract class _UserReport implements UserReport {
   @override
   String get uid;
   @override
-  String get name;
+  String get notificationId;
   @override
-  int get siteCode;
+  @DocumentReferenceConverter()
+  DocumentReference<Object?> get userRef;
   @override
-  String get anpiStatus;
+  @DocumentReferenceConverter()
+  DocumentReference<Object?> get profileRef;
   @override
-  String get gotoOfficeStatus;
-  @override
-  String get message;
-  @override
-  bool get isLocationPermitted;
-  @override
-  List<String> get position; // latitude, longitude, altitude
+  Map<String, dynamic> get reportContents;
   @override
   @TimestampConverter()
   DateTime? get createdAt;
+  @override
+  @TimestampConverter()
+  DateTime? get updatedAt;
 
   /// Create a copy of UserReport
   /// with the given fields replaced by the non-null parameter values.

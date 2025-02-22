@@ -7,7 +7,7 @@ part of 'combined_notification_notifier.dart';
 // **************************************************************************
 
 String _$streamNotificationCombinedNotifierHash() =>
-    r'aadb46d72880851da2213c5ec66f49a850044621';
+    r'af84da64d961067fdeb946ca73c30403317f1a35';
 
 /// Copied from Dart SDK
 class _SystemHash {

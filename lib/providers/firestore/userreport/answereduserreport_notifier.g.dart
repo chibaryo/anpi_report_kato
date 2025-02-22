@@ -1,13 +1,13 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'users_who_did_not_answered_notifier.dart';
+part of 'answereduserreport_notifier.dart';
 
 // **************************************************************************
 // RiverpodGenerator
 // **************************************************************************
 
-String _$streamAnsOrNotAnsNotificationCombinedNotifierHash() =>
-    r'5efb8563f4ff5a986e1dfd0ec760d2a13625dd74';
+String _$streamAnsweredUserReportNotifierHash() =>
+    r'0d669747bba15b7ca98c8ab398e3ee259d149b5c';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -30,7 +30,7 @@ class _SystemHash {
   }
 }
 
-abstract class _$StreamAnsOrNotAnsNotificationCombinedNotifier
+abstract class _$StreamAnsweredUserReportNotifier
     extends BuildlessAutoDisposeStreamNotifier<List<Map<String, dynamic>>> {
   late final String notiId;
 
@@ -39,29 +39,29 @@ abstract class _$StreamAnsOrNotAnsNotificationCombinedNotifier
   );
 }
 
-/// See also [StreamAnsOrNotAnsNotificationCombinedNotifier].
-@ProviderFor(StreamAnsOrNotAnsNotificationCombinedNotifier)
-const streamAnsOrNotAnsNotificationCombinedNotifierProvider =
-    StreamAnsOrNotAnsNotificationCombinedNotifierFamily();
+/// See also [StreamAnsweredUserReportNotifier].
+@ProviderFor(StreamAnsweredUserReportNotifier)
+const streamAnsweredUserReportNotifierProvider =
+    StreamAnsweredUserReportNotifierFamily();
 
-/// See also [StreamAnsOrNotAnsNotificationCombinedNotifier].
-class StreamAnsOrNotAnsNotificationCombinedNotifierFamily
+/// See also [StreamAnsweredUserReportNotifier].
+class StreamAnsweredUserReportNotifierFamily
     extends Family<AsyncValue<List<Map<String, dynamic>>>> {
-  /// See also [StreamAnsOrNotAnsNotificationCombinedNotifier].
-  const StreamAnsOrNotAnsNotificationCombinedNotifierFamily();
+  /// See also [StreamAnsweredUserReportNotifier].
+  const StreamAnsweredUserReportNotifierFamily();
 
-  /// See also [StreamAnsOrNotAnsNotificationCombinedNotifier].
-  StreamAnsOrNotAnsNotificationCombinedNotifierProvider call(
+  /// See also [StreamAnsweredUserReportNotifier].
+  StreamAnsweredUserReportNotifierProvider call(
     String notiId,
   ) {
-    return StreamAnsOrNotAnsNotificationCombinedNotifierProvider(
+    return StreamAnsweredUserReportNotifierProvider(
       notiId,
     );
   }
 
   @override
-  StreamAnsOrNotAnsNotificationCombinedNotifierProvider getProviderOverride(
-    covariant StreamAnsOrNotAnsNotificationCombinedNotifierProvider provider,
+  StreamAnsweredUserReportNotifierProvider getProviderOverride(
+    covariant StreamAnsweredUserReportNotifierProvider provider,
   ) {
     return call(
       provider.notiId,
@@ -80,35 +80,31 @@ class StreamAnsOrNotAnsNotificationCombinedNotifierFamily
       _allTransitiveDependencies;
 
   @override
-  String? get name => r'streamAnsOrNotAnsNotificationCombinedNotifierProvider';
+  String? get name => r'streamAnsweredUserReportNotifierProvider';
 }
 
-/// See also [StreamAnsOrNotAnsNotificationCombinedNotifier].
-class StreamAnsOrNotAnsNotificationCombinedNotifierProvider
+/// See also [StreamAnsweredUserReportNotifier].
+class StreamAnsweredUserReportNotifierProvider
     extends AutoDisposeStreamNotifierProviderImpl<
-        StreamAnsOrNotAnsNotificationCombinedNotifier,
-        List<Map<String, dynamic>>> {
-  /// See also [StreamAnsOrNotAnsNotificationCombinedNotifier].
-  StreamAnsOrNotAnsNotificationCombinedNotifierProvider(
+        StreamAnsweredUserReportNotifier, List<Map<String, dynamic>>> {
+  /// See also [StreamAnsweredUserReportNotifier].
+  StreamAnsweredUserReportNotifierProvider(
     String notiId,
   ) : this._internal(
-          () =>
-              StreamAnsOrNotAnsNotificationCombinedNotifier()..notiId = notiId,
-          from: streamAnsOrNotAnsNotificationCombinedNotifierProvider,
-          name: r'streamAnsOrNotAnsNotificationCombinedNotifierProvider',
+          () => StreamAnsweredUserReportNotifier()..notiId = notiId,
+          from: streamAnsweredUserReportNotifierProvider,
+          name: r'streamAnsweredUserReportNotifierProvider',
           debugGetCreateSourceHash:
               const bool.fromEnvironment('dart.vm.product')
                   ? null
-                  : _$streamAnsOrNotAnsNotificationCombinedNotifierHash,
-          dependencies:
-              StreamAnsOrNotAnsNotificationCombinedNotifierFamily._dependencies,
+                  : _$streamAnsweredUserReportNotifierHash,
+          dependencies: StreamAnsweredUserReportNotifierFamily._dependencies,
           allTransitiveDependencies:
-              StreamAnsOrNotAnsNotificationCombinedNotifierFamily
-                  ._allTransitiveDependencies,
+              StreamAnsweredUserReportNotifierFamily._allTransitiveDependencies,
           notiId: notiId,
         );
 
-  StreamAnsOrNotAnsNotificationCombinedNotifierProvider._internal(
+  StreamAnsweredUserReportNotifierProvider._internal(
     super._createNotifier, {
     required super.name,
     required super.dependencies,
@@ -122,7 +118,7 @@ class StreamAnsOrNotAnsNotificationCombinedNotifierProvider
 
   @override
   Stream<List<Map<String, dynamic>>> runNotifierBuild(
-    covariant StreamAnsOrNotAnsNotificationCombinedNotifier notifier,
+    covariant StreamAnsweredUserReportNotifier notifier,
   ) {
     return notifier.build(
       notiId,
@@ -130,11 +126,10 @@ class StreamAnsOrNotAnsNotificationCombinedNotifierProvider
   }
 
   @override
-  Override overrideWith(
-      StreamAnsOrNotAnsNotificationCombinedNotifier Function() create) {
+  Override overrideWith(StreamAnsweredUserReportNotifier Function() create) {
     return ProviderOverride(
       origin: this,
-      override: StreamAnsOrNotAnsNotificationCombinedNotifierProvider._internal(
+      override: StreamAnsweredUserReportNotifierProvider._internal(
         () => create()..notiId = notiId,
         from: from,
         name: null,
@@ -147,15 +142,14 @@ class StreamAnsOrNotAnsNotificationCombinedNotifierProvider
   }
 
   @override
-  AutoDisposeStreamNotifierProviderElement<
-      StreamAnsOrNotAnsNotificationCombinedNotifier,
+  AutoDisposeStreamNotifierProviderElement<StreamAnsweredUserReportNotifier,
       List<Map<String, dynamic>>> createElement() {
-    return _StreamAnsOrNotAnsNotificationCombinedNotifierProviderElement(this);
+    return _StreamAnsweredUserReportNotifierProviderElement(this);
   }
 
   @override
   bool operator ==(Object other) {
-    return other is StreamAnsOrNotAnsNotificationCombinedNotifierProvider &&
+    return other is StreamAnsweredUserReportNotifierProvider &&
         other.notiId == notiId;
   }
 
@@ -168,22 +162,21 @@ class StreamAnsOrNotAnsNotificationCombinedNotifierProvider
   }
 }
 
-mixin StreamAnsOrNotAnsNotificationCombinedNotifierRef
+mixin StreamAnsweredUserReportNotifierRef
     on AutoDisposeStreamNotifierProviderRef<List<Map<String, dynamic>>> {
   /// The parameter `notiId` of this provider.
   String get notiId;
 }
 
-class _StreamAnsOrNotAnsNotificationCombinedNotifierProviderElement
+class _StreamAnsweredUserReportNotifierProviderElement
     extends AutoDisposeStreamNotifierProviderElement<
-        StreamAnsOrNotAnsNotificationCombinedNotifier,
-        List<Map<String, dynamic>>>
-    with StreamAnsOrNotAnsNotificationCombinedNotifierRef {
-  _StreamAnsOrNotAnsNotificationCombinedNotifierProviderElement(super.provider);
+        StreamAnsweredUserReportNotifier,
+        List<Map<String, dynamic>>> with StreamAnsweredUserReportNotifierRef {
+  _StreamAnsweredUserReportNotifierProviderElement(super.provider);
 
   @override
   String get notiId =>
-      (origin as StreamAnsOrNotAnsNotificationCombinedNotifierProvider).notiId;
+      (origin as StreamAnsweredUserReportNotifierProvider).notiId;
 }
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member

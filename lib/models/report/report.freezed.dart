@@ -21,7 +21,9 @@ Report _$ReportFromJson(Map<String, dynamic> json) {
 /// @nodoc
 mixin _$Report {
   String get uid => throw _privateConstructorUsedError;
-  String get notificationId => throw _privateConstructorUsedError;
+  String get notificationId =>
+      throw _privateConstructorUsedError; //    @DocumentReferenceConverter() required DocumentReference userRef,
+//    @DocumentReferenceConverter() required DocumentReference profileRef,
   Map<String, dynamic> get reportContents => throw _privateConstructorUsedError;
   @TimestampConverter()
   DateTime? get createdAt => throw _privateConstructorUsedError;
@@ -175,7 +177,11 @@ class _$ReportImpl implements _Report {
   @override
   @JsonKey()
   final String notificationId;
+//    @DocumentReferenceConverter() required DocumentReference userRef,
+//    @DocumentReferenceConverter() required DocumentReference profileRef,
   final Map<String, dynamic> _reportContents;
+//    @DocumentReferenceConverter() required DocumentReference userRef,
+//    @DocumentReferenceConverter() required DocumentReference profileRef,
   @override
   @JsonKey()
   Map<String, dynamic> get reportContents {
@@ -251,7 +257,9 @@ abstract class _Report implements Report {
   @override
   String get uid;
   @override
-  String get notificationId;
+  String
+      get notificationId; //    @DocumentReferenceConverter() required DocumentReference userRef,
+//    @DocumentReferenceConverter() required DocumentReference profileRef,
   @override
   Map<String, dynamic> get reportContents;
   @override

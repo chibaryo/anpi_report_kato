@@ -2,7 +2,10 @@
 import 'package:anpi_report_flutter/entity/userattr/joblevel.dart';
 import 'package:anpi_report_flutter/providers/firestore/firestoreuser/users_who_did_not_answered_notifier.dart';
 import 'package:anpi_report_flutter/providers/firestore/notification/notification_notifier.dart';
+import 'package:anpi_report_flutter/providers/firestore/userreport/answereduserreport_notifier.dart';
+import 'package:anpi_report_flutter/providers/firestore/userreport/unanswereduserlist_notifier.dart';
 import 'package:auto_route/auto_route.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -14,6 +17,7 @@ import '../../../models/notification/notification.dart';
 import '../../../models/profile.dart';
 import '../../../providers/firebaseauth/auth_provider.dart';
 import '../../../providers/firestore/profile/profile_notifier.dart';
+import '../../../providers/progress/progress_notifier.dart';
 
 @RoutePage()
 class NotiAdminDetailsScreen extends HookConsumerWidget {
@@ -23,30 +27,39 @@ class NotiAdminDetailsScreen extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final moiUid = useState<String>("");
+    final unAnsweredUsersUids = useState<List<String>>([]);
     final authAsyncValue = ref.watch(authStateChangesProvider);
     final notiNotifier = ref.watch(streamNotificationNotifierProvider.notifier);
     final profileNotifier = ref.watch(streamProfileNotifierProvider.notifier);
     final currentNoti = useState<Noti?>(null);
     final moiProfile = useState<Profile?>(null);
-    final combinedNotiStream = ref.watch(streamAnsOrNotAnsNotificationCombinedNotifierProvider(notiId));
+    /** new ***/
+    final answeredUsersReportStream = ref.watch(streamAnsweredUserReportNotifierProvider(notiId));
+    final unansweredUsersStream = ref.watch(streamUnansweredUserNotifierProvider(notiId));
+    final progress = ref.watch(progressNotifierProvider);
 
     final tabController = useTabController(initialLength: 2);
 
     useEffect(() {
       final user = authAsyncValue.asData?.value;
+
       if (user != null) {
         moiUid.value = user.uid;
-        debugPrint("moiUid: ${moiUid.value}");
+        debugPrint("moiUid (notiAdminDetail): ${moiUid.value}");
 
         // Get profile by uid
         profileNotifier.getProfileByUid(moiUid.value).then((profile) {
           moiProfile.value = profile;
+          debugPrint("officeLocation: ${profile?.userAttr["officeLocation"].toString()}");
         });
 
       }
       // Get noti
       notiNotifier.getNotificationByNotiId(notiId).then((value) {
         currentNoti.value = value;
+        if (currentNoti.value != null) {
+          debugPrint("currentNoti.value: ${currentNoti.value.toString()}");
+        }
       });
 
       return () {};
@@ -55,7 +68,26 @@ class NotiAdminDetailsScreen extends HookConsumerWidget {
     bool hasBitwiseOverlap(int currentUserDepartments, int userDepartments) {
       return (currentUserDepartments & userDepartments) != 0;
     }
-    
+
+// Filter unanswered users based on officeLocation and jobLevel
+final filteredUnansweredUsers = unansweredUsersStream.when(
+  data: (unansweredData) {
+    if (moiProfile.value?.userAttr["jobLevel"] == 2) {
+      final myOfficeLocation = moiProfile.value?.userAttr["officeLocation"];
+      final myDepartments = moiProfile.value?.userAttr["department"];
+
+      return unansweredData.where((userData) {
+        final userOfficeLocation = userData["profile"]["userAttr"]["officeLocation"];
+        final userDepartments = userData["profile"]["userAttr"]["department"];
+        return userOfficeLocation == myOfficeLocation && hasBitwiseOverlap(userDepartments, myDepartments);
+      }).toList();
+    }
+    return unansweredData; // No filtering if jobLevel is not 2
+  },
+  loading: () => <Map<String, dynamic>>[],
+  error: (error, stack) => <Map<String, dynamic>>[],
+);
+
     Widget buildDataTable(List<Map<String, dynamic>> notAnsweredUsers) {
       return Text(notAnsweredUsers.toString());
 /*      return DataTable(
@@ -77,6 +109,7 @@ class NotiAdminDetailsScreen extends HookConsumerWidget {
       ); */
     }
 
+
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
@@ -92,10 +125,205 @@ class NotiAdminDetailsScreen extends HookConsumerWidget {
               Tab(text: "未回答ユーザ"),
             ]
           ),
+/*          if (unansweredUsersStream.isLoading)
+            Center(
+              child: LinearProgressIndicator(
+                value: progress,
+                backgroundColor: Colors.grey,
+                valueColor: const AlwaysStoppedAnimation<Color>(Colors.deepPurpleAccent),
+              ),
+            ), */
           // TabBarView
           Expanded(
             child:
-              currentNoti.value != null&& combinedNotiStream.asData?.value != null && combinedNotiStream.asData!.value.isNotEmpty
+              switch((answeredUsersReportStream, unansweredUsersStream)) {
+                (AsyncData(value: final answeredData), AsyncData(value: final unansweredData)) =>
+                  TabBarView(
+                    controller: tabController,
+                    children: [
+                      // Answered
+                CustomScrollView(
+                  slivers: [
+                    SliverPadding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
+                      sliver: SliverList(
+                        delegate: SliverChildBuilderDelegate(
+                          childCount: answeredData.length,
+                          (BuildContext context, int index) {
+                            final reportObject = answeredData[index]["report"];
+                            final user = answeredData[index]["user"] as Map<String, dynamic>?;
+                            final profile = answeredData[index]["profile"] as Map<String, dynamic>?;
+
+                            return SingleChildScrollView(
+                              scrollDirection: Axis.horizontal,
+                              child: DataTable(
+                                showCheckboxColumn: false,
+                                columns: const [
+                                  DataColumn(label: Text("名前")),
+                                  DataColumn(label: Text("アドレス")),
+                                  DataColumn(label: Text("支社")),
+                                  DataColumn(label: Text("部署名")),
+                                  DataColumn(label: Text("役職")),
+                                  DataColumn(label: Text("怪我")),
+                                  DataColumn(label: Text("出社")),
+                                  DataColumn(label: Text("位置情報")),
+                                  DataColumn(label: Text("伝言")),
+                                  DataColumn(label: Text("確認したか")),
+                                ],
+                                rows: [
+                                  DataRow(
+                                    cells: [
+                                      DataCell(Text(user?['username'] ?? 'Unknown User')),
+                                      DataCell(Text(user?['email'] ?? 'N/A')),
+                                      DataCell(Text(getOfficeLocationStatusTypeDetailsBySortNumber(profile?["userAttr"]["officeLocation"])?["displayName"])),
+                                      DataCell(Text(getDepartmentTypeDetailsBySortNumber(
+                                        profile?["userAttr"]["department"])
+                                        .map((dept) => dept['displayName'])
+                                        .join(', '))),
+                                      DataCell(Text(getJobLevelStatusTypeDetailsBySortNumber(profile?["userAttr"]["jobLevel"])?["displayName"])),
+                                      DataCell(Text(reportObject.reportContents["injuryStatus"] ?? "-")),
+                                      DataCell(Text(reportObject.reportContents["attendOfficeStatus"] ?? "-")),
+                                      DataCell(Text(reportObject.reportContents["location"] ?? "-")),
+                                      DataCell(Text(reportObject.reportContents["message"] ?? "-")),
+                                      DataCell(reportObject.reportContents["confirmed"] ? const Text("はい") :const Text("いいえ")),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                      // Not Answered
+                      CustomScrollView(
+                        slivers: [
+                          SliverPadding(
+                            padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
+                            sliver: SliverList(
+                              delegate: SliverChildBuilderDelegate(
+                                childCount: filteredUnansweredUsers.length,
+                                (BuildContext context, int index) {
+                                  final user = filteredUnansweredUsers[index]["user"]; 
+                                  final profile = filteredUnansweredUsers[index]["profile"];
+
+                                  return Container(
+                                    decoration: BoxDecoration(
+                                      border: Border.all(),
+                                    ),
+                                    child: Column(
+                                      children: [
+                                        Text(user["username"]),
+                                        Text(user["email"]),
+                                        Text(getOfficeLocationStatusTypeDetailsBySortNumber(profile["userAttr"]["officeLocation"])?["displayName"]),
+                                        Text(getDepartmentTypeDetailsBySortNumber(
+                                          profile["userAttr"]["department"])
+                                          .map((dept) => dept['displayName'])
+                                          .join(', ')),
+                                      ],
+                                    ),
+                                  );
+                                }
+                              ),
+                            ),
+                          ),
+                        ] 
+                      ),
+                    ],
+                  ),
+/*
+                  CustomScrollView(
+                    slivers: [
+                      SliverPadding(
+                        padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
+                        sliver: SliverList(
+                          delegate: SliverChildBuilderDelegate(
+                            childCount: value.length,
+                            (BuildContext context, int index) {
+                              final reportObject = value[index]["report"]; 
+                              final profileRef = reportObject.profileRef as DocumentReference<Map<String, dynamic>>;
+                              final userRef = reportObject.userRef as DocumentReference<Map<String, dynamic>>;
+
+                              return FutureBuilder(
+                                future: Future.wait([
+                                  profileRef.get(),
+                                  userRef.get(),
+                                ]),
+                                builder: (context, AsyncSnapshot<List<DocumentSnapshot<Map<String, dynamic>>>> snapshot) {
+                                  if (snapshot.connectionState == ConnectionState.waiting) {
+                                    return const CircularProgressIndicator(); // Show a loader while fetching
+                                  }
+
+                                  if (snapshot.hasError) {
+                                    return Text("Error: ${snapshot.error}");
+                                  }
+
+                                  if (!snapshot.hasData || snapshot.data!.any((doc) => !doc.exists)) {
+                                    return const Text("Profile or User not found.");
+                                  }
+
+                                  // Extract profile and user data
+                                  final profileDoc = snapshot.data![0];
+                                  final userDoc = snapshot.data![1];
+
+                                  // Convert to Profile and User objects
+                                  final profile = Profile.fromJson(profileDoc.data()!);
+                                  final user = FirestoreUser.fromJson(userDoc.data()!);
+
+                                  // Print the data
+                                  debugPrint("Profile Data: ${profile.toString()}");
+                                  debugPrint("User Data: ${user.toString()}");
+
+                                  // Display the profile and user data in the UI
+                                  return Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text("氏名: ${user.username}"),
+                                      Text("Email: ${user.email}"),
+                                      Text(getDepartmentTypeDetailsBySortNumber(
+                                        profile.userAttr["department"])
+                                        .map((dept) => dept['displayName'])
+                                        .join(', ')),
+                                      Text('支社: ${getOfficeLocationStatusTypeDetailsBySortNumber(profile.userAttr["officeLocation"])?["displayName"]}'),
+                                      Text('職位: ${getJobLevelStatusTypeDetailsBySortNumber(profile.userAttr["jobLevel"])?["displayName"]}'),
+                                      currentNoti.value?.notiType == 2
+                                      ?
+                                      // Confirmation only
+                                      Text('確認したか？: ${reportObject.reportContents["confirmed"] ? "はい" : "いいえ"}')
+                                      :
+                                      // Enquete
+                                      const Text("アンケート項目への回答")
+                                    ],
+                                  );
+                                },
+                              );
+                            }
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+*/
+                (AsyncError _, AsyncError _) => const Text('Error'),
+                  (_, _) => Expanded(
+                    child: Center(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    LinearProgressIndicator(
+                                      value: progress,
+                                      backgroundColor: Colors.grey,
+                                      valueColor: const AlwaysStoppedAnimation<Color>(Colors.deepPurpleAccent),
+                                    ),
+                                    Text("${(progress * 100).toStringAsFixed(0)} パーセント ロード中...")
+                                  ],
+                                ),
+                              ),
+                  ),
+                },
+/*              currentNoti.value != null && combinedNotiStream.asData?.value != null && combinedNotiStream.asData!.value.isNotEmpty
               ? combinedNotiStream.when(
                 data: (value) {
                   return TabBarView(
@@ -129,8 +357,7 @@ class NotiAdminDetailsScreen extends HookConsumerWidget {
                                       debugPrint("### userDepartment ### : $userDepartments");
                             
                                       final isSameOfficeLocation = (currentUserOfficeLocation == userOfficeLocation);
-                                      final isDepartmentMatch = hasBitwiseOverlap(currentUserDepartments, userDepartments);
-                            
+                                      final isDepartmentMatch = hasBitwiseOverlap(currentUserDepartments, userDepartments);                            
                                       return isSameOfficeLocation && isDepartmentMatch;
                                     }).map<DataRow>((data) {
                                       final rowRecordOfUser = data["user"];
@@ -507,7 +734,7 @@ class NotiAdminDetailsScreen extends HookConsumerWidget {
                   ),
                 ],
               ) */
-              : const Text("is Loading..."),
+              : const Text("is Loading..."), */
           ),
         ],
       )

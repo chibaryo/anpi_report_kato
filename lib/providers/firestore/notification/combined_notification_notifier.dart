@@ -19,7 +19,7 @@ class StreamNotificationCombinedNotifier extends _$StreamNotificationCombinedNot
           for (var notificationDoc in notificationSnapshot.docs) {
             // Check if the report exists for this notification
             final reportsSnapshot = await notificationDoc.reference
-                .collection("reports")
+                .collection("ureports")
                 .doc(uid)
                 .get();
 
