@@ -1,9 +1,10 @@
 import 'package:anpi_report_flutter/providers/firebaseauth/auth_provider.dart';
 import 'package:anpi_report_flutter/providers/firestore/notification/notification_notifier.dart';
-import 'package:anpi_report_flutter/providers/firestore/report/report_notifier.dart';
+import 'package:anpi_report_flutter/providers/firestore/userreport_notifier.dart';
 import 'package:anpi_report_flutter/providers/geolocator/location_provider.dart';
 import 'package:anpi_report_flutter/router/app_router.dart';
 import 'package:auto_route/auto_route.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:custom_text_form_field_plus/custom_text_form_field_plus.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -12,6 +13,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:uuid/uuid.dart';
 import '../../models/notification/notification.dart';
 import '../../models/report/report.dart';
+import '../../models/userreport.dart';
 import '../../providers/bottomnav/bottomnav_provider.dart';
 import '../../providers/firestore/notification/combined_notification_notifier.dart';
 
@@ -24,7 +26,7 @@ class PostEnqueteScreen extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final isNewReport = useState<bool>(true);
     final moiUid = useState<String>("");
-    final moiReport = useState<Report?>(null);
+    final moiReport = useState<UserReport?>(null);
     final isConfirmationChecked = useState<bool?>(false);
     final authAsyncValue = ref.watch(authStateChangesProvider);
 
@@ -38,7 +40,7 @@ class PostEnqueteScreen extends HookConsumerWidget {
     //
     final tFieldMessageController = useTextEditingController();
     // Provider watch
-    final reportNotifier = ref.watch(streamReportNotifierProvider.notifier);
+    final userReportNotifier = ref.watch(streamUserReportNotifierProvider.notifier);
     final notificationNotifier = ref.watch(streamNotificationNotifierProvider.notifier);
 
     // Hide the BottomNavBar when this screen is active
@@ -59,14 +61,14 @@ class PostEnqueteScreen extends HookConsumerWidget {
           //debugPrint("moiUid: ${moiUid.value}");
 
           // Load injuryStatus
-          reportNotifier.getReportByUid(moiUid.value, notificationId).then((result) {
+          userReportNotifier.getUserReportByUid(moiUid.value, notificationId).then((result) {
             if (result != null) {
               moiReport.value = result;
               //debugPrint("moiReport: ${moiReport.value}");
               // Apply moiReport.value to local states
-              injuryStatus.value = moiReport.value!.reportContents["injuryStatus"];
-              attendOfficeStatus.value = moiReport.value!.reportContents["attendOfficeStatus"];
-              tFieldMessageController.text = moiReport.value!.reportContents["message"];
+              injuryStatus.value = moiReport.value!.reportContents["injuryStatus"] ?? 0;
+              attendOfficeStatus.value = moiReport.value!.reportContents["attendOfficeStatus"] ?? 0;
+              tFieldMessageController.text = moiReport.value!.reportContents["message"] ?? "";
               // Flag on
               isNewReport.value = false;
             }
@@ -337,7 +339,14 @@ class PostEnqueteScreen extends HookConsumerWidget {
                           
                         if (isNewReport.value == true) {
                         // Build newReport
-                          final newreport = Report(
+                        final DocumentReference userRef = FirebaseFirestore.instance.collection('users').doc(moiUid.value);
+                        final DocumentReference profileRef = FirebaseFirestore.instance
+                          .collection('users')
+                          .doc(moiUid.value)
+                          .collection("profiles")
+                          .doc(moiUid.value);
+
+                          final newreport = UserReport(
                             uid: moiUid.value,
                             notificationId: notificationId,
                             reportContents: {
@@ -347,11 +356,13 @@ class PostEnqueteScreen extends HookConsumerWidget {
                               "message": tFieldMessageController.text,
                               "isConfirmed": true,
                             },
+                            userRef: userRef,
+                            profileRef: profileRef,
                             createdAt: DateTime.now(),
                             updatedAt: DateTime.now(),
                           );
                           
-                          await reportNotifier.addReport(
+                          await userReportNotifier.addUserReport(
                             notificationId,
                             moiUid.value,
                             newreport,
@@ -368,7 +379,7 @@ class PostEnqueteScreen extends HookConsumerWidget {
                             },
                             "updatedAt": DateTime.now(),
                           };
-                          await reportNotifier.updateReport(
+                          await userReportNotifier.updateUserReport(
                             notificationId,
                             moiUid.value,
                             updates,
@@ -468,17 +479,26 @@ class PostEnqueteScreen extends HookConsumerWidget {
                 onPressed: !isConfirmationChecked.value! ? null : () async {
                         if (isNewReport.value == true) {
                         // Build newReport
-                          final newreport = Report(
+                        final DocumentReference userRef = FirebaseFirestore.instance.collection('users').doc(moiUid.value);
+                        final DocumentReference profileRef = FirebaseFirestore.instance
+                          .collection('users')
+                          .doc(moiUid.value)
+                          .collection("profiles")
+                          .doc(moiUid.value);
+
+                          final newreport = UserReport(
                             uid: moiUid.value,
                             notificationId: notificationId,
                             reportContents: {
                               "isConfirmed": isConfirmationChecked.value!,
                             },
+                            userRef: userRef,
+                            profileRef: profileRef,
                             createdAt: DateTime.now(),
                             updatedAt: DateTime.now(),
                           );
               
-                          await reportNotifier.addReport(
+                          await userReportNotifier.addUserReport(
                             notificationId,
                             moiUid.value,
                             newreport,
@@ -491,7 +511,7 @@ class PostEnqueteScreen extends HookConsumerWidget {
                             },
                             "updatedAt": DateTime.now(),
                           };
-                          await reportNotifier.updateReport(
+                          await userReportNotifier.updateUserReport(
                             notificationId,
                             moiUid.value,
                             updates,
