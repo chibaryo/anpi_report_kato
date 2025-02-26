@@ -15,6 +15,7 @@ import '../../../entity/userattr/office_location.dart';
 import '../../../models/firestoreuser.dart';
 import '../../../models/notification/notification.dart';
 import '../../../models/profile.dart';
+import '../../../providers/bottomnav/bottomnav_provider.dart';
 import '../../../providers/firebaseauth/auth_provider.dart';
 import '../../../providers/firestore/profile/profile_notifier.dart';
 import '../../../providers/progress/progress_notifier.dart';
@@ -35,7 +36,8 @@ class NotiAdminDetailsScreen extends HookConsumerWidget {
     final moiProfile = useState<Profile?>(null);
     /** new ***/
     final answeredUsersReportStream = ref.watch(streamAnsweredUserReportNotifierProvider(notiId));
-    final unansweredUsersStream = ref.watch(streamUnansweredUserNotifierProvider(notiId));
+    final unansweredUsers = ref.watch(fetchUnansweredUsersProvider(notiId));
+    //final unansweredUsersStream = ref.watch(streamUnansweredUserNotifierProvider(notiId));
     final progress = ref.watch(progressNotifierProvider);
 
     final tabController = useTabController(initialLength: 2);
@@ -70,7 +72,7 @@ class NotiAdminDetailsScreen extends HookConsumerWidget {
     }
 
 // Filter unanswered users based on officeLocation and jobLevel
-final filteredUnansweredUsers = unansweredUsersStream.when(
+/*final filteredUnansweredUsers = unansweredUsersStream.when(
   data: (unansweredData) {
     if (moiProfile.value?.userAttr["jobLevel"] == 2) {
       final myOfficeLocation = moiProfile.value?.userAttr["officeLocation"];
@@ -86,7 +88,7 @@ final filteredUnansweredUsers = unansweredUsersStream.when(
   },
   loading: () => <Map<String, dynamic>>[],
   error: (error, stack) => <Map<String, dynamic>>[],
-);
+); */
 
     Widget buildDataTable(List<Map<String, dynamic>> notAnsweredUsers) {
       return Text(notAnsweredUsers.toString());
@@ -112,6 +114,16 @@ final filteredUnansweredUsers = unansweredUsersStream.when(
 
     return Scaffold(
       appBar: AppBar(
+            leading: IconButton(
+              icon: const Icon(Icons.arrow_back),
+              onPressed: () async {
+                if (context.mounted) {
+                  //
+                  ref.read(bottomNavNotifierProvider.notifier).show();
+                  context.router.back();
+                }
+              },
+            ),
         centerTitle: true,
         title: const Text("Anpi"),
         backgroundColor: Colors.purple[300],
@@ -136,78 +148,76 @@ final filteredUnansweredUsers = unansweredUsersStream.when(
           // TabBarView
           Expanded(
             child:
-              switch((answeredUsersReportStream, unansweredUsersStream)) {
+              switch((answeredUsersReportStream, unansweredUsers)) {
                 (AsyncData(value: final answeredData), AsyncData(value: final unansweredData)) =>
                   TabBarView(
                     controller: tabController,
                     children: [
                       // Answered
-                CustomScrollView(
-                  slivers: [
-                    SliverPadding(
-                      padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
-                      sliver: SliverList(
-                        delegate: SliverChildBuilderDelegate(
-                          childCount: answeredData.length,
-                          (BuildContext context, int index) {
-                            final reportObject = answeredData[index]["report"];
-                            final user = answeredData[index]["user"] as Map<String, dynamic>?;
-                            final profile = answeredData[index]["profile"] as Map<String, dynamic>?;
+CustomScrollView(
+  slivers: [
+    SliverPadding(
+      padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
+      sliver: SliverList(
+        delegate: SliverChildListDelegate(
+          [
+            SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: DataTable(
+                showCheckboxColumn: false,
+                columns: const [
+                  DataColumn(label: Text("名前")),
+                  DataColumn(label: Text("アドレス")),
+                  DataColumn(label: Text("支社")),
+                  DataColumn(label: Text("部署名")),
+                  DataColumn(label: Text("役職")),
+                  DataColumn(label: Text("怪我")),
+                  DataColumn(label: Text("出社")),
+                  DataColumn(label: Text("位置情報")),
+                  DataColumn(label: Text("伝言")),
+                  DataColumn(label: Text("確認したか")),
+                ],
+                rows: answeredData.map((data) {
+                  final reportObject = data["report"];
+                  final user = data["user"] as Map<String, dynamic>?;
+                  final profile = data["profile"] as Map<String, dynamic>?;
 
-                            return SingleChildScrollView(
-                              scrollDirection: Axis.horizontal,
-                              child: DataTable(
-                                showCheckboxColumn: false,
-                                columns: const [
-                                  DataColumn(label: Text("名前")),
-                                  DataColumn(label: Text("アドレス")),
-                                  DataColumn(label: Text("支社")),
-                                  DataColumn(label: Text("部署名")),
-                                  DataColumn(label: Text("役職")),
-                                  DataColumn(label: Text("怪我")),
-                                  DataColumn(label: Text("出社")),
-                                  DataColumn(label: Text("位置情報")),
-                                  DataColumn(label: Text("伝言")),
-                                  DataColumn(label: Text("確認したか")),
-                                ],
-                                rows: [
-                                  DataRow(
-                                    cells: [
-                                      DataCell(Text(user?['username'] ?? 'Unknown User')),
-                                      DataCell(Text(user?['email'] ?? 'N/A')),
-                                      DataCell(Text(getOfficeLocationStatusTypeDetailsBySortNumber(profile?["userAttr"]["officeLocation"])?["displayName"])),
-                                      DataCell(Text(getDepartmentTypeDetailsBySortNumber(
-                                        profile?["userAttr"]["department"])
-                                        .map((dept) => dept['displayName'])
-                                        .join(', '))),
-                                      DataCell(Text(getJobLevelStatusTypeDetailsBySortNumber(profile?["userAttr"]["jobLevel"])?["displayName"])),
-                                      DataCell(Text(reportObject.reportContents["injuryStatus"] ?? "-")),
-                                      DataCell(Text(reportObject.reportContents["attendOfficeStatus"] ?? "-")),
-                                      DataCell(Text(reportObject.reportContents["location"] ?? "-")),
-                                      DataCell(Text(reportObject.reportContents["message"] ?? "-")),
-                                      DataCell(reportObject.reportContents["confirmed"] ? const Text("はい") :const Text("いいえ")),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            );
-                          },
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                      // Not Answered
+                  return DataRow(
+                    cells: [
+                      DataCell(Text(user?['username'] ?? 'Unknown User')),
+                      DataCell(Text(user?['email'] ?? 'N/A')),
+                      DataCell(Text(getOfficeLocationStatusTypeDetailsBySortNumber(profile?["userAttr"]["officeLocation"])?["displayName"])),
+                      DataCell(Text(getDepartmentTypeDetailsBySortNumber(
+                        profile?["userAttr"]["department"])
+                        .map((dept) => dept['displayName'])
+                        .join(', '))),
+                      DataCell(Text(getJobLevelStatusTypeDetailsBySortNumber(profile?["userAttr"]["jobLevel"])?["displayName"])),
+                      DataCell(Text(reportObject.reportContents["injuryStatus"] ?? "-")),
+                      DataCell(Text(reportObject.reportContents["attendOfficeStatus"] ?? "-")),
+                      DataCell(Text(reportObject.reportContents["location"] ?? "-")),
+                      DataCell(Text(reportObject.reportContents["message"] ?? "-")),
+                      DataCell(reportObject.reportContents["isConfirmed"] ? const Text("はい") : const Text("いいえ")),
+                    ],
+                  );
+                }).toList(),
+              ),
+            ),
+          ],
+        ),
+      ),
+    ),
+  ],
+),
                       CustomScrollView(
                         slivers: [
                           SliverPadding(
                             padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
                             sliver: SliverList(
                               delegate: SliverChildBuilderDelegate(
-                                childCount: filteredUnansweredUsers.length,
+                                childCount: unansweredData.length,
                                 (BuildContext context, int index) {
-                                  final user = filteredUnansweredUsers[index]["user"]; 
-                                  final profile = filteredUnansweredUsers[index]["profile"];
+                                  final user = unansweredData[index]["user"]; 
+                                  final profile = unansweredData[index]["profile"];
 
                                   return Container(
                                     decoration: BoxDecoration(
@@ -291,7 +301,7 @@ final filteredUnansweredUsers = unansweredUsersStream.when(
                                       currentNoti.value?.notiType == 2
                                       ?
                                       // Confirmation only
-                                      Text('確認したか？: ${reportObject.reportContents["confirmed"] ? "はい" : "いいえ"}')
+                                      Text('確認したか？: ${reportObject.reportContents["isConfirmed"] ? "はい" : "いいえ"}')
                                       :
                                       // Enquete
                                       const Text("アンケート項目への回答")

@@ -3,8 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
+import '../screens/authenticated/aboutthisapp_screen.dart';
 import '../screens/authenticated/admins/notiadmin_screen.dart';
 import '../screens/authenticated/admins/notiadmindetails_screen.dart';
+import '../screens/authenticated/admins/playadmin_screen.dart';
 import '../screens/authenticated/admins/templateadmin_screen.dart';
 import '../screens/authenticated/admins/theotherops_screen.dart';
 import '../screens/authenticated/admins/useradmin_screen.dart';
@@ -98,6 +100,9 @@ class AppRouter extends _$AppRouter {
               page: UserAdminRoute.page,
             ),
             AutoRoute(
+              page: PlayAdminRoute.page,
+            ),
+            AutoRoute(
               page: TemplateAdminRoute.page,
             ),
             AutoRoute(
@@ -111,6 +116,9 @@ class AppRouter extends _$AppRouter {
             ),
             AutoRoute(
               page: PrivacyPolicyWebViewRoute.page,
+            ),
+            AutoRoute(
+              page: AboutThisAppRoute.page,
             ),
           ]
         ),

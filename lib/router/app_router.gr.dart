@@ -15,6 +15,12 @@ abstract class _$AppRouter extends RootStackRouter {
 
   @override
   final Map<String, PageFactory> pagesMap = {
+    AboutThisAppRoute.name: (routeData) {
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: const AboutThisAppScreen(),
+      );
+    },
     AppHomeRouterRoute.name: (routeData) {
       return AutoRoutePage<dynamic>(
         routeData: routeData,
@@ -57,6 +63,12 @@ abstract class _$AppRouter extends RootStackRouter {
       return AutoRoutePage<dynamic>(
         routeData: routeData,
         child: const NotiAdminScreen(),
+      );
+    },
+    PlayAdminRoute.name: (routeData) {
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: const PlayAdminScreen(),
       );
     },
     PostEnqueteRoute.name: (routeData) {
@@ -142,6 +154,20 @@ abstract class _$AppRouter extends RootStackRouter {
       );
     },
   };
+}
+
+/// generated route for
+/// [AboutThisAppScreen]
+class AboutThisAppRoute extends PageRouteInfo<void> {
+  const AboutThisAppRoute({List<PageRouteInfo>? children})
+      : super(
+          AboutThisAppRoute.name,
+          initialChildren: children,
+        );
+
+  static const String name = 'AboutThisAppRoute';
+
+  static const PageInfo<void> page = PageInfo<void>(name);
 }
 
 /// generated route for
@@ -272,6 +298,20 @@ class NotiAdminRoute extends PageRouteInfo<void> {
         );
 
   static const String name = 'NotiAdminRoute';
+
+  static const PageInfo<void> page = PageInfo<void>(name);
+}
+
+/// generated route for
+/// [PlayAdminScreen]
+class PlayAdminRoute extends PageRouteInfo<void> {
+  const PlayAdminRoute({List<PageRouteInfo>? children})
+      : super(
+          PlayAdminRoute.name,
+          initialChildren: children,
+        );
+
+  static const String name = 'PlayAdminRoute';
 
   static const PageInfo<void> page = PageInfo<void>(name);
 }

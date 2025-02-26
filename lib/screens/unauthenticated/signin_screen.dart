@@ -36,14 +36,14 @@ class SigninScreen extends HookConsumerWidget {
     final deviceInfoNotifier = ref.watch(streamDeviceInfoNotifierProvider.notifier);
     final formKey = useMemoized(() => GlobalKey<FormBuilderState>());
 
-/*    const targetCompanyCode = "C1040090==";
+    const targetCompanyCode = "KATOSANSHOTOKYO";
     final tFieldCompanyCodeController = useTextEditingController();
 
     final isValidCompanyCode = useListenableSelector(
       tFieldCompanyCodeController,
       () => tFieldCompanyCodeController.text == targetCompanyCode
     );
- */
+ 
 
      return Scaffold(
         appBar: AppBar(
@@ -63,7 +63,7 @@ class SigninScreen extends HookConsumerWidget {
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: <Widget>[
-/*                          FormBuilderTextField(
+                          FormBuilderTextField(
                             name: "companyCode",
                             controller: tFieldCompanyCodeController,
                             decoration: const InputDecoration(labelText: "企業コード"),
@@ -76,7 +76,7 @@ class SigninScreen extends HookConsumerWidget {
                               if (value.length < 8) {
                                 return "企業コードは8文字以上である必要があります";
                               }
-                              if (value != "C1040090==") {
+                              if (value != "KATOSANSHOTOKYO") {
                                 return "企業コードが正しくありません";
                               }
                               return null;
@@ -86,7 +86,7 @@ class SigninScreen extends HookConsumerWidget {
                             ]), */
                             keyboardType: TextInputType.text,
                             textCapitalization: TextCapitalization.none,
-                          ), */
+                          ),
                           // Email
                           FormBuilderTextField(
                             name: "email",
@@ -119,8 +119,8 @@ class SigninScreen extends HookConsumerWidget {
                                       backgroundColor: Colors.indigo[300],
                                       foregroundColor: Colors.white,
                                     ),
-                                    // !isValidCompanyCode ? null :
-                                    onPressed: () async {
+                                    
+                                    onPressed: !isValidCompanyCode ? null : () async {
                                       // Retreive fcmToken from SecureStorage
                                       String? fcmToken = await storage.read(key: 'fcmToken');
 

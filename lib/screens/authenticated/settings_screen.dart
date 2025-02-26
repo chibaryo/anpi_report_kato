@@ -255,6 +255,24 @@ class SettingsScreen extends HookConsumerWidget {
                       ),
                       child: Column(
                         children: [
+                          /*GestureDetector(
+                            behavior: HitTestBehavior.opaque,
+                            onTap: () async {
+                              if (context.mounted) {
+                                context.router.push(const PlayAdminRoute());
+                              }
+                            },
+                            child: const Padding(
+                              padding: EdgeInsets.all(16.0),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text("あそびば"),
+                                  Icon(Icons.chevron_right),
+                                ],
+                              ),
+                            ),
+                          ), */
                           GestureDetector(
                             behavior: HitTestBehavior.opaque,
                             onTap: () async {
@@ -393,6 +411,24 @@ class SettingsScreen extends HookConsumerWidget {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text("プライバシーポリシー"),
+                            Icon(Icons.chevron_right),
+                          ],
+                        ),
+                      ),
+                    ),
+                    GestureDetector(
+                      behavior: HitTestBehavior.opaque,
+                      onTap: () async {
+                        if (context.mounted) {
+                          context.router.push(const AboutThisAppRoute());
+                        }
+                      },
+                      child: const Padding(
+                        padding: EdgeInsets.all(16.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text("このアプリについて"),
                             Icon(Icons.chevron_right),
                           ],
                         ),

@@ -2,7 +2,9 @@ import 'package:anpi_report_flutter/entity/userattr/joblevel.dart';
 import 'package:anpi_report_flutter/entity/userattr/office_location.dart';
 import 'package:anpi_report_flutter/providers/firestore/firestoreuser/firestoreuser_notifier.dart';
 import 'package:anpi_report_flutter/providers/firestore/profile/profile_notifier.dart';
+import 'package:anpi_report_flutter/router/app_router.dart';
 import 'package:auto_route/auto_route.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:custom_text_form_field_plus/custom_text_form_field_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
@@ -371,9 +373,16 @@ List<String> getSelectedDepartments(int selectedSum) {
                                         );
                                         await profileNotifier.addProfile(result, newProfile);
 
-                                        /* if (context.mounted) {
-                                          context.router.replace(const RootRoute());
-                                        } */
+                                        // Update cachestatus
+                                        await FirebaseFirestore.instance
+                                          .collection("cachestatus").doc("users").set({
+                                            'updatedAt': DateTime.now(),
+                                        });
+                                        debugPrint("updated cache date");
+
+                                        if (context.mounted) {
+                                          context.router.replace(const TabsRouterRoute());
+                                        }
                                         // Reset form
 //                                        formKey.currentState?.reset();
 

@@ -17,11 +17,13 @@ import 'package:http/http.dart' as http;
 
 import '../../../entity/notitype.dart';
 import '../../../entity/topictype.dart';
+import '../../../models/firestoreuser.dart';
 import '../../../models/profile.dart';
 import '../../../models/template/template.dart';
 import '../../../providers/bottomnav/bottomnav_provider.dart';
 import '../../../providers/firebaseauth/auth_provider.dart';
 import '../../../providers/firestore/profile/profile_notifier.dart';
+import '../../../providers/sqlite/users/unansweredusers_sqlite_provider.dart';
 import '../../../router/app_router.dart';
 
 @RoutePage()
@@ -36,6 +38,8 @@ class NotiAdminScreen extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final sqlUsersNotifier = ref.read(unansweredUsersSQLiteNotifierProvider.notifier);
+
     final asyncNotis = ref.watch(streamNotificationNotifierProvider);
     //final asyncTemplates = ref.watch(streamTemplateNotifierProvider);
     final authAsyncValue = ref.watch(authStateChangesProvider);
@@ -345,6 +349,8 @@ Future<void> openSendNotiDialog(BuildContext context, WidgetRef ref) async {
                 scrollDirection: Axis.horizontal,
                 child: Column(
                   children: <Widget>[
+                    // debug
+                    // end debug
                     DataTable(
                       showCheckboxColumn: false,
                       columns: [
