@@ -17,6 +17,7 @@ import '../screens/authenticated/privacypolicy_screen.dart';
 import '../screens/authenticated/settings_screen.dart';
 import '../screens/authenticated/terms_screen.dart';
 import '../screens/authenticated/topicselect_screen.dart';
+import '../screens/unauthenticated/scanqr_screen.dart';
 import '../screens/unauthenticated/tabsrouter_screen.dart';
 import '../screens/unauthenticated/signin_screen.dart';
 import '../screens/unauthenticated/signup_screen.dart';
@@ -47,6 +48,9 @@ class AppRouter extends _$AppRouter {
     AutoRoute(
       page: SigninRoute.page,
       path: '/signin',
+    ),
+    AutoRoute(
+      page: ScanQRRoute.page,
     ),
     AutoRoute(
       page: SignupRoute.page,

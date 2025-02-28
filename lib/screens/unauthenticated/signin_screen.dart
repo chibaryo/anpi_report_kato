@@ -1,5 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -9,6 +10,7 @@ import 'package:form_builder_validators/form_builder_validators.dart';
 import '../../models/deviceinfo.dart';
 import '../../providers/firebaseauth/auth_provider.dart';
 import '../../providers/firestore/deviceinfo/deviceinfo_notifier.dart';
+import '../../providers/qrtext/qrtext_notifier.dart';
 import '../../router/app_router.dart';
 
 @RoutePage()
@@ -36,14 +38,16 @@ class SigninScreen extends HookConsumerWidget {
     final deviceInfoNotifier = ref.watch(streamDeviceInfoNotifierProvider.notifier);
     final formKey = useMemoized(() => GlobalKey<FormBuilderState>());
 
-    const targetCompanyCode = "KATOSANSHOTOKYO";
+    final String targetCompanyCode = dotenv.get('COMPANYAUTHCODE'); //"eD8dzYgLNtF4HmmOB9OT3i7Y1G5wXyeeAn4unMBA";
     final tFieldCompanyCodeController = useTextEditingController();
+
+    // Provider
+    final qrTextProvider = ref.watch(qrTextNotifierProvider);
 
     final isValidCompanyCode = useListenableSelector(
       tFieldCompanyCodeController,
       () => tFieldCompanyCodeController.text == targetCompanyCode
     );
- 
 
      return Scaffold(
         appBar: AppBar(
@@ -56,6 +60,26 @@ class SigninScreen extends HookConsumerWidget {
             child: Center(
               child: Column(
                 children: [
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: ElevatedButton(
+                      onPressed: () async {
+                        if (context.mounted) {
+                          context.router.push(const ScanQRRoute());
+                        }
+                      },
+                      child: const Text("QRスキャンする"),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(
+                      (!isValidCompanyCode) && (qrTextProvider != targetCompanyCode)
+                        ? "認証QRをスキャンしてください"
+                        : "認証QRスキャンOK",
+                      ),
+                    //Text((!isValidCompanyCode) || (qrTextProvider != targetCompanyCode) ? "認証QRをスキャンしてください" : "認証QRスキャンOK"),
+                  ),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16),
                     child: FormBuilder(
@@ -76,7 +100,7 @@ class SigninScreen extends HookConsumerWidget {
                               if (value.length < 8) {
                                 return "企業コードは8文字以上である必要があります";
                               }
-                              if (value != "KATOSANSHOTOKYO") {
+                              if (value != targetCompanyCode) {
                                 return "企業コードが正しくありません";
                               }
                               return null;
@@ -120,7 +144,7 @@ class SigninScreen extends HookConsumerWidget {
                                       foregroundColor: Colors.white,
                                     ),
                                     
-                                    onPressed: !isValidCompanyCode ? null : () async {
+                                    onPressed: (!isValidCompanyCode) && (qrTextProvider != targetCompanyCode) ? null : () async {
                                       // Retreive fcmToken from SecureStorage
                                       String? fcmToken = await storage.read(key: 'fcmToken');
 

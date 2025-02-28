@@ -93,6 +93,12 @@ abstract class _$AppRouter extends RootStackRouter {
         child: const RootScreen(),
       );
     },
+    ScanQRRoute.name: (routeData) {
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: const ScanQRScreen(),
+      );
+    },
     SettingsRouterRoute.name: (routeData) {
       return AutoRoutePage<dynamic>(
         routeData: routeData,
@@ -378,6 +384,20 @@ class RootRoute extends PageRouteInfo<void> {
         );
 
   static const String name = 'RootRoute';
+
+  static const PageInfo<void> page = PageInfo<void>(name);
+}
+
+/// generated route for
+/// [ScanQRScreen]
+class ScanQRRoute extends PageRouteInfo<void> {
+  const ScanQRRoute({List<PageRouteInfo>? children})
+      : super(
+          ScanQRRoute.name,
+          initialChildren: children,
+        );
+
+  static const String name = 'ScanQRRoute';
 
   static const PageInfo<void> page = PageInfo<void>(name);
 }

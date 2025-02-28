@@ -7,6 +7,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:custom_text_form_field_plus/custom_text_form_field_plus.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -16,6 +17,7 @@ import '../../models/deviceinfo.dart';
 import '../../models/firestoreuser.dart';
 import '../../models/profile.dart';
 import '../../providers/firestore/deviceinfo/deviceinfo_notifier.dart';
+import '../../providers/qrtext/qrtext_notifier.dart';
 import '../../repository/firebase/authrepo.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
 //import 'package:dropdown_button2/dropdown_button2.dart';
@@ -29,6 +31,17 @@ class SignupScreen extends HookConsumerWidget {
     const storage = FlutterSecureStorage();
     final formKey = useMemoized(() => GlobalKey<FormBuilderState>());
     final AuthService authService = AuthService();
+
+    final tFieldCompanyCodeController = useTextEditingController();
+    final String targetCompanyCode = dotenv.get('COMPANYAUTHCODE'); //"eD8dzYgLNtF4HmmOB9OT3i7Y1G5wXyeeAn4unMBA";
+    // Provider
+    final qrTextProvider = ref.watch(qrTextNotifierProvider);
+
+    final isValidCompanyCode = useListenableSelector(
+      tFieldCompanyCodeController,
+      () => tFieldCompanyCodeController.text == targetCompanyCode
+    );
+
     final userNotifier = ref.watch(streamUserNotifierProvider.notifier);
     final deviceInfoNotifier = ref.watch(streamDeviceInfoNotifierProvider.notifier);
     final profileNotifier = ref.watch(streamProfileNotifierProvider.notifier);
@@ -222,6 +235,51 @@ List<String> getSelectedDepartments(int selectedSum) {
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: ElevatedButton(
+                      onPressed: () async {
+                        if (context.mounted) {
+                          context.router.push(const ScanQRRoute());
+                        }
+                      },
+                      child: const Text("QRスキャンする"),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(
+                      (!isValidCompanyCode) && (qrTextProvider != targetCompanyCode)
+                        ? "認証QRをスキャンしてください"
+                        : "認証QRスキャンOK",
+                      ),
+                    //Text((!isValidCompanyCode) || (qrTextProvider != targetCompanyCode) ? "認証QRをスキャンしてください" : "認証QRスキャンOK"),
+                  ),
+                          FormBuilderTextField(
+                            name: "companyCode",
+                            controller: tFieldCompanyCodeController,
+                            decoration: const InputDecoration(labelText: "企業コード"),
+                            obscureText: false,
+                            autovalidateMode: AutovalidateMode.onUserInteraction,
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return "企業コードを入力してください";
+                              }
+                              if (value.length < 8) {
+                                return "企業コードは8文字以上である必要があります";
+                              }
+                              if (value != targetCompanyCode) {
+                                return "企業コードが正しくありません";
+                              }
+                              return null;
+                            },
+/*                            validator: FormBuilderValidators.compose([
+                              FormBuilderValidators.required(),
+                            ]), */
+                            keyboardType: TextInputType.text,
+                            textCapitalization: TextCapitalization.none,
+                          ),
+
 /*                          FormBuilderTextField(
                             name: "companyCode",
                             controller: tFieldCompanyCodeController,
@@ -311,7 +369,7 @@ List<String> getSelectedDepartments(int selectedSum) {
                                       foregroundColor: Colors.white,
                                     ),
                                     //!isValidCompanyCode ? null :
-                                    onPressed: () async {
+                                    onPressed: (!isValidCompanyCode) && (qrTextProvider != targetCompanyCode) ? null : () async {
                                       formKey.currentState?.saveAndValidate();
                                       //
                                       final displayName = tFieldUserNameController.text;
