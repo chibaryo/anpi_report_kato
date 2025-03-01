@@ -6,8 +6,7 @@ part of 'template.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$TemplateImpl _$$TemplateImplFromJson(Map<String, dynamic> json) =>
-    _$TemplateImpl(
+_Template _$TemplateFromJson(Map<String, dynamic> json) => _Template(
       notiTitle: json['notiTitle'] as String? ?? '',
       notiBody: json['notiBody'] as String? ?? '',
       createdAt:
@@ -16,8 +15,7 @@ _$TemplateImpl _$$TemplateImplFromJson(Map<String, dynamic> json) =>
           const TimestampConverter().fromJson(json['updatedAt'] as Timestamp?),
     );
 
-Map<String, dynamic> _$$TemplateImplToJson(_$TemplateImpl instance) =>
-    <String, dynamic>{
+Map<String, dynamic> _$TemplateToJson(_Template instance) => <String, dynamic>{
       'notiTitle': instance.notiTitle,
       'notiBody': instance.notiBody,
       'createdAt': const TimestampConverter().toJson(instance.createdAt),

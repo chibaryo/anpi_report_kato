@@ -1,3 +1,4 @@
+// dart format width=80
 // coverage:ignore-file
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint
@@ -9,101 +10,67 @@ part of 'report.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// dart format off
 T _$identity<T>(T value) => value;
-
-final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
-
-Report _$ReportFromJson(Map<String, dynamic> json) {
-  return _Report.fromJson(json);
-}
 
 /// @nodoc
 mixin _$Report {
-  String get uid => throw _privateConstructorUsedError;
-  String get notificationId =>
-      throw _privateConstructorUsedError; //    @DocumentReferenceConverter() required DocumentReference userRef,
+  String get uid;
+  String
+      get notificationId; //    @DocumentReferenceConverter() required DocumentReference userRef,
 //    @DocumentReferenceConverter() required DocumentReference profileRef,
-  Map<String, dynamic> get reportContents => throw _privateConstructorUsedError;
+  Map<String, dynamic> get reportContents;
   @TimestampConverter()
-  DateTime? get createdAt => throw _privateConstructorUsedError;
+  DateTime? get createdAt;
   @TimestampConverter()
-  DateTime? get updatedAt => throw _privateConstructorUsedError;
-
-  /// Serializes this Report to a JSON map.
-  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  DateTime? get updatedAt;
 
   /// Create a copy of Report
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
-  $ReportCopyWith<Report> get copyWith => throw _privateConstructorUsedError;
-}
-
-/// @nodoc
-abstract class $ReportCopyWith<$Res> {
-  factory $ReportCopyWith(Report value, $Res Function(Report) then) =
-      _$ReportCopyWithImpl<$Res, Report>;
-  @useResult
-  $Res call(
-      {String uid,
-      String notificationId,
-      Map<String, dynamic> reportContents,
-      @TimestampConverter() DateTime? createdAt,
-      @TimestampConverter() DateTime? updatedAt});
-}
-
-/// @nodoc
-class _$ReportCopyWithImpl<$Res, $Val extends Report>
-    implements $ReportCopyWith<$Res> {
-  _$ReportCopyWithImpl(this._value, this._then);
-
-  // ignore: unused_field
-  final $Val _value;
-  // ignore: unused_field
-  final $Res Function($Val) _then;
-
-  /// Create a copy of Report
-  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
+  $ReportCopyWith<Report> get copyWith =>
+      _$ReportCopyWithImpl<Report>(this as Report, _$identity);
+
+  /// Serializes this Report to a JSON map.
+  Map<String, dynamic> toJson();
+
   @override
-  $Res call({
-    Object? uid = null,
-    Object? notificationId = null,
-    Object? reportContents = null,
-    Object? createdAt = freezed,
-    Object? updatedAt = freezed,
-  }) {
-    return _then(_value.copyWith(
-      uid: null == uid
-          ? _value.uid
-          : uid // ignore: cast_nullable_to_non_nullable
-              as String,
-      notificationId: null == notificationId
-          ? _value.notificationId
-          : notificationId // ignore: cast_nullable_to_non_nullable
-              as String,
-      reportContents: null == reportContents
-          ? _value.reportContents
-          : reportContents // ignore: cast_nullable_to_non_nullable
-              as Map<String, dynamic>,
-      createdAt: freezed == createdAt
-          ? _value.createdAt
-          : createdAt // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      updatedAt: freezed == updatedAt
-          ? _value.updatedAt
-          : updatedAt // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-    ) as $Val);
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is Report &&
+            (identical(other.uid, uid) || other.uid == uid) &&
+            (identical(other.notificationId, notificationId) ||
+                other.notificationId == notificationId) &&
+            const DeepCollectionEquality()
+                .equals(other.reportContents, reportContents) &&
+            (identical(other.createdAt, createdAt) ||
+                other.createdAt == createdAt) &&
+            (identical(other.updatedAt, updatedAt) ||
+                other.updatedAt == updatedAt));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode => Object.hash(
+      runtimeType,
+      uid,
+      notificationId,
+      const DeepCollectionEquality().hash(reportContents),
+      createdAt,
+      updatedAt);
+
+  @override
+  String toString() {
+    return 'Report(uid: $uid, notificationId: $notificationId, reportContents: $reportContents, createdAt: $createdAt, updatedAt: $updatedAt)';
   }
 }
 
 /// @nodoc
-abstract class _$$ReportImplCopyWith<$Res> implements $ReportCopyWith<$Res> {
-  factory _$$ReportImplCopyWith(
-          _$ReportImpl value, $Res Function(_$ReportImpl) then) =
-      __$$ReportImplCopyWithImpl<$Res>;
-  @override
+abstract mixin class $ReportCopyWith<$Res> {
+  factory $ReportCopyWith(Report value, $Res Function(Report) _then) =
+      _$ReportCopyWithImpl;
   @useResult
   $Res call(
       {String uid,
@@ -114,12 +81,11 @@ abstract class _$$ReportImplCopyWith<$Res> implements $ReportCopyWith<$Res> {
 }
 
 /// @nodoc
-class __$$ReportImplCopyWithImpl<$Res>
-    extends _$ReportCopyWithImpl<$Res, _$ReportImpl>
-    implements _$$ReportImplCopyWith<$Res> {
-  __$$ReportImplCopyWithImpl(
-      _$ReportImpl _value, $Res Function(_$ReportImpl) _then)
-      : super(_value, _then);
+class _$ReportCopyWithImpl<$Res> implements $ReportCopyWith<$Res> {
+  _$ReportCopyWithImpl(this._self, this._then);
+
+  final Report _self;
+  final $Res Function(Report) _then;
 
   /// Create a copy of Report
   /// with the given fields replaced by the non-null parameter values.
@@ -132,25 +98,25 @@ class __$$ReportImplCopyWithImpl<$Res>
     Object? createdAt = freezed,
     Object? updatedAt = freezed,
   }) {
-    return _then(_$ReportImpl(
+    return _then(_self.copyWith(
       uid: null == uid
-          ? _value.uid
+          ? _self.uid
           : uid // ignore: cast_nullable_to_non_nullable
               as String,
       notificationId: null == notificationId
-          ? _value.notificationId
+          ? _self.notificationId
           : notificationId // ignore: cast_nullable_to_non_nullable
               as String,
       reportContents: null == reportContents
-          ? _value._reportContents
+          ? _self.reportContents
           : reportContents // ignore: cast_nullable_to_non_nullable
               as Map<String, dynamic>,
       createdAt: freezed == createdAt
-          ? _value.createdAt
+          ? _self.createdAt
           : createdAt // ignore: cast_nullable_to_non_nullable
               as DateTime?,
       updatedAt: freezed == updatedAt
-          ? _value.updatedAt
+          ? _self.updatedAt
           : updatedAt // ignore: cast_nullable_to_non_nullable
               as DateTime?,
     ));
@@ -159,17 +125,15 @@ class __$$ReportImplCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _$ReportImpl implements _Report {
-  const _$ReportImpl(
+class _Report implements Report {
+  const _Report(
       {this.uid = '',
       this.notificationId = '',
       final Map<String, dynamic> reportContents = const <String, dynamic>{},
       @TimestampConverter() this.createdAt,
       @TimestampConverter() this.updatedAt})
       : _reportContents = reportContents;
-
-  factory _$ReportImpl.fromJson(Map<String, dynamic> json) =>
-      _$$ReportImplFromJson(json);
+  factory _Report.fromJson(Map<String, dynamic> json) => _$ReportFromJson(json);
 
   @override
   @JsonKey()
@@ -197,16 +161,26 @@ class _$ReportImpl implements _Report {
   @TimestampConverter()
   final DateTime? updatedAt;
 
+  /// Create a copy of Report
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  String toString() {
-    return 'Report(uid: $uid, notificationId: $notificationId, reportContents: $reportContents, createdAt: $createdAt, updatedAt: $updatedAt)';
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @pragma('vm:prefer-inline')
+  _$ReportCopyWith<_Report> get copyWith =>
+      __$ReportCopyWithImpl<_Report>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$ReportToJson(
+      this,
+    );
   }
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$ReportImpl &&
+            other is _Report &&
             (identical(other.uid, uid) || other.uid == uid) &&
             (identical(other.notificationId, notificationId) ||
                 other.notificationId == notificationId) &&
@@ -228,51 +202,67 @@ class _$ReportImpl implements _Report {
       createdAt,
       updatedAt);
 
-  /// Create a copy of Report
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  @pragma('vm:prefer-inline')
-  _$$ReportImplCopyWith<_$ReportImpl> get copyWith =>
-      __$$ReportImplCopyWithImpl<_$ReportImpl>(this, _$identity);
-
-  @override
-  Map<String, dynamic> toJson() {
-    return _$$ReportImplToJson(
-      this,
-    );
+  String toString() {
+    return 'Report(uid: $uid, notificationId: $notificationId, reportContents: $reportContents, createdAt: $createdAt, updatedAt: $updatedAt)';
   }
 }
 
-abstract class _Report implements Report {
-  const factory _Report(
-      {final String uid,
-      final String notificationId,
-      final Map<String, dynamic> reportContents,
-      @TimestampConverter() final DateTime? createdAt,
-      @TimestampConverter() final DateTime? updatedAt}) = _$ReportImpl;
+/// @nodoc
+abstract mixin class _$ReportCopyWith<$Res> implements $ReportCopyWith<$Res> {
+  factory _$ReportCopyWith(_Report value, $Res Function(_Report) _then) =
+      __$ReportCopyWithImpl;
+  @override
+  @useResult
+  $Res call(
+      {String uid,
+      String notificationId,
+      Map<String, dynamic> reportContents,
+      @TimestampConverter() DateTime? createdAt,
+      @TimestampConverter() DateTime? updatedAt});
+}
 
-  factory _Report.fromJson(Map<String, dynamic> json) = _$ReportImpl.fromJson;
+/// @nodoc
+class __$ReportCopyWithImpl<$Res> implements _$ReportCopyWith<$Res> {
+  __$ReportCopyWithImpl(this._self, this._then);
 
-  @override
-  String get uid;
-  @override
-  String
-      get notificationId; //    @DocumentReferenceConverter() required DocumentReference userRef,
-//    @DocumentReferenceConverter() required DocumentReference profileRef,
-  @override
-  Map<String, dynamic> get reportContents;
-  @override
-  @TimestampConverter()
-  DateTime? get createdAt;
-  @override
-  @TimestampConverter()
-  DateTime? get updatedAt;
+  final _Report _self;
+  final $Res Function(_Report) _then;
 
   /// Create a copy of Report
   /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  _$$ReportImplCopyWith<_$ReportImpl> get copyWith =>
-      throw _privateConstructorUsedError;
+  @pragma('vm:prefer-inline')
+  $Res call({
+    Object? uid = null,
+    Object? notificationId = null,
+    Object? reportContents = null,
+    Object? createdAt = freezed,
+    Object? updatedAt = freezed,
+  }) {
+    return _then(_Report(
+      uid: null == uid
+          ? _self.uid
+          : uid // ignore: cast_nullable_to_non_nullable
+              as String,
+      notificationId: null == notificationId
+          ? _self.notificationId
+          : notificationId // ignore: cast_nullable_to_non_nullable
+              as String,
+      reportContents: null == reportContents
+          ? _self._reportContents
+          : reportContents // ignore: cast_nullable_to_non_nullable
+              as Map<String, dynamic>,
+      createdAt: freezed == createdAt
+          ? _self.createdAt
+          : createdAt // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
+      updatedAt: freezed == updatedAt
+          ? _self.updatedAt
+          : updatedAt // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
+    ));
+  }
 }
+
+// dart format on

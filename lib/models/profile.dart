@@ -17,7 +17,7 @@ class TimestampConverter implements JsonConverter<DateTime?, Timestamp?> {
 }
 
 @freezed
-class Profile with _$Profile {
+abstract class Profile with _$Profile {
   const factory Profile({
     @Default('') String uid,
     @Default(<String>[]) List<String> avatarUrl,

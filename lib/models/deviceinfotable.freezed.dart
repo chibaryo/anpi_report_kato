@@ -1,3 +1,4 @@
+// dart format width=80
 // coverage:ignore-file
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint
@@ -9,123 +10,85 @@ part of 'deviceinfotable.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// dart format off
 T _$identity<T>(T value) => value;
 
-final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
-
-DeviceInfoTable _$DeviceInfoTableFromJson(Map<String, dynamic> json) {
-  return _DeviceInfoTable.fromJson(json);
-}
-
 /// @nodoc
-mixin _$DeviceInfoTable {
-  String get systemName => throw _privateConstructorUsedError;
-  String get osVersion => throw _privateConstructorUsedError;
-  String get localizedModel => throw _privateConstructorUsedError;
-  String get productName => throw _privateConstructorUsedError;
-  String get udId => throw _privateConstructorUsedError;
-  String get fcmToken => throw _privateConstructorUsedError;
+mixin _$DeviceInfoTable implements DiagnosticableTreeMixin {
+  String get systemName;
+  String get osVersion;
+  String get localizedModel;
+  String get productName;
+  String get udId;
+  String get fcmToken;
   @TimestampConverter()
-  DateTime? get createdAt => throw _privateConstructorUsedError;
+  DateTime? get createdAt;
   @TimestampConverter()
-  DateTime? get updatedAt => throw _privateConstructorUsedError;
-
-  /// Serializes this DeviceInfoTable to a JSON map.
-  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  DateTime? get updatedAt;
 
   /// Create a copy of DeviceInfoTable
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
-  $DeviceInfoTableCopyWith<DeviceInfoTable> get copyWith =>
-      throw _privateConstructorUsedError;
-}
-
-/// @nodoc
-abstract class $DeviceInfoTableCopyWith<$Res> {
-  factory $DeviceInfoTableCopyWith(
-          DeviceInfoTable value, $Res Function(DeviceInfoTable) then) =
-      _$DeviceInfoTableCopyWithImpl<$Res, DeviceInfoTable>;
-  @useResult
-  $Res call(
-      {String systemName,
-      String osVersion,
-      String localizedModel,
-      String productName,
-      String udId,
-      String fcmToken,
-      @TimestampConverter() DateTime? createdAt,
-      @TimestampConverter() DateTime? updatedAt});
-}
-
-/// @nodoc
-class _$DeviceInfoTableCopyWithImpl<$Res, $Val extends DeviceInfoTable>
-    implements $DeviceInfoTableCopyWith<$Res> {
-  _$DeviceInfoTableCopyWithImpl(this._value, this._then);
-
-  // ignore: unused_field
-  final $Val _value;
-  // ignore: unused_field
-  final $Res Function($Val) _then;
-
-  /// Create a copy of DeviceInfoTable
-  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
+  $DeviceInfoTableCopyWith<DeviceInfoTable> get copyWith =>
+      _$DeviceInfoTableCopyWithImpl<DeviceInfoTable>(
+          this as DeviceInfoTable, _$identity);
+
+  /// Serializes this DeviceInfoTable to a JSON map.
+  Map<String, dynamic> toJson();
+
   @override
-  $Res call({
-    Object? systemName = null,
-    Object? osVersion = null,
-    Object? localizedModel = null,
-    Object? productName = null,
-    Object? udId = null,
-    Object? fcmToken = null,
-    Object? createdAt = freezed,
-    Object? updatedAt = freezed,
-  }) {
-    return _then(_value.copyWith(
-      systemName: null == systemName
-          ? _value.systemName
-          : systemName // ignore: cast_nullable_to_non_nullable
-              as String,
-      osVersion: null == osVersion
-          ? _value.osVersion
-          : osVersion // ignore: cast_nullable_to_non_nullable
-              as String,
-      localizedModel: null == localizedModel
-          ? _value.localizedModel
-          : localizedModel // ignore: cast_nullable_to_non_nullable
-              as String,
-      productName: null == productName
-          ? _value.productName
-          : productName // ignore: cast_nullable_to_non_nullable
-              as String,
-      udId: null == udId
-          ? _value.udId
-          : udId // ignore: cast_nullable_to_non_nullable
-              as String,
-      fcmToken: null == fcmToken
-          ? _value.fcmToken
-          : fcmToken // ignore: cast_nullable_to_non_nullable
-              as String,
-      createdAt: freezed == createdAt
-          ? _value.createdAt
-          : createdAt // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      updatedAt: freezed == updatedAt
-          ? _value.updatedAt
-          : updatedAt // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-    ) as $Val);
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    properties
+      ..add(DiagnosticsProperty('type', 'DeviceInfoTable'))
+      ..add(DiagnosticsProperty('systemName', systemName))
+      ..add(DiagnosticsProperty('osVersion', osVersion))
+      ..add(DiagnosticsProperty('localizedModel', localizedModel))
+      ..add(DiagnosticsProperty('productName', productName))
+      ..add(DiagnosticsProperty('udId', udId))
+      ..add(DiagnosticsProperty('fcmToken', fcmToken))
+      ..add(DiagnosticsProperty('createdAt', createdAt))
+      ..add(DiagnosticsProperty('updatedAt', updatedAt));
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is DeviceInfoTable &&
+            (identical(other.systemName, systemName) ||
+                other.systemName == systemName) &&
+            (identical(other.osVersion, osVersion) ||
+                other.osVersion == osVersion) &&
+            (identical(other.localizedModel, localizedModel) ||
+                other.localizedModel == localizedModel) &&
+            (identical(other.productName, productName) ||
+                other.productName == productName) &&
+            (identical(other.udId, udId) || other.udId == udId) &&
+            (identical(other.fcmToken, fcmToken) ||
+                other.fcmToken == fcmToken) &&
+            (identical(other.createdAt, createdAt) ||
+                other.createdAt == createdAt) &&
+            (identical(other.updatedAt, updatedAt) ||
+                other.updatedAt == updatedAt));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode => Object.hash(runtimeType, systemName, osVersion,
+      localizedModel, productName, udId, fcmToken, createdAt, updatedAt);
+
+  @override
+  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
+    return 'DeviceInfoTable(systemName: $systemName, osVersion: $osVersion, localizedModel: $localizedModel, productName: $productName, udId: $udId, fcmToken: $fcmToken, createdAt: $createdAt, updatedAt: $updatedAt)';
   }
 }
 
 /// @nodoc
-abstract class _$$DeviceInfoTableImplCopyWith<$Res>
-    implements $DeviceInfoTableCopyWith<$Res> {
-  factory _$$DeviceInfoTableImplCopyWith(_$DeviceInfoTableImpl value,
-          $Res Function(_$DeviceInfoTableImpl) then) =
-      __$$DeviceInfoTableImplCopyWithImpl<$Res>;
-  @override
+abstract mixin class $DeviceInfoTableCopyWith<$Res> {
+  factory $DeviceInfoTableCopyWith(
+          DeviceInfoTable value, $Res Function(DeviceInfoTable) _then) =
+      _$DeviceInfoTableCopyWithImpl;
   @useResult
   $Res call(
       {String systemName,
@@ -139,12 +102,12 @@ abstract class _$$DeviceInfoTableImplCopyWith<$Res>
 }
 
 /// @nodoc
-class __$$DeviceInfoTableImplCopyWithImpl<$Res>
-    extends _$DeviceInfoTableCopyWithImpl<$Res, _$DeviceInfoTableImpl>
-    implements _$$DeviceInfoTableImplCopyWith<$Res> {
-  __$$DeviceInfoTableImplCopyWithImpl(
-      _$DeviceInfoTableImpl _value, $Res Function(_$DeviceInfoTableImpl) _then)
-      : super(_value, _then);
+class _$DeviceInfoTableCopyWithImpl<$Res>
+    implements $DeviceInfoTableCopyWith<$Res> {
+  _$DeviceInfoTableCopyWithImpl(this._self, this._then);
+
+  final DeviceInfoTable _self;
+  final $Res Function(DeviceInfoTable) _then;
 
   /// Create a copy of DeviceInfoTable
   /// with the given fields replaced by the non-null parameter values.
@@ -160,37 +123,37 @@ class __$$DeviceInfoTableImplCopyWithImpl<$Res>
     Object? createdAt = freezed,
     Object? updatedAt = freezed,
   }) {
-    return _then(_$DeviceInfoTableImpl(
+    return _then(_self.copyWith(
       systemName: null == systemName
-          ? _value.systemName
+          ? _self.systemName
           : systemName // ignore: cast_nullable_to_non_nullable
               as String,
       osVersion: null == osVersion
-          ? _value.osVersion
+          ? _self.osVersion
           : osVersion // ignore: cast_nullable_to_non_nullable
               as String,
       localizedModel: null == localizedModel
-          ? _value.localizedModel
+          ? _self.localizedModel
           : localizedModel // ignore: cast_nullable_to_non_nullable
               as String,
       productName: null == productName
-          ? _value.productName
+          ? _self.productName
           : productName // ignore: cast_nullable_to_non_nullable
               as String,
       udId: null == udId
-          ? _value.udId
+          ? _self.udId
           : udId // ignore: cast_nullable_to_non_nullable
               as String,
       fcmToken: null == fcmToken
-          ? _value.fcmToken
+          ? _self.fcmToken
           : fcmToken // ignore: cast_nullable_to_non_nullable
               as String,
       createdAt: freezed == createdAt
-          ? _value.createdAt
+          ? _self.createdAt
           : createdAt // ignore: cast_nullable_to_non_nullable
               as DateTime?,
       updatedAt: freezed == updatedAt
-          ? _value.updatedAt
+          ? _self.updatedAt
           : updatedAt // ignore: cast_nullable_to_non_nullable
               as DateTime?,
     ));
@@ -199,10 +162,8 @@ class __$$DeviceInfoTableImplCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _$DeviceInfoTableImpl
-    with DiagnosticableTreeMixin
-    implements _DeviceInfoTable {
-  const _$DeviceInfoTableImpl(
+class _DeviceInfoTable with DiagnosticableTreeMixin implements DeviceInfoTable {
+  const _DeviceInfoTable(
       {this.systemName = '',
       this.osVersion = '',
       this.localizedModel = '',
@@ -211,9 +172,8 @@ class _$DeviceInfoTableImpl
       this.fcmToken = '',
       @TimestampConverter() this.createdAt,
       @TimestampConverter() this.updatedAt});
-
-  factory _$DeviceInfoTableImpl.fromJson(Map<String, dynamic> json) =>
-      _$$DeviceInfoTableImplFromJson(json);
+  factory _DeviceInfoTable.fromJson(Map<String, dynamic> json) =>
+      _$DeviceInfoTableFromJson(json);
 
   @override
   @JsonKey()
@@ -240,14 +200,23 @@ class _$DeviceInfoTableImpl
   @TimestampConverter()
   final DateTime? updatedAt;
 
+  /// Create a copy of DeviceInfoTable
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'DeviceInfoTable(systemName: $systemName, osVersion: $osVersion, localizedModel: $localizedModel, productName: $productName, udId: $udId, fcmToken: $fcmToken, createdAt: $createdAt, updatedAt: $updatedAt)';
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @pragma('vm:prefer-inline')
+  _$DeviceInfoTableCopyWith<_DeviceInfoTable> get copyWith =>
+      __$DeviceInfoTableCopyWithImpl<_DeviceInfoTable>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$DeviceInfoTableToJson(
+      this,
+    );
   }
 
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-    super.debugFillProperties(properties);
     properties
       ..add(DiagnosticsProperty('type', 'DeviceInfoTable'))
       ..add(DiagnosticsProperty('systemName', systemName))
@@ -264,7 +233,7 @@ class _$DeviceInfoTableImpl
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$DeviceInfoTableImpl &&
+            other is _DeviceInfoTable &&
             (identical(other.systemName, systemName) ||
                 other.systemName == systemName) &&
             (identical(other.osVersion, osVersion) ||
@@ -287,60 +256,88 @@ class _$DeviceInfoTableImpl
   int get hashCode => Object.hash(runtimeType, systemName, osVersion,
       localizedModel, productName, udId, fcmToken, createdAt, updatedAt);
 
-  /// Create a copy of DeviceInfoTable
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  @pragma('vm:prefer-inline')
-  _$$DeviceInfoTableImplCopyWith<_$DeviceInfoTableImpl> get copyWith =>
-      __$$DeviceInfoTableImplCopyWithImpl<_$DeviceInfoTableImpl>(
-          this, _$identity);
-
-  @override
-  Map<String, dynamic> toJson() {
-    return _$$DeviceInfoTableImplToJson(
-      this,
-    );
+  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
+    return 'DeviceInfoTable(systemName: $systemName, osVersion: $osVersion, localizedModel: $localizedModel, productName: $productName, udId: $udId, fcmToken: $fcmToken, createdAt: $createdAt, updatedAt: $updatedAt)';
   }
 }
 
-abstract class _DeviceInfoTable implements DeviceInfoTable {
-  const factory _DeviceInfoTable(
-      {final String systemName,
-      final String osVersion,
-      final String localizedModel,
-      final String productName,
-      final String udId,
-      final String fcmToken,
-      @TimestampConverter() final DateTime? createdAt,
-      @TimestampConverter() final DateTime? updatedAt}) = _$DeviceInfoTableImpl;
+/// @nodoc
+abstract mixin class _$DeviceInfoTableCopyWith<$Res>
+    implements $DeviceInfoTableCopyWith<$Res> {
+  factory _$DeviceInfoTableCopyWith(
+          _DeviceInfoTable value, $Res Function(_DeviceInfoTable) _then) =
+      __$DeviceInfoTableCopyWithImpl;
+  @override
+  @useResult
+  $Res call(
+      {String systemName,
+      String osVersion,
+      String localizedModel,
+      String productName,
+      String udId,
+      String fcmToken,
+      @TimestampConverter() DateTime? createdAt,
+      @TimestampConverter() DateTime? updatedAt});
+}
 
-  factory _DeviceInfoTable.fromJson(Map<String, dynamic> json) =
-      _$DeviceInfoTableImpl.fromJson;
+/// @nodoc
+class __$DeviceInfoTableCopyWithImpl<$Res>
+    implements _$DeviceInfoTableCopyWith<$Res> {
+  __$DeviceInfoTableCopyWithImpl(this._self, this._then);
 
-  @override
-  String get systemName;
-  @override
-  String get osVersion;
-  @override
-  String get localizedModel;
-  @override
-  String get productName;
-  @override
-  String get udId;
-  @override
-  String get fcmToken;
-  @override
-  @TimestampConverter()
-  DateTime? get createdAt;
-  @override
-  @TimestampConverter()
-  DateTime? get updatedAt;
+  final _DeviceInfoTable _self;
+  final $Res Function(_DeviceInfoTable) _then;
 
   /// Create a copy of DeviceInfoTable
   /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  _$$DeviceInfoTableImplCopyWith<_$DeviceInfoTableImpl> get copyWith =>
-      throw _privateConstructorUsedError;
+  @pragma('vm:prefer-inline')
+  $Res call({
+    Object? systemName = null,
+    Object? osVersion = null,
+    Object? localizedModel = null,
+    Object? productName = null,
+    Object? udId = null,
+    Object? fcmToken = null,
+    Object? createdAt = freezed,
+    Object? updatedAt = freezed,
+  }) {
+    return _then(_DeviceInfoTable(
+      systemName: null == systemName
+          ? _self.systemName
+          : systemName // ignore: cast_nullable_to_non_nullable
+              as String,
+      osVersion: null == osVersion
+          ? _self.osVersion
+          : osVersion // ignore: cast_nullable_to_non_nullable
+              as String,
+      localizedModel: null == localizedModel
+          ? _self.localizedModel
+          : localizedModel // ignore: cast_nullable_to_non_nullable
+              as String,
+      productName: null == productName
+          ? _self.productName
+          : productName // ignore: cast_nullable_to_non_nullable
+              as String,
+      udId: null == udId
+          ? _self.udId
+          : udId // ignore: cast_nullable_to_non_nullable
+              as String,
+      fcmToken: null == fcmToken
+          ? _self.fcmToken
+          : fcmToken // ignore: cast_nullable_to_non_nullable
+              as String,
+      createdAt: freezed == createdAt
+          ? _self.createdAt
+          : createdAt // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
+      updatedAt: freezed == updatedAt
+          ? _self.updatedAt
+          : updatedAt // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
+    ));
+  }
 }
+
+// dart format on

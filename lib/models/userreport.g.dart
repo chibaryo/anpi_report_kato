@@ -6,8 +6,7 @@ part of 'userreport.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$UserReportImpl _$$UserReportImplFromJson(Map<String, dynamic> json) =>
-    _$UserReportImpl(
+_UserReport _$UserReportFromJson(Map<String, dynamic> json) => _UserReport(
       uid: json['uid'] as String? ?? '',
       notificationId: json['notificationId'] as String? ?? '',
       userRef: const DocumentReferenceConverter()
@@ -22,7 +21,7 @@ _$UserReportImpl _$$UserReportImplFromJson(Map<String, dynamic> json) =>
           const TimestampConverter().fromJson(json['updatedAt'] as Timestamp?),
     );
 
-Map<String, dynamic> _$$UserReportImplToJson(_$UserReportImpl instance) =>
+Map<String, dynamic> _$UserReportToJson(_UserReport instance) =>
     <String, dynamic>{
       'uid': instance.uid,
       'notificationId': instance.notificationId,

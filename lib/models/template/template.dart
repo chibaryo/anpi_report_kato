@@ -16,7 +16,7 @@ class TimestampConverter implements JsonConverter<DateTime?, Timestamp?> {
 }
 
 @freezed
-class Template with _$Template {
+abstract class Template with _$Template {
   const factory Template({
     @Default('') String notiTitle,
     @Default('') String notiBody,

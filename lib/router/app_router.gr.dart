@@ -1,3 +1,4 @@
+// dart format width=80
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
 // **************************************************************************
@@ -9,199 +10,52 @@
 
 part of 'app_router.dart';
 
-abstract class _$AppRouter extends RootStackRouter {
-  // ignore: unused_element
-  _$AppRouter({super.navigatorKey});
-
-  @override
-  final Map<String, PageFactory> pagesMap = {
-    AboutThisAppRoute.name: (routeData) {
-      return AutoRoutePage<dynamic>(
-        routeData: routeData,
-        child: const AboutThisAppScreen(),
-      );
-    },
-    AppHomeRouterRoute.name: (routeData) {
-      return AutoRoutePage<dynamic>(
-        routeData: routeData,
-        child: const AppHomeRouterScreen(),
-      );
-    },
-    AppHomeRoute.name: (routeData) {
-      return AutoRoutePage<dynamic>(
-        routeData: routeData,
-        child: const AppHomeScreen(),
-      );
-    },
-    EditReportRoute.name: (routeData) {
-      final args = routeData.argsAs<EditReportRouteArgs>();
-      return AutoRoutePage<dynamic>(
-        routeData: routeData,
-        child: EditReportScreen(
-          key: args.key,
-          notificationId: args.notificationId,
-        ),
-      );
-    },
-    NotiAdminDetailsRoute.name: (routeData) {
-      final args = routeData.argsAs<NotiAdminDetailsRouteArgs>();
-      return AutoRoutePage<dynamic>(
-        routeData: routeData,
-        child: NotiAdminDetailsScreen(
-          key: args.key,
-          notiId: args.notiId,
-        ),
-      );
-    },
-    NotiAdminRouterRoute.name: (routeData) {
-      return AutoRoutePage<dynamic>(
-        routeData: routeData,
-        child: const NotiAdminRouterScreen(),
-      );
-    },
-    NotiAdminRoute.name: (routeData) {
-      return AutoRoutePage<dynamic>(
-        routeData: routeData,
-        child: const NotiAdminScreen(),
-      );
-    },
-    PlayAdminRoute.name: (routeData) {
-      return AutoRoutePage<dynamic>(
-        routeData: routeData,
-        child: const PlayAdminScreen(),
-      );
-    },
-    PostEnqueteRoute.name: (routeData) {
-      final args = routeData.argsAs<PostEnqueteRouteArgs>();
-      return AutoRoutePage<dynamic>(
-        routeData: routeData,
-        child: PostEnqueteScreen(
-          key: args.key,
-          notificationId: args.notificationId,
-        ),
-      );
-    },
-    PrivacyPolicyWebViewRoute.name: (routeData) {
-      return AutoRoutePage<dynamic>(
-        routeData: routeData,
-        child: const PrivacyPolicyWebViewScreen(),
-      );
-    },
-    RootRoute.name: (routeData) {
-      return AutoRoutePage<dynamic>(
-        routeData: routeData,
-        child: const RootScreen(),
-      );
-    },
-    ScanQRRoute.name: (routeData) {
-      return AutoRoutePage<dynamic>(
-        routeData: routeData,
-        child: const ScanQRScreen(),
-      );
-    },
-    SettingsRouterRoute.name: (routeData) {
-      return AutoRoutePage<dynamic>(
-        routeData: routeData,
-        child: const SettingsRouterScreen(),
-      );
-    },
-    SettingsRoute.name: (routeData) {
-      return AutoRoutePage<dynamic>(
-        routeData: routeData,
-        child: const SettingsScreen(),
-      );
-    },
-    SigninRoute.name: (routeData) {
-      return AutoRoutePage<dynamic>(
-        routeData: routeData,
-        child: const SigninScreen(),
-      );
-    },
-    SignupRoute.name: (routeData) {
-      return AutoRoutePage<dynamic>(
-        routeData: routeData,
-        child: const SignupScreen(),
-      );
-    },
-    TabsRouterRoute.name: (routeData) {
-      return AutoRoutePage<dynamic>(
-        routeData: routeData,
-        child: const TabsRouterScreen(),
-      );
-    },
-    TemplateAdminRoute.name: (routeData) {
-      return AutoRoutePage<dynamic>(
-        routeData: routeData,
-        child: const TemplateAdminScreen(),
-      );
-    },
-    TermsWebViewRoute.name: (routeData) {
-      return AutoRoutePage<dynamic>(
-        routeData: routeData,
-        child: const TermsWebViewScreen(),
-      );
-    },
-    TheOtherOpsRoute.name: (routeData) {
-      return AutoRoutePage<dynamic>(
-        routeData: routeData,
-        child: const TheOtherOpsScreen(),
-      );
-    },
-    TopicSelectRoute.name: (routeData) {
-      return AutoRoutePage<dynamic>(
-        routeData: routeData,
-        child: const TopicSelectScreen(),
-      );
-    },
-    UserAdminRoute.name: (routeData) {
-      return AutoRoutePage<dynamic>(
-        routeData: routeData,
-        child: const UserAdminScreen(),
-      );
-    },
-  };
-}
-
 /// generated route for
 /// [AboutThisAppScreen]
 class AboutThisAppRoute extends PageRouteInfo<void> {
   const AboutThisAppRoute({List<PageRouteInfo>? children})
-      : super(
-          AboutThisAppRoute.name,
-          initialChildren: children,
-        );
+    : super(AboutThisAppRoute.name, initialChildren: children);
 
   static const String name = 'AboutThisAppRoute';
 
-  static const PageInfo<void> page = PageInfo<void>(name);
+  static PageInfo page = PageInfo(
+    name,
+    builder: (data) {
+      return const AboutThisAppScreen();
+    },
+  );
 }
 
 /// generated route for
 /// [AppHomeRouterScreen]
 class AppHomeRouterRoute extends PageRouteInfo<void> {
   const AppHomeRouterRoute({List<PageRouteInfo>? children})
-      : super(
-          AppHomeRouterRoute.name,
-          initialChildren: children,
-        );
+    : super(AppHomeRouterRoute.name, initialChildren: children);
 
   static const String name = 'AppHomeRouterRoute';
 
-  static const PageInfo<void> page = PageInfo<void>(name);
+  static PageInfo page = PageInfo(
+    name,
+    builder: (data) {
+      return const AppHomeRouterScreen();
+    },
+  );
 }
 
 /// generated route for
 /// [AppHomeScreen]
 class AppHomeRoute extends PageRouteInfo<void> {
   const AppHomeRoute({List<PageRouteInfo>? children})
-      : super(
-          AppHomeRoute.name,
-          initialChildren: children,
-        );
+    : super(AppHomeRoute.name, initialChildren: children);
 
   static const String name = 'AppHomeRoute';
 
-  static const PageInfo<void> page = PageInfo<void>(name);
+  static PageInfo page = PageInfo(
+    name,
+    builder: (data) {
+      return const AppHomeScreen();
+    },
+  );
 }
 
 /// generated route for
@@ -212,25 +66,27 @@ class EditReportRoute extends PageRouteInfo<EditReportRouteArgs> {
     required String notificationId,
     List<PageRouteInfo>? children,
   }) : super(
-          EditReportRoute.name,
-          args: EditReportRouteArgs(
-            key: key,
-            notificationId: notificationId,
-          ),
-          initialChildren: children,
-        );
+         EditReportRoute.name,
+         args: EditReportRouteArgs(key: key, notificationId: notificationId),
+         initialChildren: children,
+       );
 
   static const String name = 'EditReportRoute';
 
-  static const PageInfo<EditReportRouteArgs> page =
-      PageInfo<EditReportRouteArgs>(name);
+  static PageInfo page = PageInfo(
+    name,
+    builder: (data) {
+      final args = data.argsAs<EditReportRouteArgs>();
+      return EditReportScreen(
+        key: args.key,
+        notificationId: args.notificationId,
+      );
+    },
+  );
 }
 
 class EditReportRouteArgs {
-  const EditReportRouteArgs({
-    this.key,
-    required this.notificationId,
-  });
+  const EditReportRouteArgs({this.key, required this.notificationId});
 
   final Key? key;
 
@@ -250,25 +106,24 @@ class NotiAdminDetailsRoute extends PageRouteInfo<NotiAdminDetailsRouteArgs> {
     required String notiId,
     List<PageRouteInfo>? children,
   }) : super(
-          NotiAdminDetailsRoute.name,
-          args: NotiAdminDetailsRouteArgs(
-            key: key,
-            notiId: notiId,
-          ),
-          initialChildren: children,
-        );
+         NotiAdminDetailsRoute.name,
+         args: NotiAdminDetailsRouteArgs(key: key, notiId: notiId),
+         initialChildren: children,
+       );
 
   static const String name = 'NotiAdminDetailsRoute';
 
-  static const PageInfo<NotiAdminDetailsRouteArgs> page =
-      PageInfo<NotiAdminDetailsRouteArgs>(name);
+  static PageInfo page = PageInfo(
+    name,
+    builder: (data) {
+      final args = data.argsAs<NotiAdminDetailsRouteArgs>();
+      return NotiAdminDetailsScreen(key: args.key, notiId: args.notiId);
+    },
+  );
 }
 
 class NotiAdminDetailsRouteArgs {
-  const NotiAdminDetailsRouteArgs({
-    this.key,
-    required this.notiId,
-  });
+  const NotiAdminDetailsRouteArgs({this.key, required this.notiId});
 
   final Key? key;
 
@@ -284,42 +139,48 @@ class NotiAdminDetailsRouteArgs {
 /// [NotiAdminRouterScreen]
 class NotiAdminRouterRoute extends PageRouteInfo<void> {
   const NotiAdminRouterRoute({List<PageRouteInfo>? children})
-      : super(
-          NotiAdminRouterRoute.name,
-          initialChildren: children,
-        );
+    : super(NotiAdminRouterRoute.name, initialChildren: children);
 
   static const String name = 'NotiAdminRouterRoute';
 
-  static const PageInfo<void> page = PageInfo<void>(name);
+  static PageInfo page = PageInfo(
+    name,
+    builder: (data) {
+      return const NotiAdminRouterScreen();
+    },
+  );
 }
 
 /// generated route for
 /// [NotiAdminScreen]
 class NotiAdminRoute extends PageRouteInfo<void> {
   const NotiAdminRoute({List<PageRouteInfo>? children})
-      : super(
-          NotiAdminRoute.name,
-          initialChildren: children,
-        );
+    : super(NotiAdminRoute.name, initialChildren: children);
 
   static const String name = 'NotiAdminRoute';
 
-  static const PageInfo<void> page = PageInfo<void>(name);
+  static PageInfo page = PageInfo(
+    name,
+    builder: (data) {
+      return const NotiAdminScreen();
+    },
+  );
 }
 
 /// generated route for
 /// [PlayAdminScreen]
 class PlayAdminRoute extends PageRouteInfo<void> {
   const PlayAdminRoute({List<PageRouteInfo>? children})
-      : super(
-          PlayAdminRoute.name,
-          initialChildren: children,
-        );
+    : super(PlayAdminRoute.name, initialChildren: children);
 
   static const String name = 'PlayAdminRoute';
 
-  static const PageInfo<void> page = PageInfo<void>(name);
+  static PageInfo page = PageInfo(
+    name,
+    builder: (data) {
+      return const PlayAdminScreen();
+    },
+  );
 }
 
 /// generated route for
@@ -330,25 +191,27 @@ class PostEnqueteRoute extends PageRouteInfo<PostEnqueteRouteArgs> {
     required String notificationId,
     List<PageRouteInfo>? children,
   }) : super(
-          PostEnqueteRoute.name,
-          args: PostEnqueteRouteArgs(
-            key: key,
-            notificationId: notificationId,
-          ),
-          initialChildren: children,
-        );
+         PostEnqueteRoute.name,
+         args: PostEnqueteRouteArgs(key: key, notificationId: notificationId),
+         initialChildren: children,
+       );
 
   static const String name = 'PostEnqueteRoute';
 
-  static const PageInfo<PostEnqueteRouteArgs> page =
-      PageInfo<PostEnqueteRouteArgs>(name);
+  static PageInfo page = PageInfo(
+    name,
+    builder: (data) {
+      final args = data.argsAs<PostEnqueteRouteArgs>();
+      return PostEnqueteScreen(
+        key: args.key,
+        notificationId: args.notificationId,
+      );
+    },
+  );
 }
 
 class PostEnqueteRouteArgs {
-  const PostEnqueteRouteArgs({
-    this.key,
-    required this.notificationId,
-  });
+  const PostEnqueteRouteArgs({this.key, required this.notificationId});
 
   final Key? key;
 
@@ -364,180 +227,206 @@ class PostEnqueteRouteArgs {
 /// [PrivacyPolicyWebViewScreen]
 class PrivacyPolicyWebViewRoute extends PageRouteInfo<void> {
   const PrivacyPolicyWebViewRoute({List<PageRouteInfo>? children})
-      : super(
-          PrivacyPolicyWebViewRoute.name,
-          initialChildren: children,
-        );
+    : super(PrivacyPolicyWebViewRoute.name, initialChildren: children);
 
   static const String name = 'PrivacyPolicyWebViewRoute';
 
-  static const PageInfo<void> page = PageInfo<void>(name);
+  static PageInfo page = PageInfo(
+    name,
+    builder: (data) {
+      return const PrivacyPolicyWebViewScreen();
+    },
+  );
 }
 
 /// generated route for
 /// [RootScreen]
 class RootRoute extends PageRouteInfo<void> {
   const RootRoute({List<PageRouteInfo>? children})
-      : super(
-          RootRoute.name,
-          initialChildren: children,
-        );
+    : super(RootRoute.name, initialChildren: children);
 
   static const String name = 'RootRoute';
 
-  static const PageInfo<void> page = PageInfo<void>(name);
+  static PageInfo page = PageInfo(
+    name,
+    builder: (data) {
+      return const RootScreen();
+    },
+  );
 }
 
 /// generated route for
 /// [ScanQRScreen]
 class ScanQRRoute extends PageRouteInfo<void> {
   const ScanQRRoute({List<PageRouteInfo>? children})
-      : super(
-          ScanQRRoute.name,
-          initialChildren: children,
-        );
+    : super(ScanQRRoute.name, initialChildren: children);
 
   static const String name = 'ScanQRRoute';
 
-  static const PageInfo<void> page = PageInfo<void>(name);
+  static PageInfo page = PageInfo(
+    name,
+    builder: (data) {
+      return const ScanQRScreen();
+    },
+  );
 }
 
 /// generated route for
 /// [SettingsRouterScreen]
 class SettingsRouterRoute extends PageRouteInfo<void> {
   const SettingsRouterRoute({List<PageRouteInfo>? children})
-      : super(
-          SettingsRouterRoute.name,
-          initialChildren: children,
-        );
+    : super(SettingsRouterRoute.name, initialChildren: children);
 
   static const String name = 'SettingsRouterRoute';
 
-  static const PageInfo<void> page = PageInfo<void>(name);
+  static PageInfo page = PageInfo(
+    name,
+    builder: (data) {
+      return const SettingsRouterScreen();
+    },
+  );
 }
 
 /// generated route for
 /// [SettingsScreen]
 class SettingsRoute extends PageRouteInfo<void> {
   const SettingsRoute({List<PageRouteInfo>? children})
-      : super(
-          SettingsRoute.name,
-          initialChildren: children,
-        );
+    : super(SettingsRoute.name, initialChildren: children);
 
   static const String name = 'SettingsRoute';
 
-  static const PageInfo<void> page = PageInfo<void>(name);
+  static PageInfo page = PageInfo(
+    name,
+    builder: (data) {
+      return const SettingsScreen();
+    },
+  );
 }
 
 /// generated route for
 /// [SigninScreen]
 class SigninRoute extends PageRouteInfo<void> {
   const SigninRoute({List<PageRouteInfo>? children})
-      : super(
-          SigninRoute.name,
-          initialChildren: children,
-        );
+    : super(SigninRoute.name, initialChildren: children);
 
   static const String name = 'SigninRoute';
 
-  static const PageInfo<void> page = PageInfo<void>(name);
+  static PageInfo page = PageInfo(
+    name,
+    builder: (data) {
+      return const SigninScreen();
+    },
+  );
 }
 
 /// generated route for
 /// [SignupScreen]
 class SignupRoute extends PageRouteInfo<void> {
   const SignupRoute({List<PageRouteInfo>? children})
-      : super(
-          SignupRoute.name,
-          initialChildren: children,
-        );
+    : super(SignupRoute.name, initialChildren: children);
 
   static const String name = 'SignupRoute';
 
-  static const PageInfo<void> page = PageInfo<void>(name);
+  static PageInfo page = PageInfo(
+    name,
+    builder: (data) {
+      return const SignupScreen();
+    },
+  );
 }
 
 /// generated route for
 /// [TabsRouterScreen]
 class TabsRouterRoute extends PageRouteInfo<void> {
   const TabsRouterRoute({List<PageRouteInfo>? children})
-      : super(
-          TabsRouterRoute.name,
-          initialChildren: children,
-        );
+    : super(TabsRouterRoute.name, initialChildren: children);
 
   static const String name = 'TabsRouterRoute';
 
-  static const PageInfo<void> page = PageInfo<void>(name);
+  static PageInfo page = PageInfo(
+    name,
+    builder: (data) {
+      return const TabsRouterScreen();
+    },
+  );
 }
 
 /// generated route for
 /// [TemplateAdminScreen]
 class TemplateAdminRoute extends PageRouteInfo<void> {
   const TemplateAdminRoute({List<PageRouteInfo>? children})
-      : super(
-          TemplateAdminRoute.name,
-          initialChildren: children,
-        );
+    : super(TemplateAdminRoute.name, initialChildren: children);
 
   static const String name = 'TemplateAdminRoute';
 
-  static const PageInfo<void> page = PageInfo<void>(name);
+  static PageInfo page = PageInfo(
+    name,
+    builder: (data) {
+      return const TemplateAdminScreen();
+    },
+  );
 }
 
 /// generated route for
 /// [TermsWebViewScreen]
 class TermsWebViewRoute extends PageRouteInfo<void> {
   const TermsWebViewRoute({List<PageRouteInfo>? children})
-      : super(
-          TermsWebViewRoute.name,
-          initialChildren: children,
-        );
+    : super(TermsWebViewRoute.name, initialChildren: children);
 
   static const String name = 'TermsWebViewRoute';
 
-  static const PageInfo<void> page = PageInfo<void>(name);
+  static PageInfo page = PageInfo(
+    name,
+    builder: (data) {
+      return const TermsWebViewScreen();
+    },
+  );
 }
 
 /// generated route for
 /// [TheOtherOpsScreen]
 class TheOtherOpsRoute extends PageRouteInfo<void> {
   const TheOtherOpsRoute({List<PageRouteInfo>? children})
-      : super(
-          TheOtherOpsRoute.name,
-          initialChildren: children,
-        );
+    : super(TheOtherOpsRoute.name, initialChildren: children);
 
   static const String name = 'TheOtherOpsRoute';
 
-  static const PageInfo<void> page = PageInfo<void>(name);
+  static PageInfo page = PageInfo(
+    name,
+    builder: (data) {
+      return const TheOtherOpsScreen();
+    },
+  );
 }
 
 /// generated route for
 /// [TopicSelectScreen]
 class TopicSelectRoute extends PageRouteInfo<void> {
   const TopicSelectRoute({List<PageRouteInfo>? children})
-      : super(
-          TopicSelectRoute.name,
-          initialChildren: children,
-        );
+    : super(TopicSelectRoute.name, initialChildren: children);
 
   static const String name = 'TopicSelectRoute';
 
-  static const PageInfo<void> page = PageInfo<void>(name);
+  static PageInfo page = PageInfo(
+    name,
+    builder: (data) {
+      return const TopicSelectScreen();
+    },
+  );
 }
 
 /// generated route for
 /// [UserAdminScreen]
 class UserAdminRoute extends PageRouteInfo<void> {
   const UserAdminRoute({List<PageRouteInfo>? children})
-      : super(
-          UserAdminRoute.name,
-          initialChildren: children,
-        );
+    : super(UserAdminRoute.name, initialChildren: children);
 
   static const String name = 'UserAdminRoute';
 
-  static const PageInfo<void> page = PageInfo<void>(name);
+  static PageInfo page = PageInfo(
+    name,
+    builder: (data) {
+      return const UserAdminScreen();
+    },
+  );
 }

@@ -21,6 +21,8 @@ final firebaseFirestoreProvider =
   allTransitiveDependencies: null,
 );
 
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
 typedef FirebaseFirestoreRef = AutoDisposeProviderRef<FirebaseFirestore>;
 String _$udidNotifierHash() => r'a1e777fff1cc0b78a29b6a983b7d13b3c5fc6ca0';
 
@@ -38,4 +40,4 @@ final udidNotifierProvider =
 
 typedef _$UdidNotifier = AutoDisposeNotifier<String>;
 // ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member
+// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

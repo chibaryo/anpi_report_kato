@@ -6,7 +6,7 @@ part of 'report.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$ReportImpl _$$ReportImplFromJson(Map<String, dynamic> json) => _$ReportImpl(
+_Report _$ReportFromJson(Map<String, dynamic> json) => _Report(
       uid: json['uid'] as String? ?? '',
       notificationId: json['notificationId'] as String? ?? '',
       reportContents: json['reportContents'] as Map<String, dynamic>? ??
@@ -17,8 +17,7 @@ _$ReportImpl _$$ReportImplFromJson(Map<String, dynamic> json) => _$ReportImpl(
           const TimestampConverter().fromJson(json['updatedAt'] as Timestamp?),
     );
 
-Map<String, dynamic> _$$ReportImplToJson(_$ReportImpl instance) =>
-    <String, dynamic>{
+Map<String, dynamic> _$ReportToJson(_Report instance) => <String, dynamic>{
       'uid': instance.uid,
       'notificationId': instance.notificationId,
       'reportContents': instance.reportContents,

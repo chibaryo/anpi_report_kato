@@ -18,7 +18,7 @@ class TimestampConverter implements JsonConverter<DateTime?, Timestamp?> {
 }
 
 @freezed
-class Report with _$Report {
+abstract class Report with _$Report {
   const factory Report({
     @Default('') String uid,
     @Default('') String notificationId,

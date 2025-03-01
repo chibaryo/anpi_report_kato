@@ -17,7 +17,7 @@ class TimestampConverter implements JsonConverter<DateTime?, Timestamp?> {
 }
 
 @freezed
-class Noti with _$Noti {
+abstract class Noti with _$Noti {
   const factory Noti({
     @Default('') String notificationId,
     @Default('') String notiTitle,

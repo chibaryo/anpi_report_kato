@@ -164,14 +164,14 @@ class MyApp extends HookConsumerWidget {
       requestAlertPermission: true,
       requestBadgePermission: true,
       requestSoundPermission: true,
-      onDidReceiveLocalNotification: (id, title, body, payload) async {
+/*      onDidReceiveLocalNotification: (id, title, body, payload) async {
         print("payload: $payload");
         print("id: $id");
                 // SecureStorageに保存
         //await secureStorage.write(key: "notiId", value: receivedNotiId);
         // Access the provider and update the state
         //ref.read(notiIdProvider.notifier).state = receivedNotiId;
-      },
+      }, */
     )
   );
 
@@ -278,7 +278,7 @@ Future<void> showAndroidLocalNotification(RemoteMessage message) async {
   );
 }    // End func defs
 
-    final appRouter = ref.watch(appRouterProvider);// appRouterProviderは、ルーティングの設定を管理する
+    final appRouter = AppRouter(); //ref.watch(appRouterProvider);// appRouterProviderは、ルーティングの設定を管理する
 
     useEffect(() {
       Future<void> storeNotiIdToSecureStorage (String notiId) async {

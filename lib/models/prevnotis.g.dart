@@ -6,8 +6,7 @@ part of 'prevnotis.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$PrevNotisImpl _$$PrevNotisImplFromJson(Map<String, dynamic> json) =>
-    _$PrevNotisImpl(
+_PrevNotis _$PrevNotisFromJson(Map<String, dynamic> json) => _PrevNotis(
       notificationId: json['notificationId'] as String? ?? '',
       uid: json['uid'] as String? ?? '',
       isMeResponded: json['isMeResponded'] as bool? ?? false,
@@ -15,7 +14,7 @@ _$PrevNotisImpl _$$PrevNotisImplFromJson(Map<String, dynamic> json) =>
           const TimestampConverter().fromJson(json['createdAt'] as Timestamp?),
     );
 
-Map<String, dynamic> _$$PrevNotisImplToJson(_$PrevNotisImpl instance) =>
+Map<String, dynamic> _$PrevNotisToJson(_PrevNotis instance) =>
     <String, dynamic>{
       'notificationId': instance.notificationId,
       'uid': instance.uid,

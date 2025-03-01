@@ -74,9 +74,9 @@ Future<void> showLocalNotification(RemoteMessage message) async {
       requestAlertPermission: true,
       requestBadgePermission: true,
       requestSoundPermission: true,
-      onDidReceiveLocalNotification: (id, title, body, payload) async {
+/*      onDidReceiveLocalNotification: (id, title, body, payload) async {
         
-      },
+      },*/
     )
   );
 

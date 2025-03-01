@@ -6,8 +6,8 @@ part of 'firestoreuser.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$FirestoreUserImpl _$$FirestoreUserImplFromJson(Map<String, dynamic> json) =>
-    _$FirestoreUserImpl(
+_FirestoreUser _$FirestoreUserFromJson(Map<String, dynamic> json) =>
+    _FirestoreUser(
       username: json['username'] as String? ?? '',
       email: json['email'] as String? ?? '',
       password: json['password'] as String? ?? '',
@@ -21,7 +21,7 @@ _$FirestoreUserImpl _$$FirestoreUserImplFromJson(Map<String, dynamic> json) =>
           const TimestampConverter().fromJson(json['updatedAt'] as Timestamp?),
     );
 
-Map<String, dynamic> _$$FirestoreUserImplToJson(_$FirestoreUserImpl instance) =>
+Map<String, dynamic> _$FirestoreUserToJson(_FirestoreUser instance) =>
     <String, dynamic>{
       'username': instance.username,
       'email': instance.email,

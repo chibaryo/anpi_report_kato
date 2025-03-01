@@ -1,3 +1,4 @@
+// dart format width=80
 // coverage:ignore-file
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint
@@ -9,124 +10,86 @@ part of 'firestoreuser.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// dart format off
 T _$identity<T>(T value) => value;
 
-final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
-
-FirestoreUser _$FirestoreUserFromJson(Map<String, dynamic> json) {
-  return _FirestoreUser.fromJson(json);
-}
-
 /// @nodoc
-mixin _$FirestoreUser {
-  String get username => throw _privateConstructorUsedError;
-  String get email => throw _privateConstructorUsedError;
-  String get password => throw _privateConstructorUsedError;
-  bool get isOnline => throw _privateConstructorUsedError;
+mixin _$FirestoreUser implements DiagnosticableTreeMixin {
+  String get username;
+  String get email;
+  String get password;
+  bool get isOnline;
   @TimestampConverter()
-  DateTime? get lastActive => throw _privateConstructorUsedError;
-  int get accoutStatus => throw _privateConstructorUsedError;
+  DateTime? get lastActive;
+  int get accoutStatus;
   @TimestampConverter()
-  DateTime? get createdAt => throw _privateConstructorUsedError;
+  DateTime? get createdAt;
   @TimestampConverter()
-  DateTime? get updatedAt => throw _privateConstructorUsedError;
-
-  /// Serializes this FirestoreUser to a JSON map.
-  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  DateTime? get updatedAt;
 
   /// Create a copy of FirestoreUser
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
-  $FirestoreUserCopyWith<FirestoreUser> get copyWith =>
-      throw _privateConstructorUsedError;
-}
-
-/// @nodoc
-abstract class $FirestoreUserCopyWith<$Res> {
-  factory $FirestoreUserCopyWith(
-          FirestoreUser value, $Res Function(FirestoreUser) then) =
-      _$FirestoreUserCopyWithImpl<$Res, FirestoreUser>;
-  @useResult
-  $Res call(
-      {String username,
-      String email,
-      String password,
-      bool isOnline,
-      @TimestampConverter() DateTime? lastActive,
-      int accoutStatus,
-      @TimestampConverter() DateTime? createdAt,
-      @TimestampConverter() DateTime? updatedAt});
-}
-
-/// @nodoc
-class _$FirestoreUserCopyWithImpl<$Res, $Val extends FirestoreUser>
-    implements $FirestoreUserCopyWith<$Res> {
-  _$FirestoreUserCopyWithImpl(this._value, this._then);
-
-  // ignore: unused_field
-  final $Val _value;
-  // ignore: unused_field
-  final $Res Function($Val) _then;
-
-  /// Create a copy of FirestoreUser
-  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
+  $FirestoreUserCopyWith<FirestoreUser> get copyWith =>
+      _$FirestoreUserCopyWithImpl<FirestoreUser>(
+          this as FirestoreUser, _$identity);
+
+  /// Serializes this FirestoreUser to a JSON map.
+  Map<String, dynamic> toJson();
+
   @override
-  $Res call({
-    Object? username = null,
-    Object? email = null,
-    Object? password = null,
-    Object? isOnline = null,
-    Object? lastActive = freezed,
-    Object? accoutStatus = null,
-    Object? createdAt = freezed,
-    Object? updatedAt = freezed,
-  }) {
-    return _then(_value.copyWith(
-      username: null == username
-          ? _value.username
-          : username // ignore: cast_nullable_to_non_nullable
-              as String,
-      email: null == email
-          ? _value.email
-          : email // ignore: cast_nullable_to_non_nullable
-              as String,
-      password: null == password
-          ? _value.password
-          : password // ignore: cast_nullable_to_non_nullable
-              as String,
-      isOnline: null == isOnline
-          ? _value.isOnline
-          : isOnline // ignore: cast_nullable_to_non_nullable
-              as bool,
-      lastActive: freezed == lastActive
-          ? _value.lastActive
-          : lastActive // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      accoutStatus: null == accoutStatus
-          ? _value.accoutStatus
-          : accoutStatus // ignore: cast_nullable_to_non_nullable
-              as int,
-      createdAt: freezed == createdAt
-          ? _value.createdAt
-          : createdAt // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      updatedAt: freezed == updatedAt
-          ? _value.updatedAt
-          : updatedAt // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-    ) as $Val);
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    properties
+      ..add(DiagnosticsProperty('type', 'FirestoreUser'))
+      ..add(DiagnosticsProperty('username', username))
+      ..add(DiagnosticsProperty('email', email))
+      ..add(DiagnosticsProperty('password', password))
+      ..add(DiagnosticsProperty('isOnline', isOnline))
+      ..add(DiagnosticsProperty('lastActive', lastActive))
+      ..add(DiagnosticsProperty('accoutStatus', accoutStatus))
+      ..add(DiagnosticsProperty('createdAt', createdAt))
+      ..add(DiagnosticsProperty('updatedAt', updatedAt));
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is FirestoreUser &&
+            (identical(other.username, username) ||
+                other.username == username) &&
+            (identical(other.email, email) || other.email == email) &&
+            (identical(other.password, password) ||
+                other.password == password) &&
+            (identical(other.isOnline, isOnline) ||
+                other.isOnline == isOnline) &&
+            (identical(other.lastActive, lastActive) ||
+                other.lastActive == lastActive) &&
+            (identical(other.accoutStatus, accoutStatus) ||
+                other.accoutStatus == accoutStatus) &&
+            (identical(other.createdAt, createdAt) ||
+                other.createdAt == createdAt) &&
+            (identical(other.updatedAt, updatedAt) ||
+                other.updatedAt == updatedAt));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode => Object.hash(runtimeType, username, email, password,
+      isOnline, lastActive, accoutStatus, createdAt, updatedAt);
+
+  @override
+  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
+    return 'FirestoreUser(username: $username, email: $email, password: $password, isOnline: $isOnline, lastActive: $lastActive, accoutStatus: $accoutStatus, createdAt: $createdAt, updatedAt: $updatedAt)';
   }
 }
 
 /// @nodoc
-abstract class _$$FirestoreUserImplCopyWith<$Res>
-    implements $FirestoreUserCopyWith<$Res> {
-  factory _$$FirestoreUserImplCopyWith(
-          _$FirestoreUserImpl value, $Res Function(_$FirestoreUserImpl) then) =
-      __$$FirestoreUserImplCopyWithImpl<$Res>;
-  @override
+abstract mixin class $FirestoreUserCopyWith<$Res> {
+  factory $FirestoreUserCopyWith(
+          FirestoreUser value, $Res Function(FirestoreUser) _then) =
+      _$FirestoreUserCopyWithImpl;
   @useResult
   $Res call(
       {String username,
@@ -140,12 +103,12 @@ abstract class _$$FirestoreUserImplCopyWith<$Res>
 }
 
 /// @nodoc
-class __$$FirestoreUserImplCopyWithImpl<$Res>
-    extends _$FirestoreUserCopyWithImpl<$Res, _$FirestoreUserImpl>
-    implements _$$FirestoreUserImplCopyWith<$Res> {
-  __$$FirestoreUserImplCopyWithImpl(
-      _$FirestoreUserImpl _value, $Res Function(_$FirestoreUserImpl) _then)
-      : super(_value, _then);
+class _$FirestoreUserCopyWithImpl<$Res>
+    implements $FirestoreUserCopyWith<$Res> {
+  _$FirestoreUserCopyWithImpl(this._self, this._then);
+
+  final FirestoreUser _self;
+  final $Res Function(FirestoreUser) _then;
 
   /// Create a copy of FirestoreUser
   /// with the given fields replaced by the non-null parameter values.
@@ -161,37 +124,37 @@ class __$$FirestoreUserImplCopyWithImpl<$Res>
     Object? createdAt = freezed,
     Object? updatedAt = freezed,
   }) {
-    return _then(_$FirestoreUserImpl(
+    return _then(_self.copyWith(
       username: null == username
-          ? _value.username
+          ? _self.username
           : username // ignore: cast_nullable_to_non_nullable
               as String,
       email: null == email
-          ? _value.email
+          ? _self.email
           : email // ignore: cast_nullable_to_non_nullable
               as String,
       password: null == password
-          ? _value.password
+          ? _self.password
           : password // ignore: cast_nullable_to_non_nullable
               as String,
       isOnline: null == isOnline
-          ? _value.isOnline
+          ? _self.isOnline
           : isOnline // ignore: cast_nullable_to_non_nullable
               as bool,
       lastActive: freezed == lastActive
-          ? _value.lastActive
+          ? _self.lastActive
           : lastActive // ignore: cast_nullable_to_non_nullable
               as DateTime?,
       accoutStatus: null == accoutStatus
-          ? _value.accoutStatus
+          ? _self.accoutStatus
           : accoutStatus // ignore: cast_nullable_to_non_nullable
               as int,
       createdAt: freezed == createdAt
-          ? _value.createdAt
+          ? _self.createdAt
           : createdAt // ignore: cast_nullable_to_non_nullable
               as DateTime?,
       updatedAt: freezed == updatedAt
-          ? _value.updatedAt
+          ? _self.updatedAt
           : updatedAt // ignore: cast_nullable_to_non_nullable
               as DateTime?,
     ));
@@ -200,10 +163,8 @@ class __$$FirestoreUserImplCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _$FirestoreUserImpl
-    with DiagnosticableTreeMixin
-    implements _FirestoreUser {
-  const _$FirestoreUserImpl(
+class _FirestoreUser with DiagnosticableTreeMixin implements FirestoreUser {
+  const _FirestoreUser(
       {this.username = '',
       this.email = '',
       this.password = '',
@@ -212,9 +173,8 @@ class _$FirestoreUserImpl
       this.accoutStatus = 0,
       @TimestampConverter() this.createdAt,
       @TimestampConverter() this.updatedAt});
-
-  factory _$FirestoreUserImpl.fromJson(Map<String, dynamic> json) =>
-      _$$FirestoreUserImplFromJson(json);
+  factory _FirestoreUser.fromJson(Map<String, dynamic> json) =>
+      _$FirestoreUserFromJson(json);
 
   @override
   @JsonKey()
@@ -241,14 +201,23 @@ class _$FirestoreUserImpl
   @TimestampConverter()
   final DateTime? updatedAt;
 
+  /// Create a copy of FirestoreUser
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'FirestoreUser(username: $username, email: $email, password: $password, isOnline: $isOnline, lastActive: $lastActive, accoutStatus: $accoutStatus, createdAt: $createdAt, updatedAt: $updatedAt)';
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @pragma('vm:prefer-inline')
+  _$FirestoreUserCopyWith<_FirestoreUser> get copyWith =>
+      __$FirestoreUserCopyWithImpl<_FirestoreUser>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$FirestoreUserToJson(
+      this,
+    );
   }
 
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-    super.debugFillProperties(properties);
     properties
       ..add(DiagnosticsProperty('type', 'FirestoreUser'))
       ..add(DiagnosticsProperty('username', username))
@@ -265,7 +234,7 @@ class _$FirestoreUserImpl
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$FirestoreUserImpl &&
+            other is _FirestoreUser &&
             (identical(other.username, username) ||
                 other.username == username) &&
             (identical(other.email, email) || other.email == email) &&
@@ -288,60 +257,88 @@ class _$FirestoreUserImpl
   int get hashCode => Object.hash(runtimeType, username, email, password,
       isOnline, lastActive, accoutStatus, createdAt, updatedAt);
 
-  /// Create a copy of FirestoreUser
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  @pragma('vm:prefer-inline')
-  _$$FirestoreUserImplCopyWith<_$FirestoreUserImpl> get copyWith =>
-      __$$FirestoreUserImplCopyWithImpl<_$FirestoreUserImpl>(this, _$identity);
-
-  @override
-  Map<String, dynamic> toJson() {
-    return _$$FirestoreUserImplToJson(
-      this,
-    );
+  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
+    return 'FirestoreUser(username: $username, email: $email, password: $password, isOnline: $isOnline, lastActive: $lastActive, accoutStatus: $accoutStatus, createdAt: $createdAt, updatedAt: $updatedAt)';
   }
 }
 
-abstract class _FirestoreUser implements FirestoreUser {
-  const factory _FirestoreUser(
-      {final String username,
-      final String email,
-      final String password,
-      final bool isOnline,
-      @TimestampConverter() final DateTime? lastActive,
-      final int accoutStatus,
-      @TimestampConverter() final DateTime? createdAt,
-      @TimestampConverter() final DateTime? updatedAt}) = _$FirestoreUserImpl;
+/// @nodoc
+abstract mixin class _$FirestoreUserCopyWith<$Res>
+    implements $FirestoreUserCopyWith<$Res> {
+  factory _$FirestoreUserCopyWith(
+          _FirestoreUser value, $Res Function(_FirestoreUser) _then) =
+      __$FirestoreUserCopyWithImpl;
+  @override
+  @useResult
+  $Res call(
+      {String username,
+      String email,
+      String password,
+      bool isOnline,
+      @TimestampConverter() DateTime? lastActive,
+      int accoutStatus,
+      @TimestampConverter() DateTime? createdAt,
+      @TimestampConverter() DateTime? updatedAt});
+}
 
-  factory _FirestoreUser.fromJson(Map<String, dynamic> json) =
-      _$FirestoreUserImpl.fromJson;
+/// @nodoc
+class __$FirestoreUserCopyWithImpl<$Res>
+    implements _$FirestoreUserCopyWith<$Res> {
+  __$FirestoreUserCopyWithImpl(this._self, this._then);
 
-  @override
-  String get username;
-  @override
-  String get email;
-  @override
-  String get password;
-  @override
-  bool get isOnline;
-  @override
-  @TimestampConverter()
-  DateTime? get lastActive;
-  @override
-  int get accoutStatus;
-  @override
-  @TimestampConverter()
-  DateTime? get createdAt;
-  @override
-  @TimestampConverter()
-  DateTime? get updatedAt;
+  final _FirestoreUser _self;
+  final $Res Function(_FirestoreUser) _then;
 
   /// Create a copy of FirestoreUser
   /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  _$$FirestoreUserImplCopyWith<_$FirestoreUserImpl> get copyWith =>
-      throw _privateConstructorUsedError;
+  @pragma('vm:prefer-inline')
+  $Res call({
+    Object? username = null,
+    Object? email = null,
+    Object? password = null,
+    Object? isOnline = null,
+    Object? lastActive = freezed,
+    Object? accoutStatus = null,
+    Object? createdAt = freezed,
+    Object? updatedAt = freezed,
+  }) {
+    return _then(_FirestoreUser(
+      username: null == username
+          ? _self.username
+          : username // ignore: cast_nullable_to_non_nullable
+              as String,
+      email: null == email
+          ? _self.email
+          : email // ignore: cast_nullable_to_non_nullable
+              as String,
+      password: null == password
+          ? _self.password
+          : password // ignore: cast_nullable_to_non_nullable
+              as String,
+      isOnline: null == isOnline
+          ? _self.isOnline
+          : isOnline // ignore: cast_nullable_to_non_nullable
+              as bool,
+      lastActive: freezed == lastActive
+          ? _self.lastActive
+          : lastActive // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
+      accoutStatus: null == accoutStatus
+          ? _self.accoutStatus
+          : accoutStatus // ignore: cast_nullable_to_non_nullable
+              as int,
+      createdAt: freezed == createdAt
+          ? _self.createdAt
+          : createdAt // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
+      updatedAt: freezed == updatedAt
+          ? _self.updatedAt
+          : updatedAt // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
+    ));
+  }
 }
+
+// dart format on

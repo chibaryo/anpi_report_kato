@@ -1,3 +1,4 @@
+// dart format width=80
 // coverage:ignore-file
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint
@@ -9,176 +10,33 @@ part of 'template.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// dart format off
 T _$identity<T>(T value) => value;
-
-final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
-
-Template _$TemplateFromJson(Map<String, dynamic> json) {
-  return _Template.fromJson(json);
-}
 
 /// @nodoc
 mixin _$Template {
-  String get notiTitle => throw _privateConstructorUsedError;
-  String get notiBody => throw _privateConstructorUsedError;
+  String get notiTitle;
+  String get notiBody;
   @TimestampConverter()
-  DateTime? get createdAt => throw _privateConstructorUsedError;
+  DateTime? get createdAt;
   @TimestampConverter()
-  DateTime? get updatedAt => throw _privateConstructorUsedError;
-
-  /// Serializes this Template to a JSON map.
-  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  DateTime? get updatedAt;
 
   /// Create a copy of Template
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
+  @pragma('vm:prefer-inline')
   $TemplateCopyWith<Template> get copyWith =>
-      throw _privateConstructorUsedError;
-}
+      _$TemplateCopyWithImpl<Template>(this as Template, _$identity);
 
-/// @nodoc
-abstract class $TemplateCopyWith<$Res> {
-  factory $TemplateCopyWith(Template value, $Res Function(Template) then) =
-      _$TemplateCopyWithImpl<$Res, Template>;
-  @useResult
-  $Res call(
-      {String notiTitle,
-      String notiBody,
-      @TimestampConverter() DateTime? createdAt,
-      @TimestampConverter() DateTime? updatedAt});
-}
-
-/// @nodoc
-class _$TemplateCopyWithImpl<$Res, $Val extends Template>
-    implements $TemplateCopyWith<$Res> {
-  _$TemplateCopyWithImpl(this._value, this._then);
-
-  // ignore: unused_field
-  final $Val _value;
-  // ignore: unused_field
-  final $Res Function($Val) _then;
-
-  /// Create a copy of Template
-  /// with the given fields replaced by the non-null parameter values.
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? notiTitle = null,
-    Object? notiBody = null,
-    Object? createdAt = freezed,
-    Object? updatedAt = freezed,
-  }) {
-    return _then(_value.copyWith(
-      notiTitle: null == notiTitle
-          ? _value.notiTitle
-          : notiTitle // ignore: cast_nullable_to_non_nullable
-              as String,
-      notiBody: null == notiBody
-          ? _value.notiBody
-          : notiBody // ignore: cast_nullable_to_non_nullable
-              as String,
-      createdAt: freezed == createdAt
-          ? _value.createdAt
-          : createdAt // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      updatedAt: freezed == updatedAt
-          ? _value.updatedAt
-          : updatedAt // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-    ) as $Val);
-  }
-}
-
-/// @nodoc
-abstract class _$$TemplateImplCopyWith<$Res>
-    implements $TemplateCopyWith<$Res> {
-  factory _$$TemplateImplCopyWith(
-          _$TemplateImpl value, $Res Function(_$TemplateImpl) then) =
-      __$$TemplateImplCopyWithImpl<$Res>;
-  @override
-  @useResult
-  $Res call(
-      {String notiTitle,
-      String notiBody,
-      @TimestampConverter() DateTime? createdAt,
-      @TimestampConverter() DateTime? updatedAt});
-}
-
-/// @nodoc
-class __$$TemplateImplCopyWithImpl<$Res>
-    extends _$TemplateCopyWithImpl<$Res, _$TemplateImpl>
-    implements _$$TemplateImplCopyWith<$Res> {
-  __$$TemplateImplCopyWithImpl(
-      _$TemplateImpl _value, $Res Function(_$TemplateImpl) _then)
-      : super(_value, _then);
-
-  /// Create a copy of Template
-  /// with the given fields replaced by the non-null parameter values.
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? notiTitle = null,
-    Object? notiBody = null,
-    Object? createdAt = freezed,
-    Object? updatedAt = freezed,
-  }) {
-    return _then(_$TemplateImpl(
-      notiTitle: null == notiTitle
-          ? _value.notiTitle
-          : notiTitle // ignore: cast_nullable_to_non_nullable
-              as String,
-      notiBody: null == notiBody
-          ? _value.notiBody
-          : notiBody // ignore: cast_nullable_to_non_nullable
-              as String,
-      createdAt: freezed == createdAt
-          ? _value.createdAt
-          : createdAt // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      updatedAt: freezed == updatedAt
-          ? _value.updatedAt
-          : updatedAt // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-    ));
-  }
-}
-
-/// @nodoc
-@JsonSerializable()
-class _$TemplateImpl implements _Template {
-  const _$TemplateImpl(
-      {this.notiTitle = '',
-      this.notiBody = '',
-      @TimestampConverter() this.createdAt,
-      @TimestampConverter() this.updatedAt});
-
-  factory _$TemplateImpl.fromJson(Map<String, dynamic> json) =>
-      _$$TemplateImplFromJson(json);
-
-  @override
-  @JsonKey()
-  final String notiTitle;
-  @override
-  @JsonKey()
-  final String notiBody;
-  @override
-  @TimestampConverter()
-  final DateTime? createdAt;
-  @override
-  @TimestampConverter()
-  final DateTime? updatedAt;
-
-  @override
-  String toString() {
-    return 'Template(notiTitle: $notiTitle, notiBody: $notiBody, createdAt: $createdAt, updatedAt: $updatedAt)';
-  }
+  /// Serializes this Template to a JSON map.
+  Map<String, dynamic> toJson();
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$TemplateImpl &&
+            other is Template &&
             (identical(other.notiTitle, notiTitle) ||
                 other.notiTitle == notiTitle) &&
             (identical(other.notiBody, notiBody) ||
@@ -194,47 +52,177 @@ class _$TemplateImpl implements _Template {
   int get hashCode =>
       Object.hash(runtimeType, notiTitle, notiBody, createdAt, updatedAt);
 
-  /// Create a copy of Template
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  @pragma('vm:prefer-inline')
-  _$$TemplateImplCopyWith<_$TemplateImpl> get copyWith =>
-      __$$TemplateImplCopyWithImpl<_$TemplateImpl>(this, _$identity);
-
-  @override
-  Map<String, dynamic> toJson() {
-    return _$$TemplateImplToJson(
-      this,
-    );
+  String toString() {
+    return 'Template(notiTitle: $notiTitle, notiBody: $notiBody, createdAt: $createdAt, updatedAt: $updatedAt)';
   }
 }
 
-abstract class _Template implements Template {
-  const factory _Template(
-      {final String notiTitle,
-      final String notiBody,
-      @TimestampConverter() final DateTime? createdAt,
-      @TimestampConverter() final DateTime? updatedAt}) = _$TemplateImpl;
+/// @nodoc
+abstract mixin class $TemplateCopyWith<$Res> {
+  factory $TemplateCopyWith(Template value, $Res Function(Template) _then) =
+      _$TemplateCopyWithImpl;
+  @useResult
+  $Res call(
+      {String notiTitle,
+      String notiBody,
+      @TimestampConverter() DateTime? createdAt,
+      @TimestampConverter() DateTime? updatedAt});
+}
 
-  factory _Template.fromJson(Map<String, dynamic> json) =
-      _$TemplateImpl.fromJson;
+/// @nodoc
+class _$TemplateCopyWithImpl<$Res> implements $TemplateCopyWith<$Res> {
+  _$TemplateCopyWithImpl(this._self, this._then);
+
+  final Template _self;
+  final $Res Function(Template) _then;
+
+  /// Create a copy of Template
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? notiTitle = null,
+    Object? notiBody = null,
+    Object? createdAt = freezed,
+    Object? updatedAt = freezed,
+  }) {
+    return _then(_self.copyWith(
+      notiTitle: null == notiTitle
+          ? _self.notiTitle
+          : notiTitle // ignore: cast_nullable_to_non_nullable
+              as String,
+      notiBody: null == notiBody
+          ? _self.notiBody
+          : notiBody // ignore: cast_nullable_to_non_nullable
+              as String,
+      createdAt: freezed == createdAt
+          ? _self.createdAt
+          : createdAt // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
+      updatedAt: freezed == updatedAt
+          ? _self.updatedAt
+          : updatedAt // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _Template implements Template {
+  const _Template(
+      {this.notiTitle = '',
+      this.notiBody = '',
+      @TimestampConverter() this.createdAt,
+      @TimestampConverter() this.updatedAt});
+  factory _Template.fromJson(Map<String, dynamic> json) =>
+      _$TemplateFromJson(json);
 
   @override
-  String get notiTitle;
+  @JsonKey()
+  final String notiTitle;
   @override
-  String get notiBody;
+  @JsonKey()
+  final String notiBody;
   @override
   @TimestampConverter()
-  DateTime? get createdAt;
+  final DateTime? createdAt;
   @override
   @TimestampConverter()
-  DateTime? get updatedAt;
+  final DateTime? updatedAt;
 
   /// Create a copy of Template
   /// with the given fields replaced by the non-null parameter values.
   @override
   @JsonKey(includeFromJson: false, includeToJson: false)
-  _$$TemplateImplCopyWith<_$TemplateImpl> get copyWith =>
-      throw _privateConstructorUsedError;
+  @pragma('vm:prefer-inline')
+  _$TemplateCopyWith<_Template> get copyWith =>
+      __$TemplateCopyWithImpl<_Template>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$TemplateToJson(
+      this,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _Template &&
+            (identical(other.notiTitle, notiTitle) ||
+                other.notiTitle == notiTitle) &&
+            (identical(other.notiBody, notiBody) ||
+                other.notiBody == notiBody) &&
+            (identical(other.createdAt, createdAt) ||
+                other.createdAt == createdAt) &&
+            (identical(other.updatedAt, updatedAt) ||
+                other.updatedAt == updatedAt));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode =>
+      Object.hash(runtimeType, notiTitle, notiBody, createdAt, updatedAt);
+
+  @override
+  String toString() {
+    return 'Template(notiTitle: $notiTitle, notiBody: $notiBody, createdAt: $createdAt, updatedAt: $updatedAt)';
+  }
 }
+
+/// @nodoc
+abstract mixin class _$TemplateCopyWith<$Res>
+    implements $TemplateCopyWith<$Res> {
+  factory _$TemplateCopyWith(_Template value, $Res Function(_Template) _then) =
+      __$TemplateCopyWithImpl;
+  @override
+  @useResult
+  $Res call(
+      {String notiTitle,
+      String notiBody,
+      @TimestampConverter() DateTime? createdAt,
+      @TimestampConverter() DateTime? updatedAt});
+}
+
+/// @nodoc
+class __$TemplateCopyWithImpl<$Res> implements _$TemplateCopyWith<$Res> {
+  __$TemplateCopyWithImpl(this._self, this._then);
+
+  final _Template _self;
+  final $Res Function(_Template) _then;
+
+  /// Create a copy of Template
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $Res call({
+    Object? notiTitle = null,
+    Object? notiBody = null,
+    Object? createdAt = freezed,
+    Object? updatedAt = freezed,
+  }) {
+    return _then(_Template(
+      notiTitle: null == notiTitle
+          ? _self.notiTitle
+          : notiTitle // ignore: cast_nullable_to_non_nullable
+              as String,
+      notiBody: null == notiBody
+          ? _self.notiBody
+          : notiBody // ignore: cast_nullable_to_non_nullable
+              as String,
+      createdAt: freezed == createdAt
+          ? _self.createdAt
+          : createdAt // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
+      updatedAt: freezed == updatedAt
+          ? _self.updatedAt
+          : updatedAt // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
+    ));
+  }
+}
+
+// dart format on

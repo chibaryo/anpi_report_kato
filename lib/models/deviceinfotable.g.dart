@@ -6,9 +6,8 @@ part of 'deviceinfotable.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$DeviceInfoTableImpl _$$DeviceInfoTableImplFromJson(
-        Map<String, dynamic> json) =>
-    _$DeviceInfoTableImpl(
+_DeviceInfoTable _$DeviceInfoTableFromJson(Map<String, dynamic> json) =>
+    _DeviceInfoTable(
       systemName: json['systemName'] as String? ?? '',
       osVersion: json['osVersion'] as String? ?? '',
       localizedModel: json['localizedModel'] as String? ?? '',
@@ -21,8 +20,7 @@ _$DeviceInfoTableImpl _$$DeviceInfoTableImplFromJson(
           const TimestampConverter().fromJson(json['updatedAt'] as Timestamp?),
     );
 
-Map<String, dynamic> _$$DeviceInfoTableImplToJson(
-        _$DeviceInfoTableImpl instance) =>
+Map<String, dynamic> _$DeviceInfoTableToJson(_DeviceInfoTable instance) =>
     <String, dynamic>{
       'systemName': instance.systemName,
       'osVersion': instance.osVersion,

@@ -24,26 +24,20 @@ import '../screens/unauthenticated/signup_screen.dart';
 import '../screens/unauthenticated/root_screen.dart';
 import 'guard/noauthguard.dart';
 
-part 'app_router.g.dart';
 part 'app_router.gr.dart';
 
-@Riverpod(keepAlive: true)
-AppRouter appRouter(AppRouterRef ref) {
-  return AppRouter(ref: ref);
-}
+@AutoRouterConfig(replaceInRouteName: 'Screen|Page,Route')
+class AppRouter extends RootStackRouter {
+  @override
+  RouteType get defaultRouteType => RouteType.material(); //.cupertino, .adaptive ..etc
 
-@AutoRouterConfig(replaceInRouteName: 'Screen,Route')
-class AppRouter extends _$AppRouter {
-  final Ref ref;
-  AppRouter({required this.ref});
-  
   @override
   List<AutoRoute> get routes => [
     AutoRoute(
       page: RootRoute.page,
       path: '/',
       initial: true,
-      guards: [NoAuthGuard(ref: ref)],
+      //guards: [NoAuthGuard(ref: ref)],
     ),
     AutoRoute(
       page: SigninRoute.page,

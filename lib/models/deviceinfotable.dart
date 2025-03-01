@@ -17,7 +17,7 @@ class TimestampConverter implements JsonConverter<DateTime?, Timestamp?> {
 }
 
 @freezed
-class DeviceInfoTable with _$DeviceInfoTable {
+abstract class DeviceInfoTable with _$DeviceInfoTable {
   const factory DeviceInfoTable({
     @Default('') String systemName,
     @Default('') String osVersion,

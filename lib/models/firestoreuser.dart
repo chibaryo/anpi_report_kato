@@ -17,7 +17,7 @@ class TimestampConverter implements JsonConverter<DateTime?, Timestamp?> {
 }
 
 @freezed
-class FirestoreUser with _$FirestoreUser {
+abstract class FirestoreUser with _$FirestoreUser {
   const factory FirestoreUser({
     @Default('') String username,
     @Default('') String email,
