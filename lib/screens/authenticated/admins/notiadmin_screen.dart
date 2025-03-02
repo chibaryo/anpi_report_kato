@@ -129,7 +129,7 @@ Future<void> openSendNotiDialog(BuildContext context, WidgetRef ref) async {
   return showDialog<void>(
     context: context,
     barrierDismissible: false,
-    builder: (BuildContext context) {
+    builder: (BuildContext dialogContext) {
       return Consumer(
         builder: (context, ref, child) {
           Template? selectedTemplate;
@@ -234,7 +234,7 @@ Future<void> openSendNotiDialog(BuildContext context, WidgetRef ref) async {
             actions: <Widget>[
               TextButton(
                 onPressed: () {
-                  Navigator.pop(context);
+                  Navigator.pop(dialogContext);
                 },
                 child: const Text("キャンセル"),
               ),
@@ -262,14 +262,16 @@ Future<void> openSendNotiDialog(BuildContext context, WidgetRef ref) async {
                         http.Response resp = await http.post(url, headers: headers, body: body);
                         
                         if (resp.statusCode == 200) {
+                          debugPrint("### message sent ###");
                           // Ok, handle Firestore saving logic as well
+                          if (context.mounted) {
+                            Navigator.pop(dialogContext);
+                            //context.router.maybePop(dialogContext);
+                          }
                         } else {
                           // Handle errors
                         }
 
-                        if (context.mounted) {
-                          context.router.maybePop();
-                        }
                       },
                 child: const Text("送信"),
               ),
@@ -330,7 +332,7 @@ Future<void> openSendNotiDialog(BuildContext context, WidgetRef ref) async {
             backgroundColor: Colors.purple[300],
             actions:
               (() {
-                if (moiProfile.value != null && moiProfile.value!.userAttr["jobLevel"] == 4) {
+                if (moiProfile.value != null && moiProfile.value!.userAttr["jobLevel"] >= 4) {
                   return <Widget>[
                     IconButton(
                       onPressed: () async {
@@ -356,7 +358,7 @@ Future<void> openSendNotiDialog(BuildContext context, WidgetRef ref) async {
                       columns: [
                         DataColumn(
                           label:
-                            moiProfile.value != null && moiProfile.value!.userAttr["jobLevel"] == 4
+                            moiProfile.value != null && moiProfile.value!.userAttr["jobLevel"] >= 4
                             ?
                             const Text("操作")
                             :
@@ -384,7 +386,7 @@ Future<void> openSendNotiDialog(BuildContext context, WidgetRef ref) async {
                             }
                           },
                           cells: [
-                          moiProfile.value != null && moiProfile.value!.userAttr["jobLevel"] == 4
+                          moiProfile.value != null && moiProfile.value!.userAttr["jobLevel"] >= 4
                           ?
                           DataCell(
                             TextButton(onPressed: () async {

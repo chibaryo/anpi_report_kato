@@ -61,7 +61,7 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  String logMessage = "ハンドリング a background message: ${message.data['notificationId']}";
+  String logMessage = "Hnaddling a background message: ${message.data['notificationId']}";
   logger.i(logMessage);
   await logToFile(logMessage); // Log to file
   await logToFile("message.notification : ${message.notification.toString()})"); // Log to file
@@ -289,15 +289,16 @@ Future<void> showAndroidLocalNotification(RemoteMessage message) async {
     debugPrint("### onMessage has come ### : ${message.toString()}");
     inspect(message);
     if (Platform.isAndroid) {
-      showAndroidLocalNotification(message);
+      //showAndroidLocalNotification(message);
     } else if (Platform.isIOS) {
       showIosLocalNotification(message);
     }
 
     final receivedNotiId = message.data['notificationId'];
+    debugPrint("receivedNotiId: ${receivedNotiId.toString()}");
   if (receivedNotiId != null) {
     // Navigate to a new route or update the UI based on the notification
-    ref.read(notiIdProvider.notifier).state = receivedNotiId;
+    //ref.read(notiIdProvider.notifier).state = receivedNotiId;
 
     // Optionally, clear the notification ID from SecureStorage if needed
     secureStorage.delete(key: "notiId");
