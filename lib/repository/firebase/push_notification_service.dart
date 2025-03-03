@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:anpi_report_flutter/platform-dependent/fcm/initfcm_android.dart';
 import 'package:anpi_report_flutter/router/app_router.dart';
@@ -13,52 +14,93 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 final String fcmVapidKey = dotenv.get('FIREBASE_FCM_VAPID_KEY'); //"eD8dzYgLNtF4HmmOB9OT3i7Y1G5wXyeeAn4unMBA";
 
 class PushNotificationService {
-  final RootStackRouter appRouter;
-  final WidgetRef ref;
+  // Singleton instance
+  static final PushNotificationService _instance = PushNotificationService._internal();
+  factory PushNotificationService() => _instance;
 
-  PushNotificationService({
-    required this.appRouter,
-    required this.ref,
-  });
+  late final RootStackRouter appRouter; // Use `late` to initialize it in `init()`
 
-  final channel = const AndroidNotificationChannel(
-    'fcm_kato_anpi_app_channel', // bd1840df-9ec5-4e69-b237-e4dcb209a310
+  // Private constructor
+  PushNotificationService._internal();
+
+  static final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+  final FirebaseMessaging messaging = FirebaseMessaging.instance;
+
+  static final AndroidNotificationChannel channel = AndroidNotificationChannel(
+    'fcm_kato_anpi_app_channel',
     'Katosansho Anpi App Notifications',
     description: 'This channel is used for Katosansho Anpi App notifications.',
     importance: Importance.high,
   );
 
-  final flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
-  final messaging = FirebaseMessaging.instance;
+  /// Initialize the service with dependencies (appRouter)
+  void init({required RootStackRouter router}) {
+    appRouter = router;
+  }
 
-  void onDidReceiveNotificationResponse(NotificationResponse notificationResponse) {
+  static Future<void> initLocalNotification() async {
+    const AndroidInitializationSettings initializationSettingsAndroid =
+        AndroidInitializationSettings('@mipmap/ic_launcher');
+
+    const DarwinInitializationSettings initializationSettingsIOS =
+        DarwinInitializationSettings(
+      requestAlertPermission: true,
+      requestBadgePermission: true,
+      requestSoundPermission: true,
+    );
+
+    const InitializationSettings initializationSettings =
+        InitializationSettings(
+      android: initializationSettingsAndroid,
+      iOS: initializationSettingsIOS,
+    ); 
+
+    await flutterLocalNotificationsPlugin.initialize(
+      initializationSettings,
+      onDidReceiveNotificationResponse: onDidReceiveNotificationResponse,
+      onDidReceiveBackgroundNotificationResponse:
+          onDidReceiveBackgroundNotificationResponse,
+    );
+
+    if (Platform.isAndroid) {
+      await requestAndroidPermissions();
+    }
+  }
+
+  static void onDidReceiveNotificationResponse(NotificationResponse notificationResponse) {
     debugPrint("***### Notification clicked! ***");
     Map notificationPayload = jsonDecode(notificationResponse.payload!);
     final notiId = notificationPayload["notificationId"];
     debugPrint("notificationId: ${notificationPayload["notificationId"].toString()}");
 
-    // Navigate to PostEnquetePage
     debugPrint("Navigate to PostEnquetePage...");
-    appRouter.push(PostEnqueteRoute(notificationId: notiId));
+    _instance.appRouter.push(PostEnqueteRoute(notificationId: notiId)); // No need for `?`
   }
 
-  void onDidReceiveBackgroundNotificationResponse(NotificationResponse notificationResponse) {
+  static void onDidReceiveBackgroundNotificationResponse(NotificationResponse notificationResponse) {
     debugPrint('onDidReceiveBackgroundNotificationResponse: $notificationResponse');
   }
 
-  void initializePushNotifications({
+  static Future<void> requestAndroidPermissions() async {
+    await flutterLocalNotificationsPlugin
+      .resolvePlatformSpecificImplementation<
+          AndroidFlutterLocalNotificationsPlugin>()
+      ?.requestNotificationsPermission();
+  }
+
+  static void initializePushNotifications({
     required Future<void> Function(RemoteMessage) handler,
   }) {
     // Set the background handler
     FirebaseMessaging.onBackgroundMessage(handler);
 
-    // Initialize local notifications
+/*    // Initialize local notifications
     flutterLocalNotificationsPlugin
         .resolvePlatformSpecificImplementation<
             AndroidFlutterLocalNotificationsPlugin>()
-        ?.createNotificationChannel(channel);
+        ?.createNotificationChannel(channel); */
 
-    messaging.setForegroundNotificationPresentationOptions(
+    FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(
       alert: true,
       badge: true,
       sound: true,
@@ -66,20 +108,16 @@ class PushNotificationService {
   }
 
   Future<void> handleNotification() async {
-    // Terminated: When notification clicked
-    RemoteMessage? initialMessage = await FirebaseMessaging.instance.getInitialMessage();
+    RemoteMessage? initialMessage = await messaging.getInitialMessage();
     if (initialMessage != null) {
       appRouter.push(PostEnqueteRoute(notificationId: initialMessage.data['notificationId']));
     }
 
-    // Background: When notification clicked
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-      debugPrint("Backgroundで通知からアプリを開きました: ${message.notification?.title}");
       final receivedNotiId = message.data['notificationId'];
       appRouter.push(PostEnqueteRoute(notificationId: receivedNotiId));
     });
 
-    // Foreground
     FirebaseMessaging.onMessage.listen((message) {
       final notification = message.notification;
       final android = message.notification?.android;

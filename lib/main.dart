@@ -103,13 +103,18 @@ Future<void> forceBadge() async {
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
   // Load dotenv file
   await dotenv.load(fileName: ".env");
+
+  // Initialize local notifications
+  // Initialize PushNotificationService with router
+  final appRouter = AppRouter();
+  PushNotificationService().init(router: appRouter);
+  PushNotificationService.initLocalNotification();
 
 //  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
@@ -157,10 +162,11 @@ Future<void> main() async {
     await secureStorage.readAll();
 */
 
+//  await PushNotificationService.initLocalNotification();
 
   timeago.setLocaleMessages("ja", timeago.JaMessages());
 
-  runApp(const ProviderScope(child: MyApp()));
+  runApp(ProviderScope(child: MyApp(appRouter: appRouter)));
 }
 
 /*
@@ -168,18 +174,15 @@ const notiIdStorageKey = "notiId";
 final notiIdProvider = StateProvider<String?>((ref) => null);
 */
 class MyApp extends HookConsumerWidget {
-  const MyApp({super.key});
+  final RootStackRouter appRouter;
+  MyApp({super.key, required this.appRouter});
+//  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     //final authAsyncValue = ref.watch(authStateChangesProvider);
 
-    final appRouter = AppRouter();
-    final flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
-    final pushNotifications = PushNotificationService(
-      appRouter: appRouter,
-      ref: ref
-    );
+    final pushNotifications = PushNotificationService();
 
     // Func defs
     // Local notification
@@ -192,27 +195,23 @@ class MyApp extends HookConsumerWidget {
       ),
     );
 
-    Future<void> initLocalNotification() async {
-      await flutterLocalNotificationsPlugin.initialize(
-        initializationSettings,
-        onDidReceiveNotificationResponse: pushNotifications.onDidReceiveNotificationResponse,
-        onDidReceiveBackgroundNotificationResponse: pushNotifications.onDidReceiveBackgroundNotificationResponse,
-      );
-    }
 
     useEffect(() {
       // Init Push
-      pushNotifications.initializePushNotifications(handler: _firebaseMessagingBackgroundHandler);
+      PushNotificationService.initializePushNotifications(handler: _firebaseMessagingBackgroundHandler);
 
       Future.wait(
         [
-          initLocalNotification(),
           // 権限リクエストの設定
           pushNotifications.settingPushNotification(),
           // Handle foreground notification
           pushNotifications.handleNotification(),
         ],
       );
+
+      if (Platform.isAndroid) {
+        //
+      }
 
       return null;
     }, const []);
