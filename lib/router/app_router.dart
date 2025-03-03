@@ -22,6 +22,7 @@ import '../screens/unauthenticated/tabsrouter_screen.dart';
 import '../screens/unauthenticated/signin_screen.dart';
 import '../screens/unauthenticated/signup_screen.dart';
 import '../screens/unauthenticated/root_screen.dart';
+import 'guard/authguard.dart';
 import 'guard/noauthguard.dart';
 
 part 'app_router.gr.dart';
@@ -30,6 +31,7 @@ part 'app_router.gr.dart';
 class AppRouter extends RootStackRouter {
   @override
   RouteType get defaultRouteType => RouteType.material(); //.cupertino, .adaptive ..etc
+
 
   @override
   List<AutoRoute> get routes => [
@@ -52,6 +54,7 @@ class AppRouter extends RootStackRouter {
     ),
     AutoRoute(
       page: TabsRouterRoute.page,
+      guards: [AuthGuard()],
       children: [
         AutoRoute(
           page: AppHomeRouterRoute.page,
@@ -64,6 +67,7 @@ class AppRouter extends RootStackRouter {
             ),
             AutoRoute(
               page: PostEnqueteRoute.page,
+              guards: [AuthGuard()],
               //path: 'postenquete/:notificationId',
             ),
             AutoRoute(

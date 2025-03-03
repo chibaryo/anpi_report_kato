@@ -10,7 +10,7 @@ import '../../providers/firebaseauth/auth_provider.dart';
 part 'noauthguard.g.dart';
 
 @Riverpod(keepAlive: true)
-NoAuthGuard noAuthGuard(NoAuthGuardRef ref) {
+NoAuthGuard noAuthGuard(Ref ref) {
   return NoAuthGuard(ref: ref);
 }
 
@@ -26,14 +26,9 @@ class NoAuthGuard extends AutoRouteGuard {
 
     //
     if (isAuth) {
-      // If logged in, skip Signin
-      router.replaceAll([const AppHomeRoute()]);
-      resolver.next(false);
+      resolver.next(true);
     } else {
-      router.replaceAll([const SigninRoute()]);
-      resolver.next(false);
-      // If not logged in, goto Signin
-      // resolver.next(true);
+      resolver.redirectUntil(const SigninRoute());
     }
   }
 }

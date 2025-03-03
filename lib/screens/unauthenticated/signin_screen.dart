@@ -1,4 +1,5 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -27,7 +28,9 @@ class SigninScreen extends HookConsumerWidget {
 
       if (currentRoute == SigninRoute.name) {
         if (next.asData?.value != null) {
-          context.router.replace(const AppHomeRoute());
+          debugPrint("context.router: ${context.router.toString()}");
+
+          context.router.replace(const TabsRouterRoute());
           // context.router.replace(const AppHomeRoute());
         } else {
           return;
@@ -52,14 +55,6 @@ class SigninScreen extends HookConsumerWidget {
     );
 
     useEffect(() {
-      // アプリを開いている場合にバナーを表示（Android）
-      pushNotifications.handleNotification();
-      Future.wait(
-        [
-          // 権限リクエストの設定
-          pushNotifications.settingPushNotification(),
-        ],
-      );
 
       return null;
     }, const []);
