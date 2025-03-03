@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 
+import 'package:anpi_report_flutter/repository/firebase/push_notification_service.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -57,9 +58,9 @@ Future<void> logToFile(String message) async {
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   // If you're going to use other Firebase services in the background, such as Firestore,
   // make sure you call `initializeApp` before using other Firebase services.
-  await Firebase.initializeApp(
+/*  await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
-  );
+  ); */
 
   String logMessage = "Hnaddling a background message: ${message.data['notificationId']}";
   logger.i(logMessage);
@@ -103,54 +104,38 @@ Future<void> main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  // Init FCM
-  final messaging = FirebaseMessaging.instance;
-  final fcmSettings = await messaging.requestPermission(
-    alert: true,
-    badge: true,
-    sound: true,
+  await dotenv.load(fileName: ".env");
+  pushNotifications.initializePushNotifications(
+    handler: _firebaseMessagingBackgroundHandler
   );
-  if (kDebugMode) {
-    print("FCM Permission granted: ${fcmSettings.authorizationStatus}");
-  }
-  try {
-    final fcmToken = await messaging.getToken(
-      vapidKey: "BHFm_plXBmh3r0yAnBVKjQ8Hg7UXgkyq5sghEKGu2-ZTKYiVxjrR53vo-WwIL-B_9q0ScF5t8Mkj1Ws-dPlLSqI",
-    );
-    // Print fcmToken
-    debugPrint("Got fcmToken: $fcmToken");
-    // Subscribe to "notice_all" (default)
-    await messaging.subscribeToTopic("notice_all");
+  final fcmToken = await pushNotifications.getFcmToken();
+  debugPrint("Got fcmToken: $fcmToken");
+//    await messaging.subscribeToTopic("notice_all");
 
     // Save to secure storage
-    await secureStorage.write(
+/*    await secureStorage.write(
       key: "fcmToken",
       value: fcmToken,
     );
     await secureStorage.readAll();
+*/
 
-  } catch (err) {
-    throw Exception(err);
-  }
-
-  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
   timeago.setLocaleMessages("ja", timeago.JaMessages());
-  await dotenv.load(fileName: ".env");
 
   runApp(const ProviderScope(child: MyApp()));
 }
 
+/*
 const notiIdStorageKey = "notiId";
-
 final notiIdProvider = StateProvider<String?>((ref) => null);
-
+*/
 class MyApp extends HookConsumerWidget {
   const MyApp({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final notiId = ref.watch(notiIdProvider);
+//    final notiId = ref.watch(notiIdProvider);
     final isNotiClicked = useState<bool>(false);
 
     // Func defs
@@ -185,7 +170,7 @@ class MyApp extends HookConsumerWidget {
       final String? receivedNotiId = notificationPayload["notificationId"];
       if (receivedNotiId != null) {
         debugPrint("receivedNotiId notiId: $receivedNotiId");
-        ref.read(notiIdProvider.notifier).state = receivedNotiId;
+//        ref.read(notiIdProvider.notifier).state = receivedNotiId;
         isNotiClicked.value = true;
       }
     }
@@ -232,7 +217,7 @@ Future<void> showAndroidLocalNotification(RemoteMessage message) async {
         // SecureStorageに保存
         await secureStorage.write(key: "notiId", value: receivedNotiId);
         // Access the provider and update the state
-        ref.read(notiIdProvider.notifier).state = receivedNotiId;
+//        ref.read(notiIdProvider.notifier).state = receivedNotiId;
         isNotiClicked.value = true;
         debugPrint("### isNotiCliced フラグをONにしました ###");
         // アプリが起動してからページ遷移を行うための処理
@@ -279,10 +264,10 @@ Future<void> showAndroidLocalNotification(RemoteMessage message) async {
 }    // End func defs
 
     final appRouter = AppRouter(); //ref.watch(appRouterProvider);// appRouterProviderは、ルーティングの設定を管理する
-
+/*
     useEffect(() {
       Future<void> storeNotiIdToSecureStorage (String notiId) async {
-        await secureStorage.write(key: notiIdStorageKey, value: notiId);
+//        await secureStorage.write(key: notiIdStorageKey, value: notiId);
       }
       // Handle foreground notification
       FirebaseMessaging.onMessage.listen((RemoteMessage message) {
@@ -378,7 +363,7 @@ Future<void> showAndroidLocalNotification(RemoteMessage message) async {
       }
       return null;
     }, [notiId]);
- 
+*/ 
 
 
     return MaterialApp.router(
@@ -391,7 +376,7 @@ Future<void> showAndroidLocalNotification(RemoteMessage message) async {
         Locale('ja'),
         Locale('en'),
       ],
-      title: "Flutter Demo App",
+      title: "Katosansho Anpi App",
       theme: ThemeData(
         primarySwatch: Colors.purple,
       ),

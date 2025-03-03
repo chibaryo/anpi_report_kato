@@ -11,6 +11,7 @@ import '../../models/deviceinfo.dart';
 import '../../providers/firebaseauth/auth_provider.dart';
 import '../../providers/firestore/deviceinfo/deviceinfo_notifier.dart';
 import '../../providers/qrtext/qrtext_notifier.dart';
+import '../../repository/firebase/push_notification_service.dart';
 import '../../router/app_router.dart';
 
 @RoutePage()
@@ -29,7 +30,8 @@ class SigninScreen extends HookConsumerWidget {
           context.router.replace(const AppHomeRoute());
           // context.router.replace(const AppHomeRoute());
         } else {
-          context.router.replace(const SigninRoute());
+          return;
+          //context.router.replace(const SigninRoute());
         }
       }
     });
@@ -48,6 +50,19 @@ class SigninScreen extends HookConsumerWidget {
       tFieldCompanyCodeController,
       () => tFieldCompanyCodeController.text == targetCompanyCode
     );
+
+    useEffect(() {
+      // アプリを開いている場合にバナーを表示（Android）
+      pushNotifications.handleNotification();
+      Future.wait(
+        [
+          // 権限リクエストの設定
+          pushNotifications.settingPushNotification(),
+        ],
+      );
+
+      return null;
+    }, const []);
 
      return Scaffold(
         appBar: AppBar(

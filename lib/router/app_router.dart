@@ -33,22 +33,22 @@ class AppRouter extends RootStackRouter {
 
   @override
   List<AutoRoute> get routes => [
-    AutoRoute(
+/*    AutoRoute(
       page: RootRoute.page,
       path: '/',
-      initial: true,
       //guards: [NoAuthGuard(ref: ref)],
-    ),
+    ), */
     AutoRoute(
       page: SigninRoute.page,
       path: '/signin',
-    ),
-    AutoRoute(
-      page: ScanQRRoute.page,
+      initial: true,
     ),
     AutoRoute(
       page: SignupRoute.page,
       path: '/signup',
+    ),
+    AutoRoute(
+      page: ScanQRRoute.page,
     ),
     AutoRoute(
       page: TabsRouterRoute.page,
