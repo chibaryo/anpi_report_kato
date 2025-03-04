@@ -138,6 +138,9 @@ class PushNotificationService {
           ),
           payload: jsonEncode(messageData),
         );
+      } else if (notification != null && android == null) {
+        // in iOS foreground
+        debugPrint("iOS foreground message ...");
       }
     });
   }
