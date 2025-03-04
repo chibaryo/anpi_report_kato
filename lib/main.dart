@@ -116,85 +116,21 @@ Future<void> main() async {
   PushNotificationService().init(router: appRouter);
   PushNotificationService.initLocalNotification();
 
-//  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
-
-  // Initialize PushNotification
-/*  pushNotifications.initializePushNotifications(
-    handler: _firebaseMessagingBackgroundHandler
-  ); */
-
-  // Get fcmToken
-//  final fcmToken = await pushNotifications.getFcmToken();
-//  debugPrint("Got fcmToken: $fcmToken");
-
-  // Terminated: When notification clicked
-/*  RemoteMessage? initialMessage =
-    await FirebaseMessaging.instance.getInitialMessage();
-  if (initialMessage != null) {
-    debugPrint("Terminatedで通知からアプリを起動しました! ${initialMessage.notification?.title}");
-  } */
-
-  // Background: When notification clicked
-/*  FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-    debugPrint("Backgroundで通知からアプリを開きました: ${message.notification?.title}");
-  }); */
-
-  // Foreground: When notification received
-/*  FirebaseMessaging.onMessage.listen((RemoteMessage message) async {
-    debugPrint("Foregroundで通知受信 ${message.notification?.title}");
-    debugPrint("Foreground 受信データ: ${message.data.toString()}");
-    final RemoteNotification? notification = message.notification;
-    final messageData = message.data;
-
-    if (messageData['notificationId'] != "") {
-      debugPrint("notiId: ${messageData['notificationId']}");
-      //      Navigator.pushNamed(context, )
-    }
-  }); */
-
-//    await messaging.subscribeToTopic("notice_all");
-
-    // Save to secure storage
-/*    await secureStorage.write(
-      key: "fcmToken",
-      value: fcmToken,
-    );
-    await secureStorage.readAll();
-*/
-
-//  await PushNotificationService.initLocalNotification();
-
   timeago.setLocaleMessages("ja", timeago.JaMessages());
 
   runApp(ProviderScope(child: MyApp(appRouter: appRouter)));
 }
 
-/*
-const notiIdStorageKey = "notiId";
-final notiIdProvider = StateProvider<String?>((ref) => null);
-*/
 class MyApp extends HookConsumerWidget {
   final RootStackRouter appRouter;
   MyApp({super.key, required this.appRouter});
-//  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    //final authAsyncValue = ref.watch(authStateChangesProvider);
 
     final pushNotifications = PushNotificationService();
 
     // Func defs
-    // Local notification
-    var initializationSettings = InitializationSettings(
-      android: const AndroidInitializationSettings('@mipmap/ic_launcher'),
-      iOS: DarwinInitializationSettings(
-        requestAlertPermission: true,
-        requestBadgePermission: true,
-        requestSoundPermission: true,
-      ),
-    );
-
 
     useEffect(() {
       // Init Push
