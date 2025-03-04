@@ -7,28 +7,17 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../../router/app_router.dart';
 import '../../providers/firebaseauth/auth_provider.dart';
 
-part 'noauthguard.g.dart';
-
-@Riverpod(keepAlive: true)
-NoAuthGuard noAuthGuard(Ref ref) {
-  return NoAuthGuard(ref: ref);
-}
-
 class NoAuthGuard extends AutoRouteGuard {
-  Ref ref;
-  NoAuthGuard({required this.ref});
-
   @override
   void onNavigation(NavigationResolver resolver, StackRouter router) {
-    //final isAuth = FirebaseAuth.instance.currentUser != null;
-    final isAuth = ref.read(streamAuthNotifierProvider).asData?.value != null;
-//    final authState = ref.read(authStateChangesProvider);
+    final isAuth = FirebaseAuth.instance.currentUser != null;
 
     //
-    if (isAuth) {
+    if (!isAuth) {
       resolver.next(true);
     } else {
-      resolver.redirectUntil(const SigninRoute());
+      router.replaceAll([const TabsRouterRoute()]);
+      resolver.next(false);
     }
   }
 }

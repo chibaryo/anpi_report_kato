@@ -43,6 +43,7 @@ class AppRouter extends RootStackRouter {
     AutoRoute(
       page: SigninRoute.page,
       path: '/signin',
+      guards: [NoAuthGuard()],
       initial: true,
     ),
     AutoRoute(

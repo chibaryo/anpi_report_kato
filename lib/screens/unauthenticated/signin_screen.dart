@@ -28,7 +28,6 @@ class SigninScreen extends HookConsumerWidget {
 
       if (currentRoute == SigninRoute.name) {
         if (next.asData?.value != null) {
-          debugPrint("context.router: ${context.router.toString()}");
 
           context.router.replace(const TabsRouterRoute());
           // context.router.replace(const AppHomeRoute());
