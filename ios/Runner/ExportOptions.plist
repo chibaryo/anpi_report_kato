@@ -10,7 +10,7 @@
 	<string>app-store</string>
 	<key>provisioningProfiles</key>
 	<dict>
-		<key>com.applpsefew.comdcsd.anpireportapp</key>
+		<key>com.katoanpireport.flutter.app</key>
 		<string>kato anpi flutter mdm dist</string>
 	</dict>
 	<key>signingCertificate</key>

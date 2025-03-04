@@ -23,6 +23,7 @@ import '../../../models/template/template.dart';
 import '../../../providers/bottomnav/bottomnav_provider.dart';
 import '../../../providers/firebaseauth/auth_provider.dart';
 import '../../../providers/firestore/profile/profile_notifier.dart';
+import '../../../providers/firestore/report/report_notifier.dart';
 import '../../../providers/sqlite/users/unansweredusers_sqlite_provider.dart';
 import '../../../router/app_router.dart';
 
@@ -322,7 +323,7 @@ Future<void> openSendNotiDialog(BuildContext context, WidgetRef ref) async {
                 if (context.mounted) {
                   //
                   ref.read(bottomNavNotifierProvider.notifier).show();
-                  context.router.back();
+                  context.router.maybePop();
                 }
               },
             ),

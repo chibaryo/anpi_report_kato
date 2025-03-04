@@ -56,7 +56,6 @@
 /* Begin PBXFileReference section */
 		0BB530772CDD607200C239B4 /* DKImagePickerController.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = DKImagePickerController.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		0BF9827B2CD442AF00131F2B /* Runner-MDM.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Runner-MDM.app"; sourceTree = BUILT_PRODUCTS_DIR; };
-		0BF9827C2CD442AF00131F2B /* Runner-MDM.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "Runner-MDM.plist"; path = "/Users/ryochiba/Documents/Programs/Flutter/anpi_report_flutter/ios/Runner-MDM.plist"; sourceTree = "<absolute>"; };
 		11526B2ACBE14DE31857A0DF /* Pods-RunnerTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RunnerTests.debug.xcconfig"; path = "Target Support Files/Pods-RunnerTests/Pods-RunnerTests.debug.xcconfig"; sourceTree = "<group>"; };
 		1491C3D9EBAB2FB85DBCDEA4 /* Pods-Runner.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.debug.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.debug.xcconfig"; sourceTree = "<group>"; };
 		1498D2321E8E86230040F4C2 /* GeneratedPluginRegistrant.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GeneratedPluginRegistrant.h; sourceTree = "<group>"; };
@@ -166,7 +165,6 @@
 				B78A9732B919E84347D326CA /* GoogleService-Info.plist */,
 				346236CE175D56A095EE9405 /* Pods */,
 				31FFAE1B92C9C14E6D7EFDC6 /* Frameworks */,
-				0BF9827C2CD442AF00131F2B /* Runner-MDM.plist */,
 			);
 			sourceTree = "<group>";
 		};
@@ -723,10 +721,10 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.1.4;
-				PRODUCT_BUNDLE_IDENTIFIER = com.applpsefew.comdcsd.anpireportapp;
+				PRODUCT_BUNDLE_IDENTIFIER = com.katoanpireport.flutter.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "kato anpi flutter mdm dist";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "Kato Sansho Anpi Flutter AppStore Dist";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
@@ -921,10 +919,10 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.1.4;
-				PRODUCT_BUNDLE_IDENTIFIER = com.applpsefew.comdcsd.anpireportapp;
+				PRODUCT_BUNDLE_IDENTIFIER = com.katoanpireport.flutter.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "kato anpi flutter mdm dist";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "Kato Sansho Anpi Flutter AppStore Dist";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
@@ -959,10 +957,10 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.1.4;
-				PRODUCT_BUNDLE_IDENTIFIER = com.applpsefew.comdcsd.anpireportapp;
+				PRODUCT_BUNDLE_IDENTIFIER = com.katoanpireport.flutter.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "kato anpi flutter mdm dist";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "Kato Sansho Anpi Flutter AppStore Dist";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;

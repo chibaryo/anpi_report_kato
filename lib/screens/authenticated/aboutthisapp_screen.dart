@@ -1,21 +1,11 @@
-
-import 'package:anpi_report_flutter/models/template/template.dart';
-import 'package:anpi_report_flutter/providers/firestore/templates/template_notifier.dart';
 import 'package:auto_route/auto_route.dart';
-import 'package:custom_text_form_field_plus/custom_text_form_field_plus.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:flutter_settings_screens/flutter_settings_screens.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../../../models/firestoreuser.dart';
 import '../../../models/profile.dart';
 import '../../../providers/bottomnav/bottomnav_provider.dart';
-import '../../../providers/firebaseauth/auth_provider.dart';
-import '../../../providers/firestore/firestoreuser/firestoreuser_notifier.dart';
-import '../../../providers/firestore/profile/profile_notifier.dart';
 import '../../../providers/sqlite/users/unansweredusers_sqlite_provider.dart';
 
 @RoutePage()
