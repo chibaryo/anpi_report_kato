@@ -429,7 +429,7 @@ Future<void> openSendNotiDialog(BuildContext context, WidgetRef ref) async {
                         :
                         const DataCell(Text(""))
                         ,
-                        DataCell(Text(DateFormat('[M/d h:mm]').format(rowRecord.createdAt))),
+                        DataCell(Text(DateFormat('[MM/dd HH:mm]').format(rowRecord.createdAt))),
                         DataCell(Text(rowRecord.notiTitle)),
                         DataCell(Text(rowRecord.notiBody)),
                       ]);

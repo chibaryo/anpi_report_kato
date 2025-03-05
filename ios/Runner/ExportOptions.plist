@@ -14,7 +14,7 @@
 		<string>Kato Sansho Anpi Flutter AppStore Dist</string>
 	</dict>
 	<key>signingCertificate</key>
-	<string>66FE7824259A979FE17200362D5FDC6C088A6A7B</string>
+	<string>2C80FB37E884BE20262E2923BB8973FB30227EA1</string>
 	<key>signingStyle</key>
 	<string>manual</string>
 	<key>stripSwiftSymbols</key>

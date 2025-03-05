@@ -1,5 +1,6 @@
 
 import 'package:anpi_report_flutter/providers/firestore/templates/template_notifier.dart';
+import 'package:app_settings/app_settings.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -96,6 +97,13 @@ class TheOtherOpsScreen extends HookConsumerWidget {
                 padding: const EdgeInsets.all(8.0),
                 child: Column(
                   children: [
+                    // AppSettings
+                    ElevatedButton(
+                      onPressed: () {
+                        AppSettings.openAppSettings(type: AppSettingsType.notification);
+                      },
+                      child: const Text("アプリの通知設定を確認する"),
+                    ),
                     GestureDetector(
                       behavior: HitTestBehavior.opaque,
                       onTap: () async {
