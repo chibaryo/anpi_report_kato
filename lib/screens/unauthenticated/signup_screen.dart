@@ -425,6 +425,7 @@ List<String> getSelectedDepartments(int selectedSum) {
                                             "officeLocation": selectedOffice.value,
                                             "jobLevel": selectedJobLevel.value,
                                             "department": selectedDepartments.value,
+                                            "subscription": 1, // notice_all
                                           },
                                           createdAt: DateTime.now(),
                                           updatedAt: DateTime.now(),

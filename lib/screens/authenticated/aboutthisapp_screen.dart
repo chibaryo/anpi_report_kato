@@ -53,7 +53,8 @@ class AboutThisAppScreen extends HookConsumerWidget {
         ),
         body: const Column(
           children: [
-            Text("バージョン: v1.2.2"),
+            Text("バージョン: v1.2.3"),
+            Text("[2025/02/26][v1.2.3] 通知先トピックの改訂"),
             Text("[2025/02/26][v1.2.2] 通知モジュールの修正"),
             Text("[2025/02/26][v1.2.1] QRコード認証を導入"),
             Text("[2025/02/26][v1.1.9] DataTableの修正"),

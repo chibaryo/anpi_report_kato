@@ -9,8 +9,10 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:intl/intl.dart';
 
 import '../../models/notification/notification.dart';
+import '../../models/profile.dart';
 import '../../providers/firebaseauth/auth_provider.dart';
 import '../../providers/firestore/notification/combined_notification_notifier.dart';
+import '../../providers/firestore/profile/moiProfile_notifier.dart';
 import '../../router/app_router.dart';
 
 @RoutePage()
@@ -25,10 +27,13 @@ class AppHomeScreen extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final moiUid = useState<String>("");
+    final moiProfile = useState<Profile?>(null);
+
     final tabController = useTabController(initialLength: 2);
     final authAsyncValue = ref.watch(authStateChangesProvider);
     final unAnsweredNotiBadgeCount = useState<int>(0);
     //final answeredByMeNotificationStream = ref.watch(streamNotificationAnswerByMeNotifierProvider(moiUid.value));
+    final profileAsyncValue = ref.watch(streamMoiProfileNotifierProvider(moiUid.value));
 
     useEffect(() {
       Future.microtask(() {
@@ -50,6 +55,10 @@ class AppHomeScreen extends HookConsumerWidget {
       if (user != null) {
         moiUid.value = user.uid;
         debugPrint("moiUid: ${moiUid.value}");
+
+        // Profile stream
+        moiProfile.value = profileAsyncValue.asData?.value;
+        debugPrint("moiP : ${moiProfile.value.toString()}");
       }
 
       return () {};

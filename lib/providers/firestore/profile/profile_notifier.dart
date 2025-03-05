@@ -41,22 +41,6 @@ class StreamProfileNotifier extends  _$StreamProfileNotifier {
     }
   }
 
-  // Stream
-  Stream<Profile?> getProfileStreamByUid(String uid) async* {
-    yield* FirebaseFirestore.instance
-      .collection("users")
-      .doc(uid)
-      .collection("profiles")
-      .doc(uid)
-      .snapshots()
-      .map((docSnap) {
-        if (docSnap.exists) {
-          return Profile.fromJson(docSnap.data()!);
-        } else {
-          return null;
-        }
-      });
-  }
 
   // Add a new record
   Future<void> addProfile(String uid, Profile profile) async {
@@ -67,6 +51,20 @@ class StreamProfileNotifier extends  _$StreamProfileNotifier {
         .collection("profiles")
         .doc(uid)
         .set(profile.toJson());
+    } catch (e) {
+      // Handle any errors here, such as logging
+    }
+  }
+
+  // Update profile
+  Future<void> updateProfileByUid(String uid, Map<String, dynamic> updates) async {
+    try {
+      await FirebaseFirestore.instance
+        .collection("users")
+        .doc(uid)
+        .collection("profiles")
+        .doc(uid)
+        .set(updates, SetOptions(merge: true));
     } catch (e) {
       // Handle any errors here, such as logging
     }

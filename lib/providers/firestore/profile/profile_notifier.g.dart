@@ -7,7 +7,7 @@ part of 'profile_notifier.dart';
 // **************************************************************************
 
 String _$streamProfileNotifierHash() =>
-    r'9485e2c0a650d219a9ad15cc0e6ef6c4d06e3134';
+    r'80c2e5b25cf1747b3c8b272500f44d4a75277441';
 
 /// See also [StreamProfileNotifier].
 @ProviderFor(StreamProfileNotifier)

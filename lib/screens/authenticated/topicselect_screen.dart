@@ -1,4 +1,5 @@
 
+import 'package:anpi_report_flutter/providers/firestore/profile/moiProfile_notifier.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
@@ -21,9 +22,11 @@ class TopicSelectScreen extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final authAsyncValue = ref.watch(authStateChangesProvider);
+
     final moiUid = useState<String>("");
     final moiProfile = useState<Profile?>(null);
     final profileNotifier = ref.watch(streamProfileNotifierProvider.notifier);
+    final profileAsyncValue = ref.watch(streamMoiProfileNotifierProvider(moiUid.value));
 
     final isTokyoFlagOn = useState<bool>(false);
     final isNagoyaFlagOn = useState<bool>(false);
@@ -42,16 +45,13 @@ class TopicSelectScreen extends HookConsumerWidget {
         moiUid.value = user.uid;
         debugPrint("moiUid: ${moiUid.value}");
 
-        // Get profile by uid
-        profileNotifier.getProfileByUid(moiUid.value).then((profile) {
-          moiProfile.value = profile;
-        });
-
-
+        // Profile stream
+        moiProfile.value = profileAsyncValue.asData?.value;
+        debugPrint("moiP : ${moiProfile.value.toString()}");
       }
 
       return () {};
-    }, [authAsyncValue]);
+    }, [authAsyncValue, profileAsyncValue]);
 
     useEffect(() {
       Future.microtask(() {
@@ -143,7 +143,7 @@ class TopicSelectScreen extends HookConsumerWidget {
           child: Column(
             children: <Widget>[
               SwitchListTile(
-                title: const Text("東京"),
+                title: const Text("通知_東京"),
                 value: isTokyoFlagOn.value,
                 onChanged: (bool? value) async {
                   final messaging = FirebaseMessaging.instance;
@@ -152,15 +152,31 @@ class TopicSelectScreen extends HookConsumerWidget {
                     await storage.write(key: "tokyoFlagStr", value: "on");
                     await messaging.subscribeToTopic("notice_tokyo");
                     isTokyoFlagOn.value = value;
+
+                    // UpdateProfile for userAttr["subscription"]
+                    final profileUpdates = {
+                      "userAttr": {
+                        "subscription": (moiProfile.value?.userAttr["subscription"] ?? 0) | (1 << 1),
+                      },
+                    };
+                    await profileNotifier.updateProfileByUid(moiUid.value, profileUpdates);
                   } else {
                     await storage.write(key: "tokyoFlagStr", value: "off");
                     await messaging.unsubscribeFromTopic("notice_tokyo");
                     isTokyoFlagOn.value = value;
+
+                    // UpdateProfile for userAttr["subscription"]
+                    final profileUpdates = {
+                      "userAttr": {
+                        "subscription": (moiProfile.value?.userAttr["subscription"] ?? 0) & ~(1 << 1),
+                      },
+                    };
+                    await profileNotifier.updateProfileByUid(moiUid.value, profileUpdates);
                   }
                 }
               ),
               SwitchListTile(
-                title: const Text("名古屋"),
+                title: const Text("通知_名古屋"),
                 value: isNagoyaFlagOn.value,
                 onChanged: (bool? value) async {
                   final messaging = FirebaseMessaging.instance;
@@ -169,15 +185,31 @@ class TopicSelectScreen extends HookConsumerWidget {
                     await storage.write(key: "nagoyaFlagStr", value: "on");
                     await messaging.subscribeToTopic("notice_nagoya");
                     isNagoyaFlagOn.value = value;
+
+                    // UpdateProfile for userAttr["subscription"]
+                    final profileUpdates = {
+                      "userAttr": {
+                        "subscription": (moiProfile.value?.userAttr["subscription"] ?? 0) | (1 << 2),
+                      },
+                    };
+                    await profileNotifier.updateProfileByUid(moiUid.value, profileUpdates);
                   } else {
                     await storage.write(key: "nagoyaFlagStr", value: "off");
                     await messaging.unsubscribeFromTopic("notice_nagoya");
                     isNagoyaFlagOn.value = value;
+
+                    // UpdateProfile for userAttr["subscription"]
+                    final profileUpdates = {
+                      "userAttr": {
+                        "subscription": (moiProfile.value?.userAttr["subscription"] ?? 0) & ~(1 << 2),
+                      },
+                    };
+                    await profileNotifier.updateProfileByUid(moiUid.value, profileUpdates);
                   }
                 }
               ),
               SwitchListTile(
-                title: const Text("大阪"),
+                title: const Text("通知_大阪"),
                 value: isOsakaFlagOn.value,
                 onChanged: (bool? value) async {
                   final messaging = FirebaseMessaging.instance;
@@ -186,15 +218,31 @@ class TopicSelectScreen extends HookConsumerWidget {
                     await storage.write(key: "osakaFlagStr", value: "on");
                     await messaging.subscribeToTopic("notice_osaka");
                     isOsakaFlagOn.value = value;
+
+                    // UpdateProfile for userAttr["subscription"]
+                    final profileUpdates = {
+                      "userAttr": {
+                        "subscription": (moiProfile.value?.userAttr["subscription"] ?? 0) | (1 << 3),
+                      },
+                    };
+                    await profileNotifier.updateProfileByUid(moiUid.value, profileUpdates);
                   } else {
                     await storage.write(key: "osakaFlagStr", value: "off");
                     await messaging.unsubscribeFromTopic("notice_osaka");
                     isOsakaFlagOn.value = value;
+
+                    // UpdateProfile for userAttr["subscription"]
+                    final profileUpdates = {
+                      "userAttr": {
+                        "subscription": (moiProfile.value?.userAttr["subscription"] ?? 0) & ~(1 << 3),
+                      },
+                    };
+                    await profileNotifier.updateProfileByUid(moiUid.value, profileUpdates);
                   }
                 }
               ),
               SwitchListTile(
-                title: const Text("広島"),
+                title: const Text("通知_広島"),
                 value: isHiroshimaFlagOn.value,
                 onChanged: (bool? value) async {
                   final messaging = FirebaseMessaging.instance;
@@ -203,15 +251,31 @@ class TopicSelectScreen extends HookConsumerWidget {
                     await storage.write(key: "hiroshimaFlagStr", value: "on");
                     await messaging.subscribeToTopic("notice_hiroshima");
                     isHiroshimaFlagOn.value = value;
+
+                    // UpdateProfile for userAttr["subscription"]
+                    final profileUpdates = {
+                      "userAttr": {
+                        "subscription": (moiProfile.value?.userAttr["subscription"] ?? 0) | (1 << 4),
+                      },
+                    };
+                    await profileNotifier.updateProfileByUid(moiUid.value, profileUpdates);
                   } else {
                     await storage.write(key: "hiroshimaFlagStr", value: "off");
                     await messaging.unsubscribeFromTopic("notice_hiroshima");
                     isHiroshimaFlagOn.value = value;
+
+                    // UpdateProfile for userAttr["subscription"]
+                    final profileUpdates = {
+                      "userAttr": {
+                        "subscription": (moiProfile.value?.userAttr["subscription"] ?? 0) & ~(1 << 4),
+                      },
+                    };
+                    await profileNotifier.updateProfileByUid(moiUid.value, profileUpdates);
                   }
                 }
               ),
               SwitchListTile(
-                title: const Text("岡山"),
+                title: const Text("通知_岡山"),
                 value: isOkayamaFlagOn.value,
                 onChanged: (bool? value) async {
                   final messaging = FirebaseMessaging.instance;
@@ -220,15 +284,31 @@ class TopicSelectScreen extends HookConsumerWidget {
                     await storage.write(key: "okayamaFlagStr", value: "on");
                     await messaging.subscribeToTopic("notice_okayama");
                     isOkayamaFlagOn.value = value;
+
+                    // UpdateProfile for userAttr["subscription"]
+                    final profileUpdates = {
+                      "userAttr": {
+                        "subscription": (moiProfile.value?.userAttr["subscription"] ?? 0) | (1 << 5),
+                      },
+                    };
+                    await profileNotifier.updateProfileByUid(moiUid.value, profileUpdates);
                   } else {
                     await storage.write(key: "okayamaFlagStr", value: "off");
                     await messaging.unsubscribeFromTopic("notice_okayama");
                     isOkayamaFlagOn.value = value;
+
+                    // UpdateProfile for userAttr["subscription"]
+                    final profileUpdates = {
+                      "userAttr": {
+                        "subscription": (moiProfile.value?.userAttr["subscription"] ?? 0) & ~(1 << 5),
+                      },
+                    };
+                    await profileNotifier.updateProfileByUid(moiUid.value, profileUpdates);
                   }
                 }
               ),
               SwitchListTile(
-                title: const Text("九州"),
+                title: const Text("通知_九州"),
                 value: isKyushuFlagOn.value,
                 onChanged: (bool? value) async {
                   final messaging = FirebaseMessaging.instance;
@@ -237,27 +317,26 @@ class TopicSelectScreen extends HookConsumerWidget {
                     await storage.write(key: "kyushuFlagStr", value: "on");
                     await messaging.subscribeToTopic("notice_kyushu");
                     isKyushuFlagOn.value = value;
+
+                    // UpdateProfile for userAttr["subscription"]
+                    final profileUpdates = {
+                      "userAttr": {
+                        "subscription": (moiProfile.value?.userAttr["subscription"] ?? 0) | (1 << 6),
+                      },
+                    };
+                    await profileNotifier.updateProfileByUid(moiUid.value, profileUpdates);
                   } else {
                     await storage.write(key: "kyushuFlagStr", value: "off");
                     await messaging.unsubscribeFromTopic("notice_kyushu");
                     isKyushuFlagOn.value = value;
-                  }
-                }
-              ),
-              SwitchListTile(
-                title: const Text("管理用テスト2024"),
-                value: isTestAdm2024FlagOn.value,
-                onChanged: (bool? value) async {
-                  final messaging = FirebaseMessaging.instance;
-                  if (value!) {
-                    // When true
-                    await storage.write(key: "testadm2024FlagStr", value: "on");
-                    await messaging.subscribeToTopic("test_adm_2024");
-                    isTestAdm2024FlagOn.value = value;
-                  } else {
-                    await storage.write(key: "testadm2024FlagStr", value: "off");
-                    await messaging.unsubscribeFromTopic("test_adm_2024");
-                    isTestAdm2024FlagOn.value = value;
+
+                    // UpdateProfile for userAttr["subscription"]
+                    final profileUpdates = {
+                      "userAttr": {
+                        "subscription": (moiProfile.value?.userAttr["subscription"] ?? 0) & ~(1 << 6),
+                      },
+                    };
+                    await profileNotifier.updateProfileByUid(moiUid.value, profileUpdates);
                   }
                 }
               ),
@@ -274,11 +353,29 @@ class TopicSelectScreen extends HookConsumerWidget {
                     await messaging.subscribeToTopic("adm_only_2025");
                     isAdmOnly2025FlagOn.value = value;
                     debugPrint("subscriped to : 管理用テスト2025");
+
+                    debugPrint('moiProfile.value?.userAttr s : ${moiProfile.value?.userAttr["subscription"].toString()}');
+
+                    // UpdateProfile for userAttr["subscription"]
+                    final profileUpdates = {
+                      "userAttr": {
+                        "subscription": (moiProfile.value?.userAttr["subscription"] ?? 0) | (1 << 8),
+                      },
+                    };
+                    await profileNotifier.updateProfileByUid(moiUid.value, profileUpdates);
                   } else {
                     await storage.write(key: "admOnly2025FlagStr", value: "off");
                     await messaging.unsubscribeFromTopic("adm_only_2025");
                     isAdmOnly2025FlagOn.value = value;
                     debugPrint("Unsubscriped from : 管理用テスト2025");
+
+                    // UpdateProfile for userAttr["subscription"]
+                    final profileUpdates = {
+                      "userAttr": {
+                        "subscription": (moiProfile.value?.userAttr["subscription"] ?? 0) & ~(1 << 8),
+                      },
+                    };
+                    await profileNotifier.updateProfileByUid(moiUid.value, profileUpdates);
                   }
                 }
               )
