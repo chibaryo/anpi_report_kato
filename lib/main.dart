@@ -129,6 +129,7 @@ class MyApp extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
 
     final pushNotifications = PushNotificationService();
+    final token = useState<String?>("");
 
     // Func defs
 
@@ -142,6 +143,13 @@ class MyApp extends HookConsumerWidget {
           pushNotifications.settingPushNotification(),
           // Handle foreground notification
           pushNotifications.handleNotification(),
+          pushNotifications.getFcmToken().then((result) {
+            token.value = result;
+            debugPrint("got FcmToken: $result");
+            // Save to secure storage
+
+          }),
+          pushNotifications.subscribeToNoticeAll(),
         ],
       );
 

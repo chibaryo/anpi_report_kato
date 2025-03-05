@@ -160,4 +160,8 @@ class PushNotificationService {
   Future<String?> getFcmToken() async {
     return await messaging.getToken(vapidKey: fcmVapidKey);
   }
+
+  Future<void> subscribeToNoticeAll() async {
+    return await messaging.subscribeToTopic("notice_all");
+  }
 }

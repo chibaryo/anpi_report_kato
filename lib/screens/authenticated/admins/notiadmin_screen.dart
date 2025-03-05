@@ -7,6 +7,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:custom_text_form_field_plus/custom_text_form_field_plus.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_settings_screens/flutter_settings_screens.dart';
@@ -56,6 +57,8 @@ class NotiAdminScreen extends HookConsumerWidget {
     final notiType = useState<int>(0);
     final selectedNotiType = useState<int>(NotiType.undefined.sortNumber);
     final selectedNotiTopic = useState<String>(TopicType.undefined.topic);
+
+    final String apiSrvEndpoint = dotenv.get('APISRV_BASEURL'); //"eD8dzYgLNtF4HmmOB9OT3i7Y1G5wXyeeAn4unMBA";
 
     // Helper method to get options for DropdownButton
     List<DropdownMenuItem<int>> getNotiTypeDropdownItems() {
@@ -213,10 +216,10 @@ Future<void> openSendNotiDialog(BuildContext context, WidgetRef ref) async {
                                 debugPrint("selectedNotiTopic: ${selectedNotiTopic.value}");
                             }
                           },
-                          items: TopicType.values.map((location) {
+                          items: TopicType.values.map((element) {
                             return DropdownMenuItem<String>(
-                              value: location.topic,
-                              child: Text(location.displayName),
+                              value: element.topic,
+                              child: Text(element.displayName),
                             );
                           }).toList(),
                           decoration: const InputDecoration(
@@ -250,8 +253,8 @@ Future<void> openSendNotiDialog(BuildContext context, WidgetRef ref) async {
                         var newId = uuid.v4();
 
                         // POST to API
-                        const String apiUrl = "https://anpi-fcm-2024-test.vercel.app/api/sendToTopic";
-                        Uri url = Uri.parse(apiUrl);
+                        final String apiEndpoint = "$apiSrvEndpoint/api/sendToTopic";
+                        Uri url = Uri.parse(apiEndpoint);
                         Map<String, String> headers = {'Content-Type': 'application/json'};
                         String body = json.encode({
                           'title': notiTitle,
@@ -313,135 +316,132 @@ Future<void> openSendNotiDialog(BuildContext context, WidgetRef ref) async {
       return () {};
     }, [authAsyncValue]);    
 
-    return PopScope(
-      canPop: false,
-      child: Scaffold(
-          appBar: AppBar(
-            leading: IconButton(
-              icon: const Icon(Icons.arrow_back),
-              onPressed: () async {
-                if (context.mounted) {
-                  //
-                  ref.read(bottomNavNotifierProvider.notifier).show();
-                  context.router.maybePop();
-                }
-              },
-            ),
-            title: const Text("通知管理"),
-            centerTitle: true,
-            foregroundColor: Colors.black,
-            backgroundColor: Colors.purple[300],
-            actions:
-              (() {
-                if (moiProfile.value != null && moiProfile.value!.userAttr["jobLevel"] >= 4) {
-                  return <Widget>[
-                    IconButton(
-                      onPressed: () async {
-                        await openSendNotiDialog(context, ref);
-                      },
-                      icon: const Icon(Icons.add)
-                    ),
-                  ];
-                }
-              })()
+    return Scaffold(
+        appBar: AppBar(
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back),
+            onPressed: () async {
+              if (context.mounted) {
+                //
+                ref.read(bottomNavNotifierProvider.notifier).show();
+                context.router.maybePop();
+              }
+            },
           ),
-          body: switch(asyncNotis) {
-            AsyncData(:final value) => SingleChildScrollView(
-              scrollDirection: Axis.vertical,
-              child: SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: Column(
-                  children: <Widget>[
-                    // debug
-                    // end debug
-                    DataTable(
-                      showCheckboxColumn: false,
-                      columns: [
-                        DataColumn(
-                          label:
-                            moiProfile.value != null && moiProfile.value!.userAttr["jobLevel"] >= 4
-                            ?
-                            const Text("操作")
-                            :
-                            const Text(""),
-                        ),
-                        const DataColumn(
-                          label: Text("日時"),
-                        ),
-                        const DataColumn(
-                          label: Text("タイトル"),
-                        ),
-                        const DataColumn(
-                          label: Text("本文"),
-                        ),
-                      ],
-                      rows: asyncNotis.value.map<DataRow>((data) {
-                        final rowRecord = data["noti"];
-                        debugPrint("rowRecord: ${rowRecord.toString()}");
-                                
-                        return DataRow(
-                          onSelectChanged: (bool? selected) async {
-                            if (selected != null && selected) {
-                              // Goto individual noti
-                              context.router.push(NotiAdminDetailsRoute(notiId: rowRecord.notificationId));
-                            }
-                          },
-                          cells: [
+          title: const Text("通知管理"),
+          centerTitle: true,
+          foregroundColor: Colors.black,
+          backgroundColor: Colors.purple[300],
+          actions:
+            (() {
+              if (moiProfile.value != null && moiProfile.value!.userAttr["jobLevel"] >= 4) {
+                return <Widget>[
+                  IconButton(
+                    onPressed: () async {
+                      await openSendNotiDialog(context, ref);
+                    },
+                    icon: const Icon(Icons.add)
+                  ),
+                ];
+              }
+            })()
+        ),
+        body: switch(asyncNotis) {
+          AsyncData(:final value) => SingleChildScrollView(
+            scrollDirection: Axis.vertical,
+            child: SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Column(
+                children: <Widget>[
+                  // debug
+                  // end debug
+                  DataTable(
+                    showCheckboxColumn: false,
+                    columns: [
+                      DataColumn(
+                        label:
                           moiProfile.value != null && moiProfile.value!.userAttr["jobLevel"] >= 4
                           ?
-                          DataCell(
-                            TextButton(onPressed: () async {
-                              // Show Del noti confirmation dialog
-                              showDialog(
-                                context: context,
-                                builder: (context) {
-                                  return AlertDialog(
-                                    title: const Text("通知削除"),
-                                    content: const Text("通知削除します。よろしいですか？"),
-                                    actions: [
-                                      TextButton(
-                                        child: const Text("キャンセル"),
-                                        onPressed: () async {
-                                          if (context.mounted) {
-                                            context.router.maybePop();
-                                          }
-                                        },
-                                      ),
-                                      TextButton(
-                                        child: const Text("削除", style: TextStyle(color: Colors.red),),
-                                        onPressed: () async {
-                                          // Delete notification
-                                          await notiStreamNotifier.deleteNotificationById(rowRecord.notificationId);
-                                          // Close modal
-                                          if (context.mounted) {
-                                            context.router.maybePop();
-                                          }
-                                        },
-                                      ),
-                                    ],
-                                  );
-                                }
-                              );
-                            }, child: const Text("削除", style: TextStyle(color: Colors.red),))
-                            
-                          )
+                          const Text("操作")
                           :
-                          const DataCell(Text(""))
-                          ,
-                          DataCell(Text(DateFormat('[M/d h:mm]').format(rowRecord.createdAt))),
-                          DataCell(Text(rowRecord.notiTitle)),
-                          DataCell(Text(rowRecord.notiBody)),
-                        ]);
-                      }).toList(),
-                    )
-                  ],
-                ),
+                          const Text(""),
+                      ),
+                      const DataColumn(
+                        label: Text("日時"),
+                      ),
+                      const DataColumn(
+                        label: Text("タイトル"),
+                      ),
+                      const DataColumn(
+                        label: Text("本文"),
+                      ),
+                    ],
+                    rows: asyncNotis.value.map<DataRow>((data) {
+                      final rowRecord = data["noti"];
+                      debugPrint("rowRecord: ${rowRecord.toString()}");
+                              
+                      return DataRow(
+                        onSelectChanged: (bool? selected) async {
+                          if (selected != null && selected) {
+                            // Goto individual noti
+                            context.router.push(NotiAdminDetailsRoute(notiId: rowRecord.notificationId));
+                          }
+                        },
+                        cells: [
+                        moiProfile.value != null && moiProfile.value!.userAttr["jobLevel"] >= 4
+                        ?
+                        DataCell(
+                          TextButton(onPressed: () async {
+                            // Show Del noti confirmation dialog
+                            showDialog(
+                              context: context,
+                              builder: (context) {
+                                return AlertDialog(
+                                  title: const Text("通知削除"),
+                                  content: const Text("通知削除します。よろしいですか？"),
+                                  actions: [
+                                    TextButton(
+                                      child: const Text("キャンセル"),
+                                      onPressed: () async {
+                                        if (context.mounted) {
+                                          context.router.maybePop();
+                                        }
+                                      },
+                                    ),
+                                    TextButton(
+                                      child: const Text("削除", style: TextStyle(color: Colors.red),),
+                                      onPressed: () async {
+                                        // Delete notification
+                                        await notiStreamNotifier.deleteNotificationById(rowRecord.notificationId);
+                                        // Close modal
+                                        if (context.mounted) {
+                                          context.router.maybePop();
+                                        }
+                                      },
+                                    ),
+                                  ],
+                                );
+                              }
+                            );
+                          }, child: const Text("削除", style: TextStyle(color: Colors.red),))
+                          
+                        )
+                        :
+                        const DataCell(Text(""))
+                        ,
+                        DataCell(Text(DateFormat('[M/d h:mm]').format(rowRecord.createdAt))),
+                        DataCell(Text(rowRecord.notiTitle)),
+                        DataCell(Text(rowRecord.notiBody)),
+                      ]);
+                    }).toList(),
+                  )
+                ],
               ),
             ),
-            AsyncError(:final error) => Center(child: Text('エラーが発生しました: ${error.toString()}')),
-          _ => const Center(child: CircularProgressIndicator()),
-        }
-      ),
+          ),
+          AsyncError(:final error) => Center(child: Text('エラーが発生しました: ${error.toString()}')),
+        _ => const Center(child: CircularProgressIndicator()),
+      }
     );
   }
 }

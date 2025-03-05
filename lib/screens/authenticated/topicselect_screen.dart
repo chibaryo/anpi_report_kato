@@ -10,6 +10,9 @@ import 'package:flutter_settings_screens/flutter_settings_screens.dart' as scree
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 import '../../../providers/bottomnav/bottomnav_provider.dart';
+import '../../models/profile.dart';
+import '../../providers/firebaseauth/auth_provider.dart';
+import '../../providers/firestore/profile/profile_notifier.dart';
 
 @RoutePage()
 class TopicSelectScreen extends HookConsumerWidget {
@@ -17,6 +20,11 @@ class TopicSelectScreen extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final authAsyncValue = ref.watch(authStateChangesProvider);
+    final moiUid = useState<String>("");
+    final moiProfile = useState<Profile?>(null);
+    final profileNotifier = ref.watch(streamProfileNotifierProvider.notifier);
+
     final isTokyoFlagOn = useState<bool>(false);
     final isNagoyaFlagOn = useState<bool>(false);
     final isOsakaFlagOn = useState<bool>(false);
@@ -24,7 +32,26 @@ class TopicSelectScreen extends HookConsumerWidget {
     final isOkayamaFlagOn = useState<bool>(false);
     final isKyushuFlagOn = useState<bool>(false);
     final isTestAdm2024FlagOn = useState<bool>(false);
+    final isAdmOnly2025FlagOn = useState<bool>(false);
     const storage = FlutterSecureStorage();
+
+
+    useEffect(() {
+      final user = authAsyncValue.asData?.value;
+      if (user != null) {
+        moiUid.value = user.uid;
+        debugPrint("moiUid: ${moiUid.value}");
+
+        // Get profile by uid
+        profileNotifier.getProfileByUid(moiUid.value).then((profile) {
+          moiProfile.value = profile;
+        });
+
+
+      }
+
+      return () {};
+    }, [authAsyncValue]);
 
     useEffect(() {
       Future.microtask(() {
@@ -82,6 +109,14 @@ class TopicSelectScreen extends HookConsumerWidget {
           isTestAdm2024FlagOn.value = true;
         } else {
           isTestAdm2024FlagOn.value = false;
+        }
+        // test_adm_2025
+        final admOnly2025FlagStr = await storage.read(key: 'admOnly2025FlagStr');
+        debugPrint("admOnly2025FlagStr: $admOnly2025FlagStr");
+        if (admOnly2025FlagStr != null && admOnly2025FlagStr == "on") {
+          isAdmOnly2025FlagOn.value = true;
+        } else {
+          isAdmOnly2025FlagOn.value = false;
         }
       }
 
@@ -226,6 +261,29 @@ class TopicSelectScreen extends HookConsumerWidget {
                   }
                 }
               ),
+              moiProfile.value != null && moiProfile.value!.userAttr["jobLevel"] >= 8
+              ?
+              SwitchListTile(
+                title: const Text("管理用テスト2025"),
+                value: isAdmOnly2025FlagOn.value,
+                onChanged: (bool? value) async {
+                  final messaging = FirebaseMessaging.instance;
+                  if (value!) {
+                    // When true
+                    await storage.write(key: "admOnly2025FlagStr", value: "on");
+                    await messaging.subscribeToTopic("adm_only_2025");
+                    isAdmOnly2025FlagOn.value = value;
+                    debugPrint("subscriped to : 管理用テスト2025");
+                  } else {
+                    await storage.write(key: "admOnly2025FlagStr", value: "off");
+                    await messaging.unsubscribeFromTopic("adm_only_2025");
+                    isAdmOnly2025FlagOn.value = value;
+                    debugPrint("Unsubscriped from : 管理用テスト2025");
+                  }
+                }
+              )
+              : const Text("")
+              ,
             ],
           ),
         )

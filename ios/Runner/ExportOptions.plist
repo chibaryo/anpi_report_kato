@@ -11,10 +11,10 @@
 	<key>provisioningProfiles</key>
 	<dict>
 		<key>com.katoanpireport.flutter.app</key>
-		<string>Kato Sansho Anpi Report iOS Dev mini</string>
+		<string>Kato Sansho Anpi Flutter AppStore Dist</string>
 	</dict>
 	<key>signingCertificate</key>
-	<string>1C1CE3B06BCB182A32F755400BED17F29CF41FC2</string>
+	<string>66FE7824259A979FE17200362D5FDC6C088A6A7B</string>
 	<key>signingStyle</key>
 	<string>manual</string>
 	<key>stripSwiftSymbols</key>
