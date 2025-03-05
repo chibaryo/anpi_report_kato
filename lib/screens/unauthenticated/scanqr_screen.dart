@@ -40,12 +40,14 @@ class ScanQRScreen extends HookConsumerWidget {
                       return MobileScanner(
                         controller: scannerController,
                         fit: BoxFit.contain,
-                        onDetect: (scandata) {
+                        onDetect: (scandata) async {
                           // Stop the scanner and navigate to the ScanDataWidget
                           scannerController.stop();
                           if (scandata.barcodes.first.rawValue != "") {
                             ref.read(qrTextNotifierProvider.notifier).updateQrText(scandata.barcodes.first.rawValue!);
-
+                            if (context.mounted) {
+                              context.router.maybePop();
+                            }
                           }
                         },
                       );
