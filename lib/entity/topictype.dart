@@ -49,3 +49,19 @@ List<Map<String, dynamic>> getNotiTopicOptions() {
       .toList()
     ..sort((a, b) => (a['sortNumber'] as int).compareTo(b['sortNumber'] as int));
 }
+
+bool calcSubscriptionBitmask(String topicName, int bitmask) {
+  // Find the TopicType corresponding to the topicName
+  TopicType? foundType = TopicType.values.firstWhere(
+    (topicType) => topicType.topic == topicName,
+    orElse: () => TopicType.undefined, // Default case if not found
+  );
+
+  // If the topic is not found, return false
+  if (foundType == TopicType.undefined) {
+    return false;
+  }
+
+  // Check if the bitMaskNum is set in the bitmask
+  return (bitmask & foundType.bitMaskNum) != 0;
+}

@@ -1,3 +1,4 @@
+import 'package:anpi_report_flutter/entity/topictype.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:rxdart/rxdart.dart';
@@ -14,6 +15,11 @@ class StreamNotificationCombinedNotifier extends _$StreamNotificationCombinedNot
         .orderBy("createdAt", descending: true) // Order by descending directly here
         .snapshots()
         .asyncMap((notificationSnapshot) async {
+          final profileDoc = await FirebaseFirestore.instance.collection("users").doc(uid).collection("profiles").doc(uid).get();
+          final profile = profileDoc.data();
+          final mySubscription = profile?["userAttr"]["subscription"];
+          print("mySubscription: ${mySubscription.toString()}");
+
           List<Map<String, dynamic>> combinedNotifications = [];
 
           for (var notificationDoc in notificationSnapshot.docs) {
@@ -25,13 +31,18 @@ class StreamNotificationCombinedNotifier extends _$StreamNotificationCombinedNot
 
             // Parse the notification
             final noti = Noti.fromJson(notificationDoc.data());
+            print("### noti.notiTopic: ${noti.notiTopic}");
+            final isMySubscription = calcSubscriptionBitmask(noti.notiTopic, mySubscription); // Calc mySubscription and noti.notiTopic
 
-            // Add the notification to the list, marking it as answered or not answered
-            combinedNotifications.add({
-              'noti': noti,
-              'docId': notificationDoc.id,
-              'answered': reportsSnapshot.exists, // Mark as answered if the report exists
-            });
+            // Filter notifications where isMySubscription is true
+            if (isMySubscription) {
+              // Add the notification to the list, marking it as answered or not answered
+              combinedNotifications.add({
+                'noti': noti,
+                'docId': notificationDoc.id,
+                'answered': reportsSnapshot.exists, // Mark as answered if the report exists
+              });
+            }
           }
 
           // Sort the combinedNotifications list by createdAt to maintain the correct order
