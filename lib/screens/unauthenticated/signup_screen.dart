@@ -261,7 +261,12 @@ List<String> getSelectedDepartments(int selectedSum) {
                             decoration: const InputDecoration(labelText: "企業コード"),
                             obscureText: false,
                             autovalidateMode: AutovalidateMode.onUserInteraction,
+                            enabled: qrTextProvider == targetCompanyCode ? false : true,
                             validator: (value) {
+                              if (qrTextProvider == targetCompanyCode) {
+                                return null;
+                              }
+
                               if (value == null || value.isEmpty) {
                                 return "企業コードを入力してください";
                               }
