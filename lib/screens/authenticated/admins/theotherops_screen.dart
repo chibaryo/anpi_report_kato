@@ -98,12 +98,22 @@ class TheOtherOpsScreen extends HookConsumerWidget {
                 child: Column(
                   children: [
                     // AppSettings
-                    ElevatedButton(
-                      onPressed: () {
+                    GestureDetector(
+                      behavior: HitTestBehavior.opaque,
+                      onTap: () async {
                         AppSettings.openAppSettings(type: AppSettingsType.notification);
                       },
-                      child: const Text("アプリの通知設定を確認する"),
-                    ),
+                      child: const Padding(
+                        padding: EdgeInsets.all(16.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text("アプリの通知設定を確認", style: TextStyle(color: Colors.blue),),
+                            Icon(Icons.chevron_right),
+                          ],
+                        ),
+                      ),
+                    ),                    
                     GestureDetector(
                       behavior: HitTestBehavior.opaque,
                       onTap: () async {

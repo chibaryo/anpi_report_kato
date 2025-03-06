@@ -102,6 +102,7 @@ class SigninScreen extends HookConsumerWidget {
                             decoration: const InputDecoration(labelText: "企業コード"),
                             obscureText: false,
                             autovalidateMode: AutovalidateMode.onUserInteraction,
+                            enabled: qrTextProvider == targetCompanyCode ? false : true,
                             validator: (value) {
                               if (qrTextProvider == targetCompanyCode) {
                                 return null;
