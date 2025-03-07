@@ -59,7 +59,7 @@ class AppHomeScreen extends HookConsumerWidget {
       }
 
       return () {};
-    }, [authAsyncValue]);
+    }, [authAsyncValue, profileAsyncValue]);
 
     // Wait for authentication to be ready
     if (authAsyncValue.isLoading || authAsyncValue.hasError || moiUid.value.isEmpty) {
