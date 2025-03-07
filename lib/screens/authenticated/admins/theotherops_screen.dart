@@ -1,37 +1,23 @@
-
-import 'package:anpi_report_flutter/providers/firestore/templates/template_notifier.dart';
 import 'package:app_settings/app_settings.dart';
 import 'package:auto_route/auto_route.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:flutter_settings_screens/flutter_settings_screens.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import '../../../models/firestoreuser.dart';
-import '../../../models/profile.dart';
 import '../../../providers/bottomnav/bottomnav_provider.dart';
-import '../../../providers/firebaseauth/auth_provider.dart';
 import '../../../providers/firestore/firestoreuser/firestoreuser_notifier.dart';
-import '../../../providers/firestore/profile/profile_notifier.dart';
 import '../../../repository/firebase/authrepo.dart';
 import '../../../router/app_router.dart';
 
 @RoutePage()
 class TheOtherOpsScreen extends HookConsumerWidget {
-  const TheOtherOpsScreen({Key? key}) : super(key: key);
+  const TheOtherOpsScreen({super.key});
 
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final moiUid = useState<String>("");
-    final moiProfile = useState<Profile?>(null);
-    final moiUser = useState<FirestoreUser?>(null);
-    final isLoading = useState<bool>(true); // Track loading status
 
-    final authAsyncValue = ref.watch(authStateChangesProvider);
-    final asyncTemplates = ref.watch(streamTemplateNotifierProvider);
-    final profileNotifier = ref.watch(streamProfileNotifierProvider.notifier);
     final userNotifier = ref.watch(streamUserNotifierProvider.notifier);
 
     final AuthService authService = AuthService();

@@ -1,11 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../../models/deviceinfotable.dart';
 part 'deviceinfotable_provider.g.dart';
 
 @riverpod
-FirebaseFirestore firebaseFirestore(FirebaseFirestoreRef ref) {
+FirebaseFirestore firebaseFirestore(Ref ref) {
   return FirebaseFirestore.instance;
 }
 
@@ -19,7 +20,7 @@ Future<List<DeviceInfoTable>> queryDeviceInfoTableByUDID(String uid, String udId
         .get();
 
   return snapshot.docs.map((doc) {
-    final data = doc.data() as Map<String, dynamic>;
+    final data = doc.data();
 
     return DeviceInfoTable.fromJson(data);
   }).toList();

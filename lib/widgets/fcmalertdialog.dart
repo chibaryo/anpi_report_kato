@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import '../platform-dependent/fcm/initfcm_android.dart';
 import '../platform-dependent/fcm/initfcm_ios.dart';
 import '../providers/firebaseauth/auth_provider.dart';
 import '../providers/firestore/deviceinfotable/deviceinfotable_provider.dart';

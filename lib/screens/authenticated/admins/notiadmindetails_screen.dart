@@ -1,18 +1,15 @@
 
 import 'package:anpi_report_flutter/entity/userattr/joblevel.dart';
-import 'package:anpi_report_flutter/providers/firestore/firestoreuser/users_who_did_not_answered_notifier.dart';
 import 'package:anpi_report_flutter/providers/firestore/notification/notification_notifier.dart';
 import 'package:anpi_report_flutter/providers/firestore/userreport/answereduserreport_notifier.dart';
 import 'package:anpi_report_flutter/providers/firestore/userreport/unanswereduserlist_notifier.dart';
 import 'package:auto_route/auto_route.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../../../entity/userattr/department.dart';
 import '../../../entity/userattr/office_location.dart';
-import '../../../models/firestoreuser.dart';
 import '../../../models/notification/notification.dart';
 import '../../../models/profile.dart';
 import '../../../providers/bottomnav/bottomnav_provider.dart';
@@ -28,7 +25,6 @@ class NotiAdminDetailsScreen extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final moiUid = useState<String>("");
-    final unAnsweredUsersUids = useState<List<String>>([]);
     final authAsyncValue = ref.watch(authStateChangesProvider);
     final notiNotifier = ref.watch(streamNotificationNotifierProvider.notifier);
     final profileNotifier = ref.watch(streamProfileNotifierProvider.notifier);
@@ -67,9 +63,9 @@ class NotiAdminDetailsScreen extends HookConsumerWidget {
       return () {};
     }, [authAsyncValue]);
 
-    bool hasBitwiseOverlap(int currentUserDepartments, int userDepartments) {
+/*    bool hasBitwiseOverlap(int currentUserDepartments, int userDepartments) {
       return (currentUserDepartments & userDepartments) != 0;
-    }
+    } */
 
 // Filter unanswered users based on officeLocation and jobLevel
 /*final filteredUnansweredUsers = unansweredUsersStream.when(

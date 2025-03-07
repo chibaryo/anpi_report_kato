@@ -122,9 +122,9 @@ class StreamReportNotifier extends  _$StreamReportNotifier {
         }
       }
 
-      print("Migration completed successfully!");
     } catch (e) {
-      print("Error during migration: $e");
+      //
+      //print("Error during migration: $e");
     }
   }
 }

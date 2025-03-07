@@ -48,12 +48,10 @@ Future<String?> initFCMIOS(String uid, String udid) async {
           "fcmToken": fcmToken,
           "updatedAt": serverDate,
       });
-    print("Updated DB");
 
 //    final fcmNotifier = ref.read(fcmTokenDataProvider.notifier);
 //    fcmNotifier.state = fcmToken!;
     await messaging.subscribeToTopic("notice_all");
-    print("registered to notice_all");
 //        print("watch: ${ref.watch(fcmTokenDataProvider)}");
 
 //        FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);

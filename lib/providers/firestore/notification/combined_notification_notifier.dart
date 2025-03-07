@@ -1,7 +1,6 @@
 import 'package:anpi_report_flutter/entity/topictype.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:rxdart/rxdart.dart';
 import '../../../models/notification/notification.dart';
 
 part 'combined_notification_notifier.g.dart';
@@ -18,7 +17,6 @@ class StreamNotificationCombinedNotifier extends _$StreamNotificationCombinedNot
           final profileDoc = await FirebaseFirestore.instance.collection("users").doc(uid).collection("profiles").doc(uid).get();
           final profile = profileDoc.data();
           final mySubscription = profile?["userAttr"]["subscription"];
-          print("mySubscription: ${mySubscription.toString()}");
 
           List<Map<String, dynamic>> combinedNotifications = [];
 
@@ -31,7 +29,6 @@ class StreamNotificationCombinedNotifier extends _$StreamNotificationCombinedNot
 
             // Parse the notification
             final noti = Noti.fromJson(notificationDoc.data());
-            print("### noti.notiTopic: ${noti.notiTopic}");
             final isMySubscription = calcSubscriptionBitmask(noti.notiTopic, mySubscription); // Calc mySubscription and noti.notiTopic
 
             // Filter notifications where isMySubscription is true
@@ -52,7 +49,6 @@ class StreamNotificationCombinedNotifier extends _$StreamNotificationCombinedNot
             return bCreatedAt!.compareTo(aCreatedAt!); // Sort in ascending order
           }); */
 
-          print("### combinedNotifications  ###: ${combinedNotifications.toString()}");
           
           return combinedNotifications;
         });

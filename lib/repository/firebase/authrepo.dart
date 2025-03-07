@@ -45,8 +45,7 @@ class AuthService {
     try {
       await _firebaseAuth.currentUser?.updateProfile(displayName: displayName);
       await _firebaseAuth.currentUser?.reload();
-      User? latestUser = _firebaseAuth.currentUser;
-      print("latestUser: $latestUser");
+      //User? latestUser = _firebaseAuth.currentUser;
       
     } catch (err) {
       //
@@ -79,16 +78,13 @@ class AuthService {
 
     http.Response resp = await http.post(url, headers: headers, body: body);
     if (resp.statusCode != 200) {
-      final int statusCode = resp.statusCode;
-      print("failed");
+/*      final int statusCode = resp.statusCode;
+      print("failed"); */
       return;
     } else {
       // Ok
-      final int statusCode = resp.statusCode;
-      print("resp.body: ${resp.body}");
 
       await _firebaseAuth.signOut();
-      print("Account deleted");
     }
 
   }
@@ -107,16 +103,13 @@ class AuthService {
 
     http.Response resp = await http.post(url, headers: headers, body: body);
     if (resp.statusCode != 200) {
-      final int statusCode = resp.statusCode;
+      //final int statusCode = resp.statusCode;
       final String result = resp.body;
       return result;
     } else {
       // Ok
-      final int statusCode = resp.statusCode;
       final String resultUid = json.decode(resp.body)["result"]["uid"];
-      print("resultUid: $resultUid");
 
-      print("Account created");
       return resultUid;
     }
   }

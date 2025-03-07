@@ -7,7 +7,7 @@ part of 'report_notifier.dart';
 // **************************************************************************
 
 String _$streamReportNotifierHash() =>
-    r'4a0976c4d5e33252968af7cc50ac3deadb90507e';
+    r'efd05331ed0848520867f929c97fae49755f0ccb';
 
 /// See also [StreamReportNotifier].
 @ProviderFor(StreamReportNotifier)

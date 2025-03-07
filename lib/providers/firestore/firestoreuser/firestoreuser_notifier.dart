@@ -8,7 +8,6 @@ part 'firestoreuser_notifier.g.dart';
 class StreamUserNotifier extends  _$StreamUserNotifier {
   @override
   Stream<List<Map<String, dynamic>>> build() async* {
-    print("begin retreiving users...");
 
     // Create a stream for user documents
     final userStream = FirebaseFirestore.instance
@@ -140,7 +139,8 @@ Future<void> deleteUserByUid(String uid) async {
     await batch.commit();
     
   } catch (e) {
-    print("Error deleting user by UID: $e");
+    rethrow;
+    //print("Error deleting user by UID: $e");
     // Handle any errors such as logging or showing user feedback
   }
   }

@@ -474,7 +474,7 @@ List<String> getSelectedDepartments(int selectedSum) {
                                   child: ElevatedButton(
                                     onPressed: () async {
                                       if (context.mounted) {
-                                        context.router.pushNamed("SigninRoute");
+                                        context.router.push(const SigninRoute());
                                       }
                                     },
                                     child: const Text("サインイン")

@@ -1,9 +1,7 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'dart:developer';
 
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
@@ -42,12 +40,12 @@ Future<void> showAndroidLocalNotification(RemoteMessage message) async {
     },
   );
 
-  const notificationDetails = NotificationDetails(
+/*  const notificationDetails = NotificationDetails(
     android: AndroidNotificationDetails(
       'my_channel_id',
       'my_channel_name'
     ),
-  );
+  ); */
 
   const AndroidNotificationDetails androidPlatformChannelSpecifics =
     AndroidNotificationDetails(

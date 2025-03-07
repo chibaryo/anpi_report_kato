@@ -3,26 +3,23 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import '../../../models/firestoreuser.dart';
-import '../../../models/profile.dart';
 import '../../../providers/bottomnav/bottomnav_provider.dart';
-import '../../../providers/sqlite/users/unansweredusers_sqlite_provider.dart';
 
 @RoutePage()
 class AboutThisAppScreen extends HookConsumerWidget {
-  const AboutThisAppScreen({Key? key}) : super(key: key);
+  const AboutThisAppScreen({super.key});
 
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final moiUid = useState<String>("");
+/*    final moiUid = useState<String>("");
     final moiProfile = useState<Profile?>(null);
     final moiUser = useState<FirestoreUser?>(null);
 
     final isLoading = useState<bool>(true); // Track loading status
 
     final notifier = ref.read(unansweredUsersSQLiteNotifierProvider.notifier);
-
+*/
     useEffect(() {
       // Hide bottomnav
       Future.microtask(() {

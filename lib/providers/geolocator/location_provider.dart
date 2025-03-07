@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:geolocator/geolocator.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -105,7 +103,6 @@ class GeocodingController extends _$GeocodingController {
   Future<void> resetLocationPermissions() async {
     // Simulate resetting location permissions
     // You may need to implement the actual logic depending on your use case
-    print('Location permissions have been reset.');
   }
 }
 

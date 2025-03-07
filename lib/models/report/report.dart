@@ -1,7 +1,6 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-import '../converter/document_reference_converter.dart';
 
 part "report.freezed.dart";
 part "report.g.dart";

@@ -2,20 +2,16 @@ import 'package:anpi_report_flutter/entity/userattr/office_location.dart';
 import 'package:anpi_report_flutter/models/firestoreuser.dart';
 import 'package:anpi_report_flutter/providers/firebaseauth/auth_provider.dart';
 import 'package:anpi_report_flutter/providers/firestore/firestoreuser/firestoreuser_notifier.dart';
-import 'package:anpi_report_flutter/providers/firestore/notification/notification_notifier.dart';
 import 'package:anpi_report_flutter/providers/firestore/profile/profile_notifier.dart';
 import 'package:anpi_report_flutter/router/app_router.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:uuid/uuid.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 import '../../entity/userattr/department.dart';
 import '../../entity/userattr/joblevel.dart';
 import '../../models/profile.dart';
-import '../../repository/firebase/authrepo.dart';
 
 @RoutePage()
 class SettingsRouterScreen extends AutoRouter {
@@ -32,12 +28,11 @@ class SettingsScreen extends HookConsumerWidget {
     final moiUser = useState<FirestoreUser?>(null);
     final moiProfile = useState<Profile?>(null);
 
-    final notificationNotifier = ref.watch(streamNotificationNotifierProvider.notifier);
     final authAsyncValue = ref.watch(authStateChangesProvider);
     final userNotifier = ref.watch(streamUserNotifierProvider.notifier);
     final profileNotifier = ref.watch(streamProfileNotifierProvider.notifier);
 
-    final AuthService authService = AuthService();
+    //final AuthService authService = AuthService();
 
     useEffect(() {
       final user = authAsyncValue.asData?.value;
@@ -192,13 +187,13 @@ class SettingsScreen extends HookConsumerWidget {
       );
     }
 
-    Widget buildTerms () {
+/*    Widget buildTerms () {
       return const Text("buildTerms");
     }
 
     Widget buildPrivacy () {
       return const Text("buildPrivacy");
-    }
+    } */
 
     Widget buildTemplateAdminButton() {
       return 

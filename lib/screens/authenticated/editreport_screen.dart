@@ -1,16 +1,10 @@
 import 'package:anpi_report_flutter/providers/firebaseauth/auth_provider.dart';
 import 'package:anpi_report_flutter/providers/firestore/notification/notification_notifier.dart';
-import 'package:anpi_report_flutter/providers/firestore/report/report_notifier.dart';
-import 'package:anpi_report_flutter/providers/geolocator/location_provider.dart';
-import 'package:anpi_report_flutter/router/app_router.dart';
 import 'package:auto_route/auto_route.dart';
-import 'package:custom_text_form_field_plus/custom_text_form_field_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:uuid/uuid.dart';
 import '../../models/notification/notification.dart';
-import '../../models/report/report.dart';
 import '../../providers/bottomnav/bottomnav_provider.dart';
 
 @RoutePage()
@@ -25,15 +19,9 @@ class EditReportScreen extends HookConsumerWidget {
 
     final currentNoti = useState<Noti?>(null);
     //
-    final stepperCount = useState<int>(1);
-    final injuryStatus = useState<int>(0);
-    final attendOfficeStatus = useState<int>(0);
-    final locationAddr = useState<String>("");
-    final isChecked = useState<bool>(false);
+    //final locationAddr = useState<String>("");
     //
-    final tFieldMessageController = useTextEditingController();
     // Provider watch
-    final reportNotifier = ref.watch(streamReportNotifierProvider.notifier);
     final notificationNotifier = ref.watch(streamNotificationNotifierProvider.notifier);
 
     // Hide the BottomNavBar when this screen is active
@@ -59,14 +47,14 @@ class EditReportScreen extends HookConsumerWidget {
     }, []);
 
     // Custom functions
-    Future<void> getAddress() async {
+/*    Future<void> getAddress() async {
       try {
         final address = await ref.read(geocodingControllerProvider.notifier).getCurrentAddress();
         locationAddr.value = "${address.prefecture}${address.city}${address.street}";
       } catch (err) {
         locationAddr.value = "Failed to get address: $err";
       }
-    }
+    } */
 
     return PopScope(
       canPop: false,

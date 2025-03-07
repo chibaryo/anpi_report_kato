@@ -7,7 +7,7 @@ import 'package:flutter_app_badger/flutter_app_badger.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:badges/badges.dart' as badges; // Import the badges package
+//import 'package:badges/badges.dart' as badges; // Import the badges package
 
 import '../../providers/bottomnav/bottomnav_provider.dart';
 import '../../providers/firebaseauth/auth_provider.dart';
@@ -54,7 +54,7 @@ class TabsRouterScreen extends HookConsumerWidget {
       // バッジ表示機能に対応している場合のみ、バッジの数字を更新する
       if (Platform.isIOS) {
         if (await FlutterAppBadger.isAppBadgeSupported()) {
-          FlutterAppBadger.updateBadgeCount(number ?? 0); // <-引数の`number`が`null`だった場合は`0`
+          FlutterAppBadger.updateBadgeCount(number); // <-引数の`number`が`null`だった場合は`0`
           // SecureStorageに保存
           await secureStorage.write(key: "currentAppBadgeCount", value: number.toString());
         }
@@ -62,7 +62,7 @@ class TabsRouterScreen extends HookConsumerWidget {
         debugPrint("### android number : ${number.toString()}");
 
         if (await FlutterAppBadger.isAppBadgeSupported()) {
-          FlutterAppBadger.updateBadgeCount(number ?? 0); // <-引数の`number`が`null`だった場合は`0`
+          FlutterAppBadger.updateBadgeCount(number); // <-引数の`number`が`null`だった場合は`0`
           // SecureStorageに保存
           await secureStorage.write(key: "currentAppBadgeCount", value: number.toString());
         }
@@ -71,6 +71,8 @@ class TabsRouterScreen extends HookConsumerWidget {
 
     useEffect(() {
       setIconBadge(unAnsweredNotiBadgeCount.value);
+
+      return () {};
     }, [unAnsweredNotiBadgeCount.value]);
 
     return AutoTabsRouter(

@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firestore_cache/firestore_cache.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../progress/progress_notifier.dart';
@@ -11,7 +12,7 @@ final firestore = FirebaseFirestore.instance;
 late final FirestoreCache usersCache;
 
 @riverpod
-Future<List<Map<String, dynamic>>> fetchUnansweredUsers(FetchUnansweredUsersRef ref, String notiId) async {
+Future<List<Map<String, dynamic>>> fetchUnansweredUsers(Ref ref, String notiId) async {
   const cacheField = 'updatedAt'; // Field used for caching
   final cacheDocRef = firestore.doc('cachestatus/users'); // Cache document reference
   final query = firestore.collection("users");

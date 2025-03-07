@@ -1,18 +1,16 @@
 import 'dart:async';
-import 'dart:convert';
-import 'dart:developer';
+//import 'dart:convert';
+//import 'dart:developer';
 import 'dart:io';
 
 import 'package:anpi_report_flutter/repository/firebase/push_notification_service.dart';
 import 'package:auto_route/auto_route.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_app_badger/flutter_app_badger.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'firebase_options.dart';
@@ -22,10 +20,7 @@ import 'package:logger/logger.dart';
 import 'package:path_provider/path_provider.dart';
 
 //import 'platform-dependent/fcm/initfcm_android.dart';
-import 'platform-dependent/fcm/initfcm_ios.dart';
-import 'providers/firebaseauth/auth_provider.dart';
 import 'router/app_router.dart';
-import 'screens/authenticated/postenquete_screen.dart';
 final Logger logger = Logger();
 
 const secureStorage = FlutterSecureStorage();
@@ -46,10 +41,6 @@ Future<void> logToFile(String message) async {
     directory = await getApplicationDocumentsDirectory();
   } else {
     throw Exception("Unsupported platform");
-  }
-
-  if (directory == null) {
-    throw Exception("Directory is null");
   }
 
   final logFile = File('${directory.path}/app.log');
@@ -123,7 +114,7 @@ Future<void> main() async {
 
 class MyApp extends HookConsumerWidget {
   final RootStackRouter appRouter;
-  MyApp({super.key, required this.appRouter});
+  const MyApp({super.key, required this.appRouter});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

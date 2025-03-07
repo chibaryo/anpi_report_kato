@@ -1,6 +1,5 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:sqflite/sqflite.dart';
-import 'package:path/path.dart';
 
 import '../../../models/firestoreuser.dart';
 
@@ -74,7 +73,7 @@ class UnansweredUsersSQLiteNotifier extends _$UnansweredUsersSQLiteNotifier {
         conflictAlgorithm: ConflictAlgorithm.replace,
       );
     } catch (e) {
-      print("Error");
+      //print("Error");
       rethrow;
     }
   }

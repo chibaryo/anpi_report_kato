@@ -1,13 +1,9 @@
 import 'package:anpi_report_flutter/providers/qrtext/qrtext_notifier.dart';
 import 'package:auto_route/auto_route.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
-
-import '../../providers/firebaseauth/auth_provider.dart';
-import '../../router/app_router.dart';
 
 @RoutePage()
 class ScanQRScreen extends HookConsumerWidget {
@@ -19,7 +15,7 @@ class ScanQRScreen extends HookConsumerWidget {
     final scannerController = useMemoized(() => MobileScannerController());
 
     // Notifier
-    final qrTextProvider = ref.watch(qrTextNotifierProvider);
+    //final qrTextProvider = ref.watch(qrTextNotifierProvider);
 
 
     useEffect(() {

@@ -3,11 +3,9 @@ import 'package:anpi_report_flutter/models/template/template.dart';
 import 'package:anpi_report_flutter/providers/firestore/templates/template_notifier.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:custom_text_form_field_plus/custom_text_form_field_plus.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:flutter_settings_screens/flutter_settings_screens.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../../../models/firestoreuser.dart';
@@ -19,7 +17,7 @@ import '../../../providers/firestore/profile/profile_notifier.dart';
 
 @RoutePage()
 class TemplateAdminScreen extends HookConsumerWidget {
-  const TemplateAdminScreen({Key? key}) : super(key: key);
+  const TemplateAdminScreen({super.key});
 
 
   @override
@@ -73,6 +71,8 @@ class TemplateAdminScreen extends HookConsumerWidget {
     useEffect(() {
 
       isLoading.value = false;
+
+      return () {};
     }, [asyncTemplates]);
 
     // Dialog

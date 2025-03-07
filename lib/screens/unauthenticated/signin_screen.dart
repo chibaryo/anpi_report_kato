@@ -1,5 +1,4 @@
 import 'package:auto_route/auto_route.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -12,7 +11,6 @@ import '../../models/deviceinfo.dart';
 import '../../providers/firebaseauth/auth_provider.dart';
 import '../../providers/firestore/deviceinfo/deviceinfo_notifier.dart';
 import '../../providers/qrtext/qrtext_notifier.dart';
-import '../../repository/firebase/push_notification_service.dart';
 import '../../router/app_router.dart';
 
 @RoutePage()
@@ -164,7 +162,7 @@ class SigninScreen extends HookConsumerWidget {
 
                                       formKey.currentState?.saveAndValidate();
                                       //
-                                      final companyCode = formKey.currentState!.value["companyCode"];
+                                      //final companyCode = formKey.currentState!.value["companyCode"];
                                       final email = formKey.currentState!.value["email"];
                                       final password = formKey.currentState!.value["password"];
 
@@ -181,11 +179,9 @@ class SigninScreen extends HookConsumerWidget {
                                           // Check if already "deviceinfo" doc exists
                                           final resChkDoc = await deviceInfoNotifier.getDeviceInfoByUid(result.user!.uid);
                                           if (resChkDoc != null) {
-                                            print("#### update fcmToken #####");
                                             await deviceInfoNotifier.updateFcmTokenInDeviceInfo(result.user!.uid, fcmToken);
                                           } else {
                                             // Create a new subcollection doc
-                                            print("#### create entry for fcmToken #####");
                                             final newDeviceInfo = DeviceInfo(
                                               fcmTokens: {
                                                 "token": fcmToken,
