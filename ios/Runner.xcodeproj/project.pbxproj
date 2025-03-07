@@ -505,7 +505,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_TEAM = "";
@@ -518,11 +518,11 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.1.4;
-				PRODUCT_BUNDLE_IDENTIFIER = com.katoanpireport.flutter.app;
+				MARKETING_VERSION = 1.2.4;
+				PRODUCT_BUNDLE_IDENTIFIER = com.applpsefew.comdcsd.anpireportapp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "Kato Sansho Anpi Flutter AppStore Dist";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "KatoSansho Anpi App MDM iOS Dev macbook";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
@@ -703,7 +703,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_TEAM = "";
@@ -716,11 +716,11 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.1.4;
-				PRODUCT_BUNDLE_IDENTIFIER = com.katoanpireport.flutter.app;
+				MARKETING_VERSION = 1.2.4;
+				PRODUCT_BUNDLE_IDENTIFIER = com.applpsefew.comdcsd.anpireportapp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "Kato Sansho Anpi Flutter AppStore Dist";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "KatoSansho Anpi App MDM iOS Dev macbook";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
@@ -741,7 +741,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_TEAM = "";
@@ -754,11 +754,11 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.1.4;
-				PRODUCT_BUNDLE_IDENTIFIER = com.katoanpireport.flutter.app;
+				MARKETING_VERSION = 1.2.4;
+				PRODUCT_BUNDLE_IDENTIFIER = com.applpsefew.comdcsd.anpireportapp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "Kato Sansho Anpi Flutter AppStore Dist";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "KatoSansho Anpi App MDM iOS Dev macbook";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
