@@ -18,7 +18,7 @@ class _WebViewController extends Hook<WebViewController> {
 class _WebViewControllerState
     extends HookState<WebViewController, _WebViewController> {
   final WebViewController _controller = WebViewController()
-    ..loadRequest(Uri.parse("https://chibaryo.github.io/anpi_report_kato/privacy/"))
+    ..loadRequest(Uri.parse("https://anpi-report-2024.web.app/privacy/privacy.html"))
     ..setJavaScriptMode(JavaScriptMode.unrestricted)
   ;
 
