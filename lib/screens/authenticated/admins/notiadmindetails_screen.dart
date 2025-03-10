@@ -33,6 +33,7 @@ class NotiAdminDetailsScreen extends HookConsumerWidget {
     /** new ***/
     final answeredUsersReportStream = ref.watch(streamAnsweredUserReportNotifierProvider(notiId));
     final unansweredUsers = ref.watch(fetchUnansweredUsersProvider(notiId));
+    final filteredUnansweredUsers = useState<List<Map<String, dynamic>>>([]);
     //final unansweredUsersStream = ref.watch(streamUnansweredUserNotifierProvider(notiId));
     final progress = ref.watch(progressNotifierProvider);
 
@@ -63,12 +64,14 @@ class NotiAdminDetailsScreen extends HookConsumerWidget {
       return () {};
     }, [authAsyncValue]);
 
-/*    bool hasBitwiseOverlap(int currentUserDepartments, int userDepartments) {
+    bool hasBitwiseOverlap(int currentUserDepartments, int userDepartments) {
       return (currentUserDepartments & userDepartments) != 0;
-    } */
+    }
+
+    useEffect(() {
 
 // Filter unanswered users based on officeLocation and jobLevel
-/*final filteredUnansweredUsers = unansweredUsersStream.when(
+/*filteredUnansweredUsers.value = unansweredUsers.when(
   data: (unansweredData) {
     if (moiProfile.value?.userAttr["jobLevel"] == 2) {
       final myOfficeLocation = moiProfile.value?.userAttr["officeLocation"];
@@ -85,6 +88,26 @@ class NotiAdminDetailsScreen extends HookConsumerWidget {
   loading: () => <Map<String, dynamic>>[],
   error: (error, stack) => <Map<String, dynamic>>[],
 ); */
+
+// Filter unanswered users based on officeLocation and jobLevel
+/*final filteredAnsweredUsers = answeredUsersReportStream.when(
+  data: (answeredData) {
+    if (moiProfile.value?.userAttr["jobLevel"] == 2) {
+      final myOfficeLocation = moiProfile.value?.userAttr["officeLocation"];
+      final myDepartments = moiProfile.value?.userAttr["department"];
+
+      return answeredData.where((answerData) {
+        final userOfficeLocation = answerData["profile"]["userAttr"]["officeLocation"];
+        final userDepartments = answerData["profile"]["userAttr"]["department"];
+        return userOfficeLocation == myOfficeLocation && hasBitwiseOverlap(userDepartments, myDepartments);
+      }).toList();
+    }
+    return answeredData; // No filtering if jobLevel is not 2
+  },
+  loading: () => <Map<String, dynamic>>[],
+  error: (error, stack) => <Map<String, dynamic>>[],
+      ); */
+    }, const []);
 
     Widget buildDataTable(List<Map<String, dynamic>> notAnsweredUsers) {
       return Text(notAnsweredUsers.toString());
@@ -173,30 +196,52 @@ CustomScrollView(
                   DataColumn(label: Text("伝言")),
                   DataColumn(label: Text("確認したか")),
                 ],
-                rows: answeredData.map((data) {
-                  final reportObject = data["report"];
-                  final user = data["user"] as Map<String, dynamic>?;
-                  final profile = data["profile"] as Map<String, dynamic>?;
+rows: answeredData
+    .where((data) {
+      // Filtering logic
+      final moiOfficeLocation = moiProfile.value?.userAttr["officeLocation"];
+      final moiDepartment = moiProfile.value?.userAttr["department"];
+      final moiJobLevel = moiProfile.value?.userAttr["jobLevel"];
 
-                  return DataRow(
-                    cells: [
-                      DataCell(Text(user?['username'] ?? 'Unknown User')),
-                      DataCell(Text(user?['email'] ?? 'N/A')),
-                      DataCell(Text(getOfficeLocationStatusTypeDetailsBySortNumber(profile?["userAttr"]["officeLocation"])?["displayName"])),
-                      DataCell(Text(getDepartmentTypeDetailsBySortNumber(
-                        profile?["userAttr"]["department"])
-                        .map((dept) => dept['displayName'])
-                        .join(', '))),
-                      DataCell(Text(getJobLevelStatusTypeDetailsBySortNumber(profile?["userAttr"]["jobLevel"])?["displayName"])),
-                      DataCell(Text(reportObject.reportContents["injuryStatus"] ?? "-")),
-                      DataCell(Text(reportObject.reportContents["attendOfficeStatus"] ?? "-")),
-                      DataCell(Text(reportObject.reportContents["location"] ?? "-")),
-                      DataCell(Text(reportObject.reportContents["message"] ?? "-")),
-                      DataCell(reportObject.reportContents["isConfirmed"] ? const Text("はい") : const Text("いいえ")),
-                    ],
-                  );
-                }).toList(),
-              ),
+      final profile = data["profile"] as Map<String, dynamic>?;
+      final targetOfficeLocation = profile?['userAttr']["officeLocation"];
+      final targetDepartment = profile?['userAttr']["department"];
+
+      // Apply filtering based on job level, office location, and department
+      if (moiJobLevel == 2) {
+        final isSameOfficeLocation = (moiOfficeLocation == targetOfficeLocation);
+        final isDepartmentMatch = hasBitwiseOverlap(moiDepartment, targetDepartment);
+        return isSameOfficeLocation && isDepartmentMatch;
+      } else {
+        // If job level is not 2, include all rows
+        return true;
+      }
+    })
+    .map((data) {
+      final reportObject = data["report"];
+      final user = data["user"] as Map<String, dynamic>?;
+      final profile = data["profile"] as Map<String, dynamic>?;
+
+      return DataRow(
+        cells: [
+          DataCell(Text(user?['username'] ?? 'Unknown User')),
+          DataCell(Text(user?['email'] ?? 'N/A')),
+          DataCell(Text(getOfficeLocationStatusTypeDetailsBySortNumber(profile?["userAttr"]["officeLocation"])?["displayName"])),
+          DataCell(Text(getDepartmentTypeDetailsBySortNumber(
+            profile?["userAttr"]["department"])
+            .map((dept) => dept['displayName'])
+            .join(', '))),
+          DataCell(Text(getJobLevelStatusTypeDetailsBySortNumber(profile?["userAttr"]["jobLevel"])?["displayName"])),
+          DataCell(Text(reportObject.reportContents["injuryStatus"] ?? "-")),
+          DataCell(Text(reportObject.reportContents["attendOfficeStatus"] ?? "-")),
+          DataCell(Text(reportObject.reportContents["location"] ?? "-")),
+          DataCell(Text(reportObject.reportContents["message"] ?? "-")),
+          DataCell(reportObject.reportContents["isConfirmed"] ? const Text("はい") : const Text("いいえ")),
+        ],
+      );
+    })
+    .toList(),
+                  ),
             ),
           ],
         ),
@@ -208,13 +253,103 @@ CustomScrollView(
                         slivers: [
                           SliverPadding(
                             padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
-                            sliver: SliverList(
+                            sliver: 
+                              SliverList(
+                                delegate: SliverChildListDelegate(
+                                  [
+                                    SingleChildScrollView(
+                                      scrollDirection: Axis.horizontal,
+                                      child: DataTable(
+                                        showCheckboxColumn: false,
+                                        columns: const [
+                                          DataColumn(label: Text("名前")),
+                                          DataColumn(label: Text("アドレス")),
+                                          DataColumn(label: Text("支社")),
+                                          DataColumn(label: Text("部署名")),
+                                          DataColumn(label: Text("役職")),
+                                        ],
+                                        rows: 
+unansweredData
+        .where((data) {
+          // Filtering logic
+          final moiOfficeLocation = moiProfile.value?.userAttr["officeLocation"];
+          final moiDepartment = moiProfile.value?.userAttr["department"];
+          final moiJobLevel = moiProfile.value?.userAttr["jobLevel"];
+
+          final profile = data["profile"] as Map<String, dynamic>?;
+          final targetOfficeLocation = profile?['userAttr']["officeLocation"];
+          final targetDepartment = profile?['userAttr']["department"];
+
+          // Apply filtering based on job level, office location, and department
+          if (moiJobLevel == 2) {
+            final isSameOfficeLocation = (moiOfficeLocation == targetOfficeLocation);
+            final isDepartmentMatch = hasBitwiseOverlap(moiDepartment, targetDepartment);
+            return isSameOfficeLocation && isDepartmentMatch;
+          } else {
+            // If job level is not 2, include all rows
+            return true;
+          }
+        })
+        .map<DataRow>((data) {
+          final user = data["user"] as Map<String, dynamic>?;
+          final profile = data["profile"] as Map<String, dynamic>?;
+
+          return DataRow(
+            cells: [
+              DataCell(Text(user?['username'] ?? 'Unknown User')),
+              DataCell(Text(user?['email'] ?? 'Unknown address')),
+              DataCell(Text(getOfficeLocationStatusTypeDetailsBySortNumber(profile?["userAttr"]["officeLocation"])?["displayName"] ?? 'Unknown OfficeLocation')),
+              DataCell(Text(getDepartmentTypeDetailsBySortNumber(profile?['userAttr']["department"])
+                  .map((dept) => dept['displayName'])
+                  .join(', '))),
+              DataCell(Text(getJobLevelStatusTypeDetailsBySortNumber(profile?['userAttr']["jobLevel"])?["displayName"] ?? 'Unknown jobLevel')),
+            ],
+          );
+        })
+        .toList(),
+/*
+                                        unansweredData.map((data) {
+                                          final moiOfficeLocation = moiProfile.value?.userAttr["officeLocation"];
+                                          final moiDepartment = moiProfile.value?.userAttr["department"];
+                                          final moiJobLevel = moiProfile.value?.userAttr["jobLevel"];
+
+                                          final user = data["user"] as Map<String, dynamic>?;
+                                          final profile = data["profile"] as Map<String, dynamic>?;
+                                          final targetOfficeLocation = profile?['userAttr']["officeLocation"];
+                                          final targetDepartment = profile?['userAttr']["department"];
+
+                                          return DataRow(
+                                            cells: [
+                                              DataCell(Text(user?['username'] ?? 'Unknown User')),
+                                              DataCell(Text(user?['email'] ?? 'Unknown address')),
+                                              DataCell(Text(getOfficeLocationStatusTypeDetailsBySortNumber(profile?["userAttr"]["officeLocation"])?["displayName"] ?? 'Unknown OfficeLocation')),
+                                              DataCell(Text(getDepartmentTypeDetailsBySortNumber(
+                                        profile?['userAttr']["department"])
+                                        .map((dept) => dept['displayName'])
+                                        .join(', '))),
+                                              DataCell(Text(getJobLevelStatusTypeDetailsBySortNumber(profile?['userAttr']["jobLevel"])?["displayName"] ?? 'Unknown jobLevel')),
+                                            ]
+                                          );
+                                        }).toList(),
+*/
+                                      )
+                                    ),
+                                  ],
+                              ),
+/*
+                            SliverList(
                               delegate: SliverChildBuilderDelegate(
                                 childCount: unansweredData.length,
                                 (BuildContext context, int index) {
+                                  final moiOfficeLocation = moiProfile.value?.userAttr["officeLocation"];
+                                  final moiDepartment = moiProfile.value?.userAttr["department"];
+                                  final moiJobLevel = moiProfile.value?.userAttr["jobLevel"];
+
+                                  debugPrint("moiJobLevel: ${moiJobLevel.toString()}");
+
                                   final user = unansweredData[index]["user"]; 
                                   final profile = unansweredData[index]["profile"];
-
+/*
                                   return Container(
                                     decoration: BoxDecoration(
                                       border: Border.all(),
@@ -231,11 +366,14 @@ CustomScrollView(
                                       ],
                                     ),
                                   );
+*/
                                 }
                               ),
                             ),
-                          ),
-                        ] 
+*/
+                              ),
+                            ),
+                          ],
                       ),
                     ],
                   ),
