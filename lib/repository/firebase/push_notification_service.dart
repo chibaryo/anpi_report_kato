@@ -7,6 +7,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:device_info_plus/device_info_plus.dart';
 
 //final pushNotifications = PushNotificationService();
 final String fcmVapidKey = dotenv.get('FIREBASE_FCM_VAPID_KEY'); //"eD8dzYgLNtF4HmmOB9OT3i7Y1G5wXyeeAn4unMBA";
@@ -80,10 +81,18 @@ class PushNotificationService {
   }
 
   static Future<void> requestAndroidPermissions() async {
-    await flutterLocalNotificationsPlugin
-      .resolvePlatformSpecificImplementation<
-          AndroidFlutterLocalNotificationsPlugin>()
-      ?.requestNotificationsPermission();
+    DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+    AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
+    final androidOsVersion = androidInfo.version.release;
+    debugPrint("androidOsVersion : ## ${androidOsVersion.toString()}");
+
+    // Resolve the Android-specific implementation of the notifications plugin
+    final AndroidFlutterLocalNotificationsPlugin? androidImplementation =
+      flutterLocalNotificationsPlugin.resolvePlatformSpecificImplementation<
+          AndroidFlutterLocalNotificationsPlugin>();
+
+    // Request notification permissions
+    await androidImplementation?.requestNotificationsPermission();
   }
 
   static void initializePushNotifications({
