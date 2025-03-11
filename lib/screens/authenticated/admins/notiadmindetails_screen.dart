@@ -136,6 +136,8 @@ class NotiAdminDetailsScreen extends HookConsumerWidget {
                                           .value?.userAttr["department"];
                                       final moiJobLevel = moiProfile
                                           .value?.userAttr["jobLevel"];
+                                      final moiSubscription = moiProfile
+                                          .value?.userAttr["subscription"];
 
                                       final profile = data["profile"]
                                           as Map<String, dynamic>?;
@@ -144,6 +146,8 @@ class NotiAdminDetailsScreen extends HookConsumerWidget {
                                               ["officeLocation"];
                                       final targetDepartment =
                                           profile?['userAttr']["department"];
+                                      final targetSubscription =
+                                          profile?['userAttr']['subscription'];
 
                                       // Apply filtering based on job level, office location, and department
                                       if (moiJobLevel == 2) {
@@ -153,10 +157,22 @@ class NotiAdminDetailsScreen extends HookConsumerWidget {
                                         final isDepartmentMatch =
                                             hasBitwiseOverlap(moiDepartment,
                                                 targetDepartment);
+                                        final isSubscriptionMatch =
+                                            hasBitwiseOverlap(moiSubscription,
+                                              targetSubscription
+                                            );
                                         return isSameOfficeLocation &&
-                                            isDepartmentMatch;
+                                            isDepartmentMatch &&
+                                            isSubscriptionMatch;
+                                      } else if (moiJobLevel == 4) {
+                                        final isSubscriptionMatch =
+                                            hasBitwiseOverlap(moiSubscription,
+                                              targetSubscription
+                                            );
+                                        return isSubscriptionMatch;
+                                      } else if (moiJobLevel == 8) {
+                                        return true;
                                       } else {
-                                        // If job level is not 2, include all rows
                                         return true;
                                       }
                                     }).map((data) {
@@ -246,6 +262,8 @@ class NotiAdminDetailsScreen extends HookConsumerWidget {
                                           .value?.userAttr["department"];
                                       final moiJobLevel = moiProfile
                                           .value?.userAttr["jobLevel"];
+                                      final moiSubscription = moiProfile
+                                          .value?.userAttr["subscription"];
 
                                       final profile = data["profile"]
                                           as Map<String, dynamic>?;
@@ -254,6 +272,8 @@ class NotiAdminDetailsScreen extends HookConsumerWidget {
                                               ["officeLocation"];
                                       final targetDepartment =
                                           profile?['userAttr']["department"];
+                                      final targetSubscription =
+                                          profile?['userAttr']['subscription'];
 
                                       // Apply filtering based on job level, office location, and department
                                       if (moiJobLevel == 2) {
@@ -263,10 +283,23 @@ class NotiAdminDetailsScreen extends HookConsumerWidget {
                                         final isDepartmentMatch =
                                             hasBitwiseOverlap(moiDepartment,
                                                 targetDepartment);
+                                        final isSubscriptionMatch =
+                                            hasBitwiseOverlap(moiSubscription,
+                                              targetSubscription
+                                            );
                                         return isSameOfficeLocation &&
-                                            isDepartmentMatch;
+                                            isDepartmentMatch &&
+                                            isSubscriptionMatch
+                                            ;
+                                      } else if (moiJobLevel == 4) {
+                                        final isSubscriptionMatch =
+                                            hasBitwiseOverlap(moiSubscription,
+                                              targetSubscription
+                                            );
+                                        return isSubscriptionMatch;
+                                      } else if (moiJobLevel == 8) {
+                                        return true; 
                                       } else {
-                                        // If job level is not 2, include all rows
                                         return true;
                                       }
                                     }).map<DataRow>((data) {

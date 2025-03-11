@@ -17,20 +17,6 @@ enum DepartmentType {
   candidate_15(displayName: "広島営業所", sortNumber: 16384),
   candidate_16(displayName: "大阪支店", sortNumber: 32768),
   candidate_17(displayName: "名古屋支店", sortNumber: 65536),
-  // Add
-  candidate_18(displayName: "第一精錬課", sortNumber: 131072),
-  candidate_19(displayName: "圧延課", sortNumber: 262144),
-  candidate_20(displayName: "第二精錬課", sortNumber: 524288),
-  candidate_21(displayName: "品質保証課", sortNumber: 1048576),
-  candidate_22(displayName: "業務課", sortNumber: 2097152),
-  candidate_23(displayName: "技能実習生", sortNumber: 4194304),
-  // Add2
-  candidate_24(displayName: "製造部", sortNumber: 8388608),
-  // Add3
-  candidate_25(displayName: "製造１部", sortNumber: 16777216),
-  candidate_26(displayName: "製造２部", sortNumber: 33554432),
-  candidate_27(displayName: "業務", sortNumber: 67108864),
-  candidate_28(displayName: "製造", sortNumber: 134217728),
   ;
 
   final String displayName;

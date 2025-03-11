@@ -11,6 +11,22 @@
 part of 'app_router.dart';
 
 /// generated route for
+/// [AboutThisAppRouterScreen]
+class AboutThisAppRouterRoute extends PageRouteInfo<void> {
+  const AboutThisAppRouterRoute({List<PageRouteInfo>? children})
+    : super(AboutThisAppRouterRoute.name, initialChildren: children);
+
+  static const String name = 'AboutThisAppRouterRoute';
+
+  static PageInfo page = PageInfo(
+    name,
+    builder: (data) {
+      return const AboutThisAppRouterScreen();
+    },
+  );
+}
+
+/// generated route for
 /// [AboutThisAppScreen]
 class AboutThisAppRoute extends PageRouteInfo<void> {
   const AboutThisAppRoute({List<PageRouteInfo>? children})
@@ -54,6 +70,22 @@ class AppHomeRoute extends PageRouteInfo<void> {
     name,
     builder: (data) {
       return const AppHomeScreen();
+    },
+  );
+}
+
+/// generated route for
+/// [AppVersionHistroyScreen]
+class AppVersionHistroyRoute extends PageRouteInfo<void> {
+  const AppVersionHistroyRoute({List<PageRouteInfo>? children})
+    : super(AppVersionHistroyRoute.name, initialChildren: children);
+
+  static const String name = 'AppVersionHistroyRoute';
+
+  static PageInfo page = PageInfo(
+    name,
+    builder: (data) {
+      return const AppVersionHistroyScreen();
     },
   );
 }

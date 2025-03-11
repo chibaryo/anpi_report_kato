@@ -9,6 +9,7 @@ import '../screens/authenticated/admins/templateadmin_screen.dart';
 import '../screens/authenticated/admins/theotherops_screen.dart';
 import '../screens/authenticated/admins/useradmin_screen.dart';
 import '../screens/authenticated/apphome_screen.dart';
+import '../screens/authenticated/appversionhistory_screen.dart';
 import '../screens/authenticated/editreport_screen.dart';
 import '../screens/authenticated/postenquete_screen.dart';
 import '../screens/authenticated/privacypolicy_screen.dart';
@@ -119,7 +120,16 @@ class AppRouter extends RootStackRouter {
               page: PrivacyPolicyWebViewRoute.page,
             ),
             AutoRoute(
-              page: AboutThisAppRoute.page,
+              page: AboutThisAppRouterRoute.page,
+              children: [
+                AutoRoute(
+                  page: AboutThisAppRoute.page,
+                  initial: true,
+                ),
+                AutoRoute(
+                  page: AppVersionHistroyRoute.page,
+                )
+              ]
             ),
           ]
         ),
