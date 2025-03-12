@@ -16,6 +16,7 @@ import '../../entity/userattr/department.dart';
 import '../../models/deviceinfo.dart';
 import '../../models/firestoreuser.dart';
 import '../../models/profile.dart';
+import '../../providers/appStatus/isAlreadyQRAuthenticated.dart';
 import '../../providers/firestore/deviceinfo/deviceinfo_notifier.dart';
 import '../../providers/qrtext/qrtext_notifier.dart';
 import '../../repository/firebase/authrepo.dart';
@@ -36,6 +37,7 @@ class SignupScreen extends HookConsumerWidget {
     final String targetCompanyCode = dotenv.get('COMPANYAUTHCODE'); //"eD8dzYgLNtF4HmmOB9OT3i7Y1G5wXyeeAn4unMBA";
     // Provider
     final qrTextProvider = ref.watch(qrTextNotifierProvider);
+    final isAlreadyQRAuthed = ref.watch(isAlreadyQRAuthenticatedNotifierProvider);
 
     final isValidCompanyCode = useListenableSelector(
       tFieldCompanyCodeController,
@@ -62,6 +64,17 @@ class SignupScreen extends HookConsumerWidget {
 
     const departmentOptions = DepartmentType.values;
     final isUndefinedSelected = useState<bool>(true); // Tracks if "undefined" is selected
+
+    useEffect(() {
+      storage.read(key: 'isAlreadyQRAuthenticated').then((result) {
+        debugPrint(" ##  isAlreadyQRAuthenticated result ### ${result.toString()}");
+        if (result == "yes") {
+          ref.read(isAlreadyQRAuthenticatedNotifierProvider.notifier).updateFlag(true);
+        }
+      });
+
+      return null;
+    }, const []);
 
     void toggleDepartmentSelection(DepartmentType department) {
       final sortNumber = department.sortNumber;
@@ -249,9 +262,9 @@ List<String> getSelectedDepartments(int selectedSum) {
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Text(
-                      (!isValidCompanyCode) && (qrTextProvider != targetCompanyCode)
-                        ? "認証QRをスキャンしてください"
-                        : "認証QRスキャンOK",
+                      (isValidCompanyCode || qrTextProvider == targetCompanyCode || isAlreadyQRAuthed)
+                        ? "認証QRスキャンOK"
+                        : "認証QRをスキャンしてください",
                       ),
                     //Text((!isValidCompanyCode) || (qrTextProvider != targetCompanyCode) ? "認証QRをスキャンしてください" : "認証QRスキャンOK"),
                   ),
@@ -261,7 +274,7 @@ List<String> getSelectedDepartments(int selectedSum) {
                             decoration: const InputDecoration(labelText: "企業コード"),
                             obscureText: false,
                             autovalidateMode: AutovalidateMode.onUserInteraction,
-                            enabled: qrTextProvider == targetCompanyCode ? false : true,
+                            enabled: qrTextProvider == targetCompanyCode || isAlreadyQRAuthed ? false : true,
                             validator: (value) {
                               if (qrTextProvider == targetCompanyCode) {
                                 return null;
@@ -374,7 +387,7 @@ List<String> getSelectedDepartments(int selectedSum) {
                                       foregroundColor: Colors.white,
                                     ),
                                     //!isValidCompanyCode ? null :
-                                    onPressed: (!isValidCompanyCode) && (qrTextProvider != targetCompanyCode) ? null : () async {
+                                    onPressed: (isValidCompanyCode || qrTextProvider == targetCompanyCode || isAlreadyQRAuthed) ? () async {
                                       formKey.currentState?.saveAndValidate();
                                       //
                                       final displayName = tFieldUserNameController.text;
@@ -458,7 +471,7 @@ List<String> getSelectedDepartments(int selectedSum) {
                                         }
                                       }
 
-                                    },
+                                    } : null,
                                     child: const Text("アカウント作成"),
                                   ),
                                 )

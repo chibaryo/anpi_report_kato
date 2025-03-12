@@ -8,6 +8,11 @@ import '../../providers/bottomnav/bottomnav_provider.dart';
 final listVersionHistory = [
   {
     "date": "[2025/03/11]",
+    "version": "1.2.8",
+    "description": "サインイン後はQR認証をバイパスする",
+  },
+  {
+    "date": "[2025/03/11]",
     "version": "1.2.7",
     "description": "通知トピックに基づくフィルタリング",
   },

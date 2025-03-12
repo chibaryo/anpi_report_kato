@@ -6,7 +6,7 @@ part of 'auth_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$firebaseAuthHash() => r'7791bf70ce0f01bf991a53a76abc915478673c0b';
+String _$firebaseAuthHash() => r'912368c3df3f72e4295bf7a8cda93b9c5749d923';
 
 /// See also [firebaseAuth].
 @ProviderFor(firebaseAuth)

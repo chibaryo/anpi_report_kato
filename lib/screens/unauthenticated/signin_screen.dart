@@ -1,3 +1,4 @@
+import 'package:anpi_report_flutter/providers/appStatus/isAlreadyQRAuthenticated.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -37,6 +38,8 @@ class SigninScreen extends HookConsumerWidget {
     });
 
     const storage = FlutterSecureStorage();
+    final isAlreadyQRAuthed = ref.watch(isAlreadyQRAuthenticatedNotifierProvider);
+
     final deviceInfoNotifier = ref.watch(streamDeviceInfoNotifierProvider.notifier);
     final formKey = useMemoized(() => GlobalKey<FormBuilderState>());
 
@@ -52,6 +55,11 @@ class SigninScreen extends HookConsumerWidget {
     );
 
     useEffect(() {
+      storage.read(key: 'isAlreadyQRAuthenticated').then((result) {
+        if (result == "yes") {
+          ref.read(isAlreadyQRAuthenticatedNotifierProvider.notifier).updateFlag(true);
+        }
+      });
 
       return null;
     }, const []);
@@ -81,9 +89,9 @@ class SigninScreen extends HookConsumerWidget {
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Text(
-                      (!isValidCompanyCode) && (qrTextProvider != targetCompanyCode)
-                        ? "認証QRをスキャンしてください"
-                        : "認証QRスキャンOK",
+                      (isValidCompanyCode || qrTextProvider == targetCompanyCode || isAlreadyQRAuthed)
+                        ? "認証QRスキャンOK"
+                        : "認証QRをスキャンしてください",
                       ),
                     //Text((!isValidCompanyCode) || (qrTextProvider != targetCompanyCode) ? "認証QRをスキャンしてください" : "認証QRスキャンOK"),
                   ),
@@ -100,7 +108,7 @@ class SigninScreen extends HookConsumerWidget {
                             decoration: const InputDecoration(labelText: "企業コード"),
                             obscureText: false,
                             autovalidateMode: AutovalidateMode.onUserInteraction,
-                            enabled: qrTextProvider == targetCompanyCode ? false : true,
+                            enabled: qrTextProvider == targetCompanyCode || isAlreadyQRAuthed ? false : true,
                             validator: (value) {
                               if (qrTextProvider == targetCompanyCode) {
                                 return null;
@@ -156,7 +164,7 @@ class SigninScreen extends HookConsumerWidget {
                                       foregroundColor: Colors.white,
                                     ),
                                     
-                                    onPressed: (!isValidCompanyCode) && (qrTextProvider != targetCompanyCode) ? null : () async {
+                                    onPressed: (isValidCompanyCode || qrTextProvider == targetCompanyCode || isAlreadyQRAuthed) ? () async {
                                       // Retreive fcmToken from SecureStorage
                                       String? fcmToken = await storage.read(key: 'fcmToken');
 
@@ -172,6 +180,12 @@ class SigninScreen extends HookConsumerWidget {
                                         .signInWithEmailAndPassword(
                                           email: email,
                                           password: password,
+                                        );
+
+                                        // Set QR auth flag = yes
+                                        await storage.write(
+                                          key: "isAlreadyQRAuthenticated",
+                                          value: "yes",
                                         );
 
                                         // Update fcmToken in "deviceinfo"
@@ -212,7 +226,7 @@ class SigninScreen extends HookConsumerWidget {
 
                                       // Reset form
                                       formKey.currentState?.reset();
-                                    },
+                                    } : null,
                                     child: const Text("サインイン"),
                                   ),
                                 )

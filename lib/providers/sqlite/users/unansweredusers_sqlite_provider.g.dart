@@ -7,7 +7,7 @@ part of 'unansweredusers_sqlite_provider.dart';
 // **************************************************************************
 
 String _$unansweredUsersSQLiteNotifierHash() =>
-    r'3f77a6b3190eb9587360871d01383611f90a2aa1';
+    r'a09ab1d6e9a6ec1f422b693449a58bd6135afe0b';
 
 /// See also [UnansweredUsersSQLiteNotifier].
 @ProviderFor(UnansweredUsersSQLiteNotifier)

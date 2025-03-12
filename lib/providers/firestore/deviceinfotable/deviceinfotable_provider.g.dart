@@ -6,7 +6,7 @@ part of 'deviceinfotable_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$firebaseFirestoreHash() => r'230b9276da2e44bb1aa6b300e1ddbb2f93c422da';
+String _$firebaseFirestoreHash() => r'963402713bf9b7cc1fb259d619d9b0184d4dcec1';
 
 /// See also [firebaseFirestore].
 @ProviderFor(firebaseFirestore)

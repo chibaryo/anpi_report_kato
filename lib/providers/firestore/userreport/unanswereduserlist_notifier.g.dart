@@ -7,7 +7,7 @@ part of 'unanswereduserlist_notifier.dart';
 // **************************************************************************
 
 String _$fetchUnansweredUsersHash() =>
-    r'fb094941983f554782e0e15ab5473a1fdaf0b6c2';
+    r'8d92e2a71375e08c47f8e2d0fdee2a16d3965e91';
 
 /// Copied from Dart SDK
 class _SystemHash {
