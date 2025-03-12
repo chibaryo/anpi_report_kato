@@ -7,6 +7,11 @@ import '../../providers/bottomnav/bottomnav_provider.dart';
 
 final listVersionHistory = [
   {
+    "date": "[2025/03/12]",
+    "version": "1.2.9",
+    "description": "サインアップ画面でのQR認証バイパス修正",
+  },
+  {
     "date": "[2025/03/11]",
     "version": "1.2.8",
     "description": "サインイン後はQR認証をバイパスする",
