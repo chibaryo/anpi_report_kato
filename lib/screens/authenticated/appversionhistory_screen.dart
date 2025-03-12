@@ -8,6 +8,16 @@ import '../../providers/bottomnav/bottomnav_provider.dart';
 final listVersionHistory = [
   {
     "date": "[2025/03/12]",
+    "version": "1.3.1",
+    "description": "生体認証でログイン履歴から自動ログイン機能を実装",
+  },
+  {
+    "date": "[2025/03/12]",
+    "version": "1.3.0",
+    "description": "西日本統括（支社扱い）を新設",
+  },
+  {
+    "date": "[2025/03/12]",
     "version": "1.2.9",
     "description": "サインアップ画面でのQR認証バイパス修正",
   },

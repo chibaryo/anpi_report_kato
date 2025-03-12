@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:anpi_report_flutter/entity/userattr/joblevel.dart';
 import 'package:anpi_report_flutter/entity/userattr/office_location.dart';
 import 'package:anpi_report_flutter/providers/firestore/firestoreuser/firestoreuser_notifier.dart';
@@ -12,6 +14,7 @@ import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:local_auth/local_auth.dart';
 import '../../entity/userattr/department.dart';
 import '../../models/deviceinfo.dart';
 import '../../models/firestoreuser.dart';
@@ -38,6 +41,11 @@ class SignupScreen extends HookConsumerWidget {
     // Provider
     final qrTextProvider = ref.watch(qrTextNotifierProvider);
     final isAlreadyQRAuthed = ref.watch(isAlreadyQRAuthenticatedNotifierProvider);
+    // bio
+    final authorized = useState<String>('未認証');
+    final userHistory = useState<List<Map<String, dynamic>>>([]);
+    final LocalAuthentication auth = LocalAuthentication();
+
 
     final isValidCompanyCode = useListenableSelector(
       tFieldCompanyCodeController,
@@ -75,6 +83,42 @@ class SignupScreen extends HookConsumerWidget {
 
       return null;
     }, const []);
+
+
+    Future<void> authenticate() async {
+      bool authenticated = false;
+      try {
+        authenticated = await auth.authenticate(
+          localizedReason: '生体認証でログインしてください',
+          options: const AuthenticationOptions(
+            stickyAuth: true,
+            biometricOnly: true,
+          ),
+        );
+
+        // if true
+        if (authenticated) {
+          // Check if securestorage have userHistory
+          userHistory.value.clear();
+          final userHistoryOnStorage = await storage.read(key: "userHistory");
+          if (userHistoryOnStorage != null) {
+            final List<dynamic> userHistoryDecoded =
+                jsonDecode(userHistoryOnStorage);
+            final List<Map<String, dynamic>> userHistoryList =
+                userHistoryDecoded
+                    .map((history) => history as Map<String, dynamic>)
+                    .toList();
+
+            debugPrint("userHistory on storage: ${userHistoryList.toString()}");
+            userHistory.value.addAll(userHistoryList);
+          }
+        }
+      } catch (e) {
+        //
+      }
+
+      authorized.value = authenticated ? '認証成功' : '認証失敗';
+    }
 
     void toggleDepartmentSelection(DepartmentType department) {
       final sortNumber = department.sortNumber;
@@ -276,7 +320,7 @@ List<String> getSelectedDepartments(int selectedSum) {
                             autovalidateMode: AutovalidateMode.onUserInteraction,
                             enabled: qrTextProvider == targetCompanyCode || isAlreadyQRAuthed ? false : true,
                             validator: (value) {
-                              if (qrTextProvider == targetCompanyCode) {
+                              if (qrTextProvider == targetCompanyCode || isAlreadyQRAuthed) {
                                 return null;
                               }
 
@@ -419,6 +463,47 @@ List<String> getSelectedDepartments(int selectedSum) {
                                         );
 
                                         await userNotifier.addUser(result!, newUser);
+
+                                        // add userHistory
+                                        userHistory.value.clear();
+                                        final userHistoryOnStorage = await storage.read(key: "userHistory");
+                                        if (userHistoryOnStorage != null) {
+                                          final List<dynamic> userHistoryDecoded =
+                                            jsonDecode(userHistoryOnStorage);
+                                          final List<Map<String, dynamic>> userHistoryList =
+                                            userHistoryDecoded
+                                              .map((history) => history as Map<String, dynamic>)
+                                              .toList();
+
+                                          debugPrint("userHistory on storage: ${userHistoryList.toString()}");
+                                          userHistory.value.addAll(userHistoryList);
+                                        }
+                                              final Map<String, String>
+                                                  currentUserAccount = {
+                                                "email": email,
+                                                "password": password,
+                                              };
+                                              userHistory.value.insert(
+                                                  0, currentUserAccount);
+
+                                              // 要素数を2以下にする
+                                              List<Map<String, dynamic>>
+                                                  resultUserHistory;
+                                              if (userHistory.value.length >
+                                                  2) {
+                                                resultUserHistory = userHistory
+                                                    .value
+                                                    .sublist(0, 2);
+                                              } else {
+                                                resultUserHistory =
+                                                    userHistory.value;
+                                              }
+
+                                              await storage.write(
+                                                  key: "userHistory",
+                                                  value: jsonEncode(
+                                                      resultUserHistory));
+
 
                                         // Store fcmToken to "deviceinfo" subcollection of each user
                                         final newDeviceInfo = DeviceInfo(

@@ -6,7 +6,7 @@ enum OfficeLocationStatusType {
   candidate_04(displayName: "広島", sortNumber: 8),
   candidate_05(displayName: "岡山", sortNumber: 16),
   candidate_06(displayName: "九州", sortNumber: 32),
-
+  candidate_07(displayName: "西日本統括", sortNumber: 60),
   ;
 
   final String displayName;

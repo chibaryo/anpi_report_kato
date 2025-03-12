@@ -74,7 +74,7 @@ class NotiAdminDetailsScreen extends HookConsumerWidget {
           icon: const Icon(Icons.arrow_back),
           onPressed: () async {
             if (context.mounted) {
-              ref.read(bottomNavNotifierProvider.notifier).show();
+              //ref.read(bottomNavNotifierProvider.notifier).show();
               context.router.back();
             }
           },
@@ -151,6 +151,10 @@ class NotiAdminDetailsScreen extends HookConsumerWidget {
 
                                       // Apply filtering based on job level, office location, and department
                                       if (moiJobLevel == 2) {
+                                        final isOfficeLocationMatch =
+                                          hasBitwiseOverlap(moiOfficeLocation,
+                                          targetOfficeLocation);
+                                        //
                                         final isSameOfficeLocation =
                                             (moiOfficeLocation ==
                                                 targetOfficeLocation);
@@ -161,9 +165,13 @@ class NotiAdminDetailsScreen extends HookConsumerWidget {
                                             hasBitwiseOverlap(moiSubscription,
                                               targetSubscription
                                             );
-                                        return isSameOfficeLocation &&
+                                        if (isOfficeLocationMatch) {
+                                          return isOfficeLocationMatch;
+                                        } else {
+                                          return isSameOfficeLocation &&
                                             isDepartmentMatch &&
                                             isSubscriptionMatch;
+                                        }
                                       } else if (moiJobLevel == 4) {
                                         final isSubscriptionMatch =
                                             hasBitwiseOverlap(moiSubscription,
@@ -277,6 +285,14 @@ class NotiAdminDetailsScreen extends HookConsumerWidget {
 
                                       // Apply filtering based on job level, office location, and department
                                       if (moiJobLevel == 2) {
+                                        final isOfficeLocationMatch =
+                                          hasBitwiseOverlap(moiOfficeLocation,
+                                          targetOfficeLocation);
+                                          if (isOfficeLocationMatch) {
+                                            debugPrint("im included");
+                                          } else {
+                                            debugPrint("im without");
+                                          }             
                                         final isSameOfficeLocation =
                                             (moiOfficeLocation ==
                                                 targetOfficeLocation);
@@ -287,7 +303,7 @@ class NotiAdminDetailsScreen extends HookConsumerWidget {
                                             hasBitwiseOverlap(moiSubscription,
                                               targetSubscription
                                             );
-                                        return isSameOfficeLocation &&
+                                        return isOfficeLocationMatch &&
                                             isDepartmentMatch &&
                                             isSubscriptionMatch
                                             ;

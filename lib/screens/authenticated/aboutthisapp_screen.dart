@@ -57,7 +57,7 @@ class AboutThisAppScreen extends HookConsumerWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text("バージョン"),
-                        Text("v1.2.9"),
+                        Text("v1.3.1"),
                       ],
                     ),
                   ),
