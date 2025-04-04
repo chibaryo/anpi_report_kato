@@ -154,7 +154,9 @@ class TopicSelectScreen extends HookConsumerWidget {
                     isTokyoFlagOn.value = value;
 
                     // UpdateProfile for userAttr["subscription"]
+                    DateTime now = DateTime.now();
                     final profileUpdates = {
+                      "updatedAt": now,
                       "userAttr": {
                         "subscription": (moiProfile.value?.userAttr["subscription"] ?? 0) | (1 << 1),
                       },
@@ -166,7 +168,9 @@ class TopicSelectScreen extends HookConsumerWidget {
                     isTokyoFlagOn.value = value;
 
                     // UpdateProfile for userAttr["subscription"]
+                    DateTime now = DateTime.now();
                     final profileUpdates = {
+                      "updatedAt": now,
                       "userAttr": {
                         "subscription": (moiProfile.value?.userAttr["subscription"] ?? 0) & ~(1 << 1),
                       },
@@ -187,7 +191,9 @@ class TopicSelectScreen extends HookConsumerWidget {
                     isNagoyaFlagOn.value = value;
 
                     // UpdateProfile for userAttr["subscription"]
+                    DateTime now = DateTime.now();
                     final profileUpdates = {
+                      "updatedAt": now,
                       "userAttr": {
                         "subscription": (moiProfile.value?.userAttr["subscription"] ?? 0) | (1 << 2),
                       },
@@ -199,7 +205,9 @@ class TopicSelectScreen extends HookConsumerWidget {
                     isNagoyaFlagOn.value = value;
 
                     // UpdateProfile for userAttr["subscription"]
+                    DateTime now = DateTime.now();
                     final profileUpdates = {
+                      "updatedAt": now,
                       "userAttr": {
                         "subscription": (moiProfile.value?.userAttr["subscription"] ?? 0) & ~(1 << 2),
                       },
@@ -220,7 +228,9 @@ class TopicSelectScreen extends HookConsumerWidget {
                     isOsakaFlagOn.value = value;
 
                     // UpdateProfile for userAttr["subscription"]
+                    DateTime now = DateTime.now();
                     final profileUpdates = {
+                      "updatedAt": now,
                       "userAttr": {
                         "subscription": (moiProfile.value?.userAttr["subscription"] ?? 0) | (1 << 3),
                       },
@@ -232,7 +242,9 @@ class TopicSelectScreen extends HookConsumerWidget {
                     isOsakaFlagOn.value = value;
 
                     // UpdateProfile for userAttr["subscription"]
+                    DateTime now = DateTime.now();
                     final profileUpdates = {
+                      "updatedAt": now,
                       "userAttr": {
                         "subscription": (moiProfile.value?.userAttr["subscription"] ?? 0) & ~(1 << 3),
                       },
@@ -253,7 +265,9 @@ class TopicSelectScreen extends HookConsumerWidget {
                     isHiroshimaFlagOn.value = value;
 
                     // UpdateProfile for userAttr["subscription"]
+                    DateTime now = DateTime.now();
                     final profileUpdates = {
+                      "updatedAt": now,
                       "userAttr": {
                         "subscription": (moiProfile.value?.userAttr["subscription"] ?? 0) | (1 << 4),
                       },
@@ -265,7 +279,9 @@ class TopicSelectScreen extends HookConsumerWidget {
                     isHiroshimaFlagOn.value = value;
 
                     // UpdateProfile for userAttr["subscription"]
+                    DateTime now = DateTime.now();
                     final profileUpdates = {
+                      "updatedAt": now,
                       "userAttr": {
                         "subscription": (moiProfile.value?.userAttr["subscription"] ?? 0) & ~(1 << 4),
                       },
@@ -286,7 +302,9 @@ class TopicSelectScreen extends HookConsumerWidget {
                     isOkayamaFlagOn.value = value;
 
                     // UpdateProfile for userAttr["subscription"]
+                    DateTime now = DateTime.now();
                     final profileUpdates = {
+                      "updatedAt": now,
                       "userAttr": {
                         "subscription": (moiProfile.value?.userAttr["subscription"] ?? 0) | (1 << 5),
                       },
@@ -298,7 +316,9 @@ class TopicSelectScreen extends HookConsumerWidget {
                     isOkayamaFlagOn.value = value;
 
                     // UpdateProfile for userAttr["subscription"]
+                    DateTime now = DateTime.now();
                     final profileUpdates = {
+                      "updatedAt": now,
                       "userAttr": {
                         "subscription": (moiProfile.value?.userAttr["subscription"] ?? 0) & ~(1 << 5),
                       },
@@ -319,7 +339,9 @@ class TopicSelectScreen extends HookConsumerWidget {
                     isKyushuFlagOn.value = value;
 
                     // UpdateProfile for userAttr["subscription"]
+                    DateTime now = DateTime.now();
                     final profileUpdates = {
+                      "updatedAt": now,
                       "userAttr": {
                         "subscription": (moiProfile.value?.userAttr["subscription"] ?? 0) | (1 << 6),
                       },
@@ -331,7 +353,9 @@ class TopicSelectScreen extends HookConsumerWidget {
                     isKyushuFlagOn.value = value;
 
                     // UpdateProfile for userAttr["subscription"]
+                    DateTime now = DateTime.now();
                     final profileUpdates = {
+                      "updatedAt": now,
                       "userAttr": {
                         "subscription": (moiProfile.value?.userAttr["subscription"] ?? 0) & ~(1 << 6),
                       },
@@ -357,7 +381,9 @@ class TopicSelectScreen extends HookConsumerWidget {
                     debugPrint('moiProfile.value?.userAttr s : ${moiProfile.value?.userAttr["subscription"].toString()}');
 
                     // UpdateProfile for userAttr["subscription"]
+                    DateTime now = DateTime.now();
                     final profileUpdates = {
+                      "updatedAt": now,
                       "userAttr": {
                         "subscription": (moiProfile.value?.userAttr["subscription"] ?? 0) | (1 << 8),
                       },
@@ -370,7 +396,9 @@ class TopicSelectScreen extends HookConsumerWidget {
                     debugPrint("Unsubscriped from : 管理用テスト2025");
 
                     // UpdateProfile for userAttr["subscription"]
+                    DateTime now = DateTime.now();
                     final profileUpdates = {
+                      "updatedAt": now,
                       "userAttr": {
                         "subscription": (moiProfile.value?.userAttr["subscription"] ?? 0) & ~(1 << 8),
                       },

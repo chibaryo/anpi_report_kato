@@ -31,8 +31,8 @@ class SigninScreen extends HookConsumerWidget {
     final dialogFormKey = useMemoized(() => GlobalKey<FormBuilderState>());
 
     Future<void> openNoUserHistoryDialog(
-      BuildContext context, WidgetRef ref) async {
-        return showDialog<void>(
+        BuildContext context, WidgetRef ref) async {
+      return showDialog<void>(
           context: context,
           barrierDismissible: false,
           builder: (BuildContext context) {
@@ -50,10 +50,9 @@ class SigninScreen extends HookConsumerWidget {
                 ),
               ],
             );
-          }
-        );
+          });
     }
-    
+
     Future<void> openUserSelectDialog(
         BuildContext context, WidgetRef ref) async {
       return showDialog<void>(
@@ -188,7 +187,7 @@ class SigninScreen extends HookConsumerWidget {
             }
           } else {
             if (context.mounted) {
-              await openNoUserHistoryDialog(context,ref);
+              await openNoUserHistoryDialog(context, ref);
             }
           }
         }
@@ -251,292 +250,310 @@ class SigninScreen extends HookConsumerWidget {
           backgroundColor: Colors.purple[300],
         ),
         body: Center(
-            child: SingleChildScrollView(
-          child: Center(
-            child: Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: ElevatedButton(
-                    onPressed: () async {
-                      if (context.mounted) {
-                        context.router.push(const ScanQRRoute());
-                      }
-                    },
-                    child: const Text("QRスキャンする"),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text(
-                    (isValidCompanyCode ||
-                            qrTextProvider == targetCompanyCode ||
-                            isAlreadyQRAuthed)
-                        ? "認証QRスキャンOK"
-                        : "認証QRをスキャンしてください",
-                  ),
-                  //Text((!isValidCompanyCode) || (qrTextProvider != targetCompanyCode) ? "認証QRをスキャンしてください" : "認証QRスキャンOK"),
-                ),
-                // bio
-                //Text('生体認証状態: ${authorized.value}'),
-                ElevatedButton(
-                  onPressed: authenticate,
-                  child: const Text('生体認証で自動ログインする'),
-                ),
-                // end bio
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: FormBuilder(
-                      key: formKey,
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: <Widget>[
-                          FormBuilderTextField(
-                            name: "companyCode",
-                            controller: tFieldCompanyCodeController,
-                            decoration:
-                                const InputDecoration(labelText: "企業コード"),
-                            obscureText: false,
-                            autovalidateMode:
-                                AutovalidateMode.onUserInteraction,
-                            enabled: qrTextProvider == targetCompanyCode ||
-                                    isAlreadyQRAuthed
-                                ? false
-                                : true,
-                            validator: (value) {
-                              if (qrTextProvider == targetCompanyCode ||
-                                  isAlreadyQRAuthed) {
-                                return null;
-                              }
+          child: Column(
+            children: [
+              Expanded(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: ElevatedButton(
+                        onPressed: () async {
+                          if (context.mounted) {
+                            context.router.push(const ScanQRRoute());
+                          }
+                        },
+                        child: const Text("QRスキャンする"),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(
+                        (isValidCompanyCode ||
+                                qrTextProvider == targetCompanyCode ||
+                                isAlreadyQRAuthed)
+                            ? "認証QRスキャンOK"
+                            : "認証QRをスキャンしてください",
+                      ),
+                      //Text((!isValidCompanyCode) || (qrTextProvider != targetCompanyCode) ? "認証QRをスキャンしてください" : "認証QRスキャンOK"),
+                    ),
+                    // bio
+                    //Text('生体認証状態: ${authorized.value}'),
+                    ElevatedButton(
+                      onPressed: authenticate,
+                      child: const Text('生体認証で自動ログインする'),
+                    ),
+                    // end bio
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: FormBuilder(
+                          key: formKey,
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: <Widget>[
+                              FormBuilderTextField(
+                                name: "companyCode",
+                                controller: tFieldCompanyCodeController,
+                                decoration:
+                                    const InputDecoration(labelText: "企業コード"),
+                                obscureText: false,
+                                autovalidateMode:
+                                    AutovalidateMode.onUserInteraction,
+                                enabled: qrTextProvider == targetCompanyCode ||
+                                        isAlreadyQRAuthed
+                                    ? false
+                                    : true,
+                                validator: (value) {
+                                  if (qrTextProvider == targetCompanyCode ||
+                                      isAlreadyQRAuthed) {
+                                    return null;
+                                  }
 
-                              if (value == null || value.isEmpty) {
-                                return "企業コードを入力してください";
-                              }
-                              if (value.length < 8) {
-                                return "企業コードは8文字以上である必要があります";
-                              }
-                              if (value != targetCompanyCode) {
-                                return "企業コードが正しくありません";
-                              }
-                              return null;
-                            },
-/*                            validator: FormBuilderValidators.compose([
-                              FormBuilderValidators.required(),
-                            ]), */
-                            keyboardType: TextInputType.text,
-                            textCapitalization: TextCapitalization.none,
-                          ),
-                          // Email
-                          FormBuilderTextField(
-                            name: "email",
-                            decoration:
-                                const InputDecoration(labelText: "メールアドレス"),
-                            obscureText: false,
-                            validator: FormBuilderValidators.compose([
-                              FormBuilderValidators.required(),
-                            ]),
-                            autocorrect: false,
-                            keyboardType: TextInputType.emailAddress,
-                            textCapitalization: TextCapitalization.none,
-                          ),
-                          FormBuilderTextField(
-                            name: "password",
-                            decoration:
-                                const InputDecoration(labelText: "パスワード"),
-                            obscureText: true,
-                            validator: FormBuilderValidators.compose([
-                              FormBuilderValidators.required(),
-                            ]),
-                            keyboardType: TextInputType.text,
-                            textCapitalization: TextCapitalization.none,
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Row(
-                              children: <Widget>[
-                                Expanded(
-                                  child: ElevatedButton(
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor: Colors.indigo[300],
-                                      foregroundColor: Colors.white,
-                                    ),
-                                    onPressed: (isValidCompanyCode ||
-                                            qrTextProvider ==
-                                                targetCompanyCode ||
-                                            isAlreadyQRAuthed)
-                                        ? () async {
-                                            // Retreive fcmToken from SecureStorage
-                                            String? fcmToken = await storage
-                                                .read(key: 'fcmToken');
+                                  if (value == null || value.isEmpty) {
+                                    return "企業コードを入力してください";
+                                  }
+                                  if (value.length < 8) {
+                                    return "企業コードは8文字以上である必要があります";
+                                  }
+                                  if (value != targetCompanyCode) {
+                                    return "企業コードが正しくありません";
+                                  }
+                                  return null;
+                                },
+                                /*                            validator: FormBuilderValidators.compose([
+                        FormBuilderValidators.required(),
+                      ]), */
+                                keyboardType: TextInputType.text,
+                                textCapitalization: TextCapitalization.none,
+                              ),
+                              // Email
+                              FormBuilderTextField(
+                                name: "email",
+                                decoration:
+                                    const InputDecoration(labelText: "メールアドレス"),
+                                obscureText: false,
+                                validator: FormBuilderValidators.compose([
+                                  FormBuilderValidators.required(),
+                                ]),
+                                autocorrect: false,
+                                keyboardType: TextInputType.emailAddress,
+                                textCapitalization: TextCapitalization.none,
+                              ),
+                              FormBuilderTextField(
+                                name: "password",
+                                decoration:
+                                    const InputDecoration(labelText: "パスワード"),
+                                obscureText: true,
+                                validator: FormBuilderValidators.compose([
+                                  FormBuilderValidators.required(),
+                                ]),
+                                keyboardType: TextInputType.text,
+                                textCapitalization: TextCapitalization.none,
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Row(
+                                  children: <Widget>[
+                                    Expanded(
+                                      child: ElevatedButton(
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor: Colors.indigo[300],
+                                          foregroundColor: Colors.white,
+                                        ),
+                                        onPressed: (isValidCompanyCode ||
+                                                qrTextProvider ==
+                                                    targetCompanyCode ||
+                                                isAlreadyQRAuthed)
+                                            ? () async {
+                                                // Retreive fcmToken from SecureStorage
+                                                String? fcmToken = await storage
+                                                    .read(key: 'fcmToken');
 
-                                            formKey.currentState
-                                                ?.saveAndValidate();
-                                            //
-                                            //final companyCode = formKey.currentState!.value["companyCode"];
-                                            final email = formKey
-                                                .currentState!.value["email"];
-                                            final password = formKey
-                                                .currentState!
-                                                .value["password"];
-
-                                            // Do signin
-                                            try {
-                                              final result = await ref
-                                                  .read(firebaseAuthProvider)
-                                                  .signInWithEmailAndPassword(
-                                                    email: email,
-                                                    password: password,
-                                                  );
-
-                                              // Set QR auth flag = yes
-                                              await storage.write(
-                                                key: "isAlreadyQRAuthenticated",
-                                                value: "yes",
-                                              );
-
-                                              final Map<String, String>
-                                                  currentUserAccount = {
-                                                "email": email,
-                                                "password": password,
-                                              };
-                                              // Initiate userHistory.value
-                                              userHistory.value.clear();
-                                              final userHistoryOnStorage =
-                                                  await storage.read(
-                                                      key: "userHistory");
-                                              if (userHistoryOnStorage !=
-                                                  null) {
-                                                final List<dynamic>
-                                                    userHistoryDecoded =
-                                                    jsonDecode(
-                                                        userHistoryOnStorage);
-                                                final List<Map<String, dynamic>>
-                                                    userHistoryList =
-                                                    userHistoryDecoded
-                                                        .map((history) =>
-                                                            history as Map<
-                                                                String,
-                                                                dynamic>)
-                                                        .toList();
-
-                                                debugPrint(
-                                                    "userHistory on storage: ${userHistoryList.toString()}");
-                                                userHistory.value
-                                                    .addAll(userHistoryList);
-                                              }
-                                              // Check if already exists current email
-                                              final bool isEmailAlreadyExists =
-                                                  userHistory.value.any(
-                                                (history) =>
-                                                    history["email"] ==
-                                                    currentUserAccount["email"],
-                                              );
-                                              //
-                                              if (!isEmailAlreadyExists) {
+                                                formKey.currentState
+                                                    ?.saveAndValidate();
                                                 //
-                                                userHistory.value.insert(
-                                                    0, currentUserAccount);
+                                                //final companyCode = formKey.currentState!.value["companyCode"];
+                                                final email = formKey
+                                                    .currentState!
+                                                    .value["email"];
+                                                final password = formKey
+                                                    .currentState!
+                                                    .value["password"];
 
-                                                // 要素数を2以下にする
-                                                List<Map<String, dynamic>>
-                                                    resultUserHistory;
-                                                if (userHistory.value.length >
-                                                    2) {
-                                                  resultUserHistory =
-                                                      userHistory.value
-                                                          .sublist(0, 2);
-                                                } else {
-                                                  resultUserHistory =
-                                                      userHistory.value;
-                                                }
+                                                // Do signin
+                                                try {
+                                                  final result = await ref
+                                                      .read(
+                                                          firebaseAuthProvider)
+                                                      .signInWithEmailAndPassword(
+                                                        email: email,
+                                                        password: password,
+                                                      );
 
-                                                await storage.write(
-                                                    key: "userHistory",
-                                                    value: jsonEncode(
-                                                        resultUserHistory));
-                                              }
-
-                                              // Update fcmToken in "deviceinfo"
-                                              if (fcmToken != null) {
-                                                // Check if already "deviceinfo" doc exists
-                                                final resChkDoc =
-                                                    await deviceInfoNotifier
-                                                        .getDeviceInfoByUid(
-                                                            result.user!.uid);
-                                                if (resChkDoc != null) {
-                                                  await deviceInfoNotifier
-                                                      .updateFcmTokenInDeviceInfo(
-                                                          result.user!.uid,
-                                                          fcmToken);
-                                                } else {
-                                                  // Create a new subcollection doc
-                                                  final newDeviceInfo =
-                                                      DeviceInfo(
-                                                    fcmTokens: {
-                                                      "token": fcmToken,
-                                                      "updatedAt":
-                                                          DateTime.now(),
-                                                    },
-                                                    createdAt: DateTime.now(),
-                                                    updatedAt: DateTime.now(),
+                                                  // Set QR auth flag = yes
+                                                  await storage.write(
+                                                    key:
+                                                        "isAlreadyQRAuthenticated",
+                                                    value: "yes",
                                                   );
 
-                                                  await deviceInfoNotifier
-                                                      .addDeviceInfo(
-                                                          result.user!.uid,
-                                                          newDeviceInfo);
+                                                  final Map<String, String>
+                                                      currentUserAccount = {
+                                                    "email": email,
+                                                    "password": password,
+                                                  };
+                                                  // Initiate userHistory.value
+                                                  userHistory.value.clear();
+                                                  final userHistoryOnStorage =
+                                                      await storage.read(
+                                                          key: "userHistory");
+                                                  if (userHistoryOnStorage !=
+                                                      null) {
+                                                    final List<dynamic>
+                                                        userHistoryDecoded =
+                                                        jsonDecode(
+                                                            userHistoryOnStorage);
+                                                    final List<
+                                                            Map<String,
+                                                                dynamic>>
+                                                        userHistoryList =
+                                                        userHistoryDecoded
+                                                            .map((history) =>
+                                                                history as Map<
+                                                                    String,
+                                                                    dynamic>)
+                                                            .toList();
 
-                                                  // Show snackbar
+                                                    debugPrint(
+                                                        "userHistory on storage: ${userHistoryList.toString()}");
+                                                    userHistory.value.addAll(
+                                                        userHistoryList);
+                                                  }
+                                                  // Check if already exists current email
+                                                  final bool
+                                                      isEmailAlreadyExists =
+                                                      userHistory.value.any(
+                                                    (history) =>
+                                                        history["email"] ==
+                                                        currentUserAccount[
+                                                            "email"],
+                                                  );
+                                                  //
+                                                  if (!isEmailAlreadyExists) {
+                                                    //
+                                                    userHistory.value.insert(
+                                                        0, currentUserAccount);
+
+                                                    // 要素数を2以下にする
+                                                    List<Map<String, dynamic>>
+                                                        resultUserHistory;
+                                                    if (userHistory
+                                                            .value.length >
+                                                        2) {
+                                                      resultUserHistory =
+                                                          userHistory.value
+                                                              .sublist(0, 2);
+                                                    } else {
+                                                      resultUserHistory =
+                                                          userHistory.value;
+                                                    }
+
+                                                    await storage.write(
+                                                        key: "userHistory",
+                                                        value: jsonEncode(
+                                                            resultUserHistory));
+                                                  }
+
+                                                  // Update fcmToken in "deviceinfo"
+                                                  if (fcmToken != null) {
+                                                    // Check if already "deviceinfo" doc exists
+                                                    final resChkDoc =
+                                                        await deviceInfoNotifier
+                                                            .getDeviceInfoByUid(
+                                                                result
+                                                                    .user!.uid);
+                                                    if (resChkDoc != null) {
+                                                      await deviceInfoNotifier
+                                                          .updateFcmTokenInDeviceInfo(
+                                                              result.user!.uid,
+                                                              fcmToken);
+                                                    } else {
+                                                      // Create a new subcollection doc
+                                                      final newDeviceInfo =
+                                                          DeviceInfo(
+                                                        fcmTokens: {
+                                                          "token": fcmToken,
+                                                          "updatedAt":
+                                                              DateTime.now(),
+                                                        },
+                                                        createdAt:
+                                                            DateTime.now(),
+                                                        updatedAt:
+                                                            DateTime.now(),
+                                                      );
+
+                                                      await deviceInfoNotifier
+                                                          .addDeviceInfo(
+                                                              result.user!.uid,
+                                                              newDeviceInfo);
+
+                                                      // Show snackbar
+                                                    }
+                                                  }
+                                                  debugPrint("result: $result");
+                                                } catch (e) {
+                                                  if (context.mounted) {
+                                                    ScaffoldMessenger.of(
+                                                            context)
+                                                        .showSnackBar(SnackBar(
+                                                            content: Text(
+                                                                e.toString())));
+                                                  }
                                                 }
-                                              }
-                                              debugPrint("result: $result");
-                                            } catch (e) {
-                                              if (context.mounted) {
-                                                ScaffoldMessenger.of(context)
-                                                    .showSnackBar(SnackBar(
-                                                        content: Text(
-                                                            e.toString())));
-                                              }
-                                            }
 
-/*                                        if (context.mounted) {
-                                          context.router.push(const MypageRoute());
-                                        }*/
+                                                /*                                        if (context.mounted) {
+                                    context.router.push(const MypageRoute());
+                                  }*/
 
-                                            // Reset form
-                                            formKey.currentState?.reset();
-                                          }
-                                        : null,
-                                    child: const Text("サインイン"),
-                                  ),
-                                )
-                              ],
-                            ),
-                          ),
-                          const Text("アカウントを持っていない方："),
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Row(
-                              children: <Widget>[
-                                Expanded(
-                                  child: ElevatedButton(
-                                      onPressed: () async {
-                                        if (context.mounted) {
-                                          context.router
-                                              .push(const SignupRoute());
-                                        }
-                                      },
-                                      child: const Text("サインアップ")),
-                                )
-                              ],
-                            ),
-                          )
-                        ],
-                      )),
-                )
-              ],
-            ),
+                                                // Reset form
+                                                formKey.currentState?.reset();
+                                              }
+                                            : null,
+                                        child: const Text("サインイン"),
+                                      ),
+                                    )
+                                  ],
+                                ),
+                              ),
+                            ],
+                          )),
+                    ),
+                  ],
+                ),
+              ),
+              // Signup button
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        minimumSize: Size(150, 20),
+                      ),
+                        onPressed: () async {
+                          if (context.mounted) {
+                            context.router.push(const SignupRoute());
+                          }
+                        },
+                        child: Text("アカウントを持っていない方",
+                            style: TextStyle(fontSize: 9, color: Colors.blueGrey)))
+                  ],
+                ),
+              ),
+            ],
           ),
-        )));
+        ));
   }
 }

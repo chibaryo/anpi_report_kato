@@ -1,4 +1,6 @@
 
+import 'package:anpi_report_flutter/entity/topictype.dart';
+import 'package:anpi_report_flutter/providers/firestore/profile/profile_notifier.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -16,6 +18,7 @@ class PlayAdminScreen extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final notifier = ref.read(unansweredUsersSQLiteNotifierProvider.notifier);
+    final asyncProfiles = ref.watch(streamProfileNotifierProvider);
 
     useEffect(() {
       // Hide bottomnav
@@ -42,33 +45,68 @@ class PlayAdminScreen extends HookConsumerWidget {
             },
           ),
           centerTitle: true,
-          title: const Text("テンプレート管理"),
+          title: const Text("Profile管理"),
           backgroundColor: Colors.purple[300],
         ),
-        body: Column(
-          children: [
-ElevatedButton(
-      onPressed: () async {
-        final user = FirestoreUser(
-          username: 'john_doe',
-          email: 'john@example.com',
-          password: 'password123',
-          isOnline: true,
-          createdAt: DateTime.now(),
-          updatedAt: DateTime.now(),
-        );
+        body: switch(asyncProfiles) {
+          AsyncData(:final value)
+            => SafeArea(
+  child: CustomScrollView(
+    slivers: [
+      SliverPadding(
+        padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
+        sliver: SliverList(
+          delegate: SliverChildListDelegate(
+            [
+              switch(asyncProfiles) {
+                AsyncData(:final value) => SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: DataTable(
+                    showCheckboxColumn: false,
+                    columns: const [
+                      DataColumn(label: Text("uid")),
+                      DataColumn(label: Text("subscription")),
+                      // Add more columns as needed for your profile data
+                    ],
+                    rows: value.map((profile) {
+                      return DataRow(
+                        cells: [
+                          DataCell(Text(profile["profile"]?.uid ?? "")),
+                          DataCell(
+                            Text
+                            (
+//                              profile["profile"]?.userAttr?["subscription"].toString() ?? ""
+                                        getTopicDetailsBySortNumber(
+                                          profile["profile"]?.userAttr?["subscription"] ?? 0
+                                        )
+                                          .map((topic) => topic['displayName'])
+                                          .join(', ')
 
-        try {
-          await notifier.addUser('uid123', user);
-        } catch (e) {
-          //
-          //print('Failed to add user: $e');
+                            )
+                          ),
+                          // Add more cells to match your profile data
+                        ],
+                      );
+                    }).toList(),
+                  ),
+                ),
+                AsyncError(:final error) => Center(
+                  child: Text('Error: ${error.toString()}'),
+                ),
+                _ => const Center(
+                  child: CircularProgressIndicator(),
+                ),
+              },
+            ],
+          ),
+        ),
+      ),
+    ],
+  ),
+),
+              AsyncError(:final error) => Center(child: Text('エラー: ${error.toString()}')),
+              _ => const Center(child: CircularProgressIndicator()), // Loading state
         }
-      },
-      child: Text('Add User'),
-    ),            
-          ],
-        )
     );
   }
 }

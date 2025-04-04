@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
@@ -51,7 +53,11 @@ Future<String?> initFCMIOS(String uid, String udid) async {
 
 //    final fcmNotifier = ref.read(fcmTokenDataProvider.notifier);
 //    fcmNotifier.state = fcmToken!;
-    await messaging.subscribeToTopic("notice_all");
+    if (Platform.isAndroid || Platform.isIOS) {
+      await messaging.subscribeToTopic("notice_all");
+    } else {
+      // Web
+    }
 //        print("watch: ${ref.watch(fcmTokenDataProvider)}");
 
 //        FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);

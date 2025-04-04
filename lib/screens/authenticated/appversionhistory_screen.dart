@@ -7,6 +7,46 @@ import '../../providers/bottomnav/bottomnav_provider.dart';
 
 final listVersionHistory = [
   {
+    "date": "[2025/04/04]",
+    "version": "1.3.9",
+    "description": "通知管理画面にて、修正を実施",
+  },
+  {
+    "date": "[2025/04/04]",
+    "version": "1.3.8",
+    "description": "設定画面にて、責任者・管理者のみ管理パネル表示",
+  },
+  {
+    "date": "[2025/04/01]",
+    "version": "1.3.7",
+    "description": "ユーザ管理画面にて、軽微な修正",
+  },
+  {
+    "date": "[2025/03/31]",
+    "version": "1.3.6",
+    "description": "管理画面にて、メールアドレスは非表示にする",
+  },
+  {
+    "date": "[2025/03/28]",
+    "version": "1.3.5",
+    "description": "責任者：ユーザ管理、通知管理詳細のフィルタ修正",
+  },
+  {
+    "date": "[2025/03/27]",
+    "version": "1.3.4",
+    "description": "管理パネルが一般社員に公開されないよう修正",
+  },
+  {
+    "date": "[2025/03/21]",
+    "version": "1.3.3",
+    "description": "通知管理画面の非同期処理を修正",
+  },
+  {
+    "date": "[2025/03/19]",
+    "version": "1.3.2",
+    "description": "サインアップボタン；名称と位置の変更",
+  },
+  {
     "date": "[2025/03/12]",
     "version": "1.3.1",
     "description": "生体認証でログイン履歴から自動ログイン機能を実装",

@@ -1,6 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+
+final String apiSrvBaseUrl = dotenv.get('APISRV_BASEURL');
 
 class AuthService {
   final _firebaseAuth = FirebaseAuth.instance;
@@ -71,7 +74,8 @@ class AuthService {
 
   Future<void> deleteAccount(String uid) async {
     // POST v1 https://anpi-fcm-2024-test.vercel.app/api/firebase/deleteaccount
-    const apiUrl = "https://anpi-fcm-2024-test.vercel.app/api/firebase/deleteaccount";
+    final apiUrl = Uri.parse(apiSrvBaseUrl).replace(path: '/api/firebase/deleteaccount').toString();
+
     Uri url = Uri.parse(apiUrl);
     Map<String, String> headers = {'Content-Type': 'application/json'};
     String body = json.encode({'uid': uid});
@@ -90,7 +94,8 @@ class AuthService {
   }
 
   Future<String?> createAccountViaServer(String displayName, String email, String password) async {
-    const apiUrl = "https://anpi-fcm-2024-test.vercel.app/api/firebase/createaccount";
+    final apiUrl = Uri.parse(apiSrvBaseUrl).replace(path: '/api/firebase/createaccount').toString();
+
     Uri url = Uri.parse(apiUrl);
     Map<String, String> headers = {'Content-Type': 'application/json'};
     String body = json.encode(
@@ -102,6 +107,8 @@ class AuthService {
     );
 
     http.Response resp = await http.post(url, headers: headers, body: body);
+
+    print("resp.body: ${resp.body.toString()}");
     if (resp.statusCode != 200) {
       //final int statusCode = resp.statusCode;
       final String result = resp.body;

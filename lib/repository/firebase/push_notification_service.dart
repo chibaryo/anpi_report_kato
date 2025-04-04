@@ -169,6 +169,11 @@ class PushNotificationService {
   }
 
   Future<void> subscribeToNoticeAll() async {
-    return await messaging.subscribeToTopic("notice_all");
+    if (Platform.isAndroid || Platform.isIOS) {
+      return await messaging.subscribeToTopic("notice_all");
+    } else {
+      // Web
+      return;
+    }
   }
 }

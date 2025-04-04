@@ -10,6 +10,7 @@ class StreamProfileNotifier extends  _$StreamProfileNotifier {
   Stream<List<Map<String, dynamic>>> build() async* {
     yield* FirebaseFirestore.instance
       .collectionGroup("profiles")
+      .orderBy("updatedAt", descending: false)
       .snapshots()
       .map((snapshot) => snapshot.docs.map((doc) {
         final profile = Profile.fromJson(doc.data());

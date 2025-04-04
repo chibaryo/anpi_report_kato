@@ -32,6 +32,8 @@ class UserAdminScreen extends HookConsumerWidget {
     final isLoading = useState<bool>(true); // Track loading status
     final hasFilteredData = useState<bool>(false); // Track if data has been filtered
 
+    final filterAdminOnly = useState<bool>(false);
+
     final authAsyncValue = ref.watch(authStateChangesProvider);
     final asyncUsers = ref.watch(streamUserNotifierProvider);
     final userNotifier = ref.watch(streamUserNotifierProvider.notifier);
@@ -113,23 +115,28 @@ class UserAdminScreen extends HookConsumerWidget {
             final officeLocationMatch = officeLocationFilter == null || userOfficeLocation == officeLocationFilter;
             final departmentsMatch = departmentFilter == null || (userDepartments & departmentFilter) != 0;
 */
-            return isSameOfficeLocation && isDepartmentMatch;
+            return isSameOfficeLocation; // && isDepartmentMatch;
+          } else if (currentUserJobLevel == 4 && filterAdminOnly.value == true) {
+            final userJobLevel = rowRecordOfProfile["userAttr"]["jobLevel"];
+            if (userJobLevel == 4) {
+              return true;
+            } else {
+              return false;
+            }
           } else {
-            debugPrint("## return true ##");
             return true;
           }
         }).toList();
-        debugPrint("usersList: ${usersList.toString()}");
 
         // Update state with filtered users and mark data as ready
-        filteredUsers.value = value;
+        filteredUsers.value = usersList;
         isLoading.value = false; // Set loading to false after filtering
         hasFilteredData.value = true; // Mark filtered data as available
 
       });
 
       return () {};
-    }, [asyncUsers, moiProfile.value]);
+    }, [asyncUsers, moiProfile.value, filterAdminOnly.value]);
 
     // Dialog
     Future<void> openAddUserDialog(BuildContext context, WidgetRef ref) async {
@@ -355,6 +362,13 @@ class UserAdminScreen extends HookConsumerWidget {
                   },
                   icon: const Icon(Icons.add)
                 ),
+                IconButton(
+                  onPressed: () async {
+                    // Add user Dialog
+                    filterAdminOnly.value = true;
+                  },
+                  icon: const Icon(Icons.filter)
+                ),
               ];
             }
           })()
@@ -376,7 +390,7 @@ class UserAdminScreen extends HookConsumerWidget {
                                 : const DataColumn(label: Text(""))
                                 ,
                                 const DataColumn(label: Text("名前")),
-                                const DataColumn(label: Text("アドレス")),
+                                //const DataColumn(label: Text("アドレス")),
                                 const DataColumn(label: Text("支社")),
                                 const DataColumn(label: Text("部署名")),
                                 const DataColumn(label: Text("役職")),
@@ -384,7 +398,7 @@ class UserAdminScreen extends HookConsumerWidget {
                               rows: filteredUsers.value.map<DataRow>((data) {
                                 final rowRecordOfUser = data["user"];
                                 final rowRecordOfProfile = data["profile"];
-                                debugPrint("###??? rowRecordOfProfile: $rowRecordOfProfile");
+                                //debugPrint("###??? rowRecordOfProfile: $rowRecordOfProfile");
                   
                                 return DataRow(
                                   cells: [
@@ -434,7 +448,7 @@ class UserAdminScreen extends HookConsumerWidget {
                                     : const DataCell(Text(""))
                                     ,
                                     DataCell(Text(rowRecordOfUser.username)),
-                                    DataCell(Text(rowRecordOfUser.email)),
+                                    //DataCell(Text(rowRecordOfUser.email)),
                                     DataCell(
                                       Text(
                                         getOfficeLocationStatusTypeDetailsBySortNumber(

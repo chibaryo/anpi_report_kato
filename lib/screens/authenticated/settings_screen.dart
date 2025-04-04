@@ -32,6 +32,7 @@ class SettingsScreen extends HookConsumerWidget {
     final userNotifier = ref.watch(streamUserNotifierProvider.notifier);
     final profileNotifier = ref.watch(streamProfileNotifierProvider.notifier);
 
+    final jobLevel = moiProfile.value?.userAttr?["jobLevel"] as int?; // Cast to int? if needed
     //final AuthService authService = AuthService();
 
     useEffect(() {
@@ -95,8 +96,7 @@ class SettingsScreen extends HookConsumerWidget {
       }
     ); */
 
-
-    Widget buildProfilePanel () {
+    Widget buildProfilePanel() {
       return Column(
         children: <Widget>[
           Padding(
@@ -105,12 +105,12 @@ class SettingsScreen extends HookConsumerWidget {
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: <Widget>[
                 const Text("氏名"),
-                const SizedBox(width: 16,),
+                const SizedBox(
+                  width: 16,
+                ),
                 moiUser.value != null
-                ?
-                Text(moiUser.value!.username)
-                :
-                const Text("")
+                    ? Text(moiUser.value!.username)
+                    : const Text("")
               ],
             ),
           ),
@@ -120,12 +120,12 @@ class SettingsScreen extends HookConsumerWidget {
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: <Widget>[
                 const Text("アドレス"),
-                const SizedBox(width: 16,),
+                const SizedBox(
+                  width: 16,
+                ),
                 moiUser.value != null
-                ?
-                Text(moiUser.value!.email)
-                :
-                const Text("")
+                    ? Text(moiUser.value!.email)
+                    : const Text("")
               ],
             ),
           ),
@@ -135,12 +135,14 @@ class SettingsScreen extends HookConsumerWidget {
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: <Widget>[
                 const Text("支社"),
-                const SizedBox(width: 16,),
+                const SizedBox(
+                  width: 16,
+                ),
                 moiProfile.value != null
-                ?
-                Text(getOfficeLocationStatusTypeDetailsBySortNumber(moiProfile.value!.userAttr["officeLocation"])?["displayName"])
-                :
-                const Text("")
+                    ? Text(getOfficeLocationStatusTypeDetailsBySortNumber(
+                        moiProfile
+                            .value!.userAttr["officeLocation"])?["displayName"])
+                    : const Text("")
               ],
             ),
           ),
@@ -150,21 +152,31 @@ class SettingsScreen extends HookConsumerWidget {
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: <Widget>[
                 const Text("部署名"),
-                const SizedBox(width: 16,),
+                const SizedBox(
+                  width: 16,
+                ),
                 moiProfile.value != null
-                ? Text(
-              getDepartmentTypeDetailsBySortNumber(moiProfile.value!.userAttr["department"])
-                  .where((dept) => dept['displayName'] != "未設定") // Filter out '未設定'
-                  .map((dept) => dept['displayName']) // Extract 'displayName' from each map
-                  .join(', ') // Join them into a comma-separated string
-                  .isNotEmpty // If there's any valid department, display them
-                  ? getDepartmentTypeDetailsBySortNumber(moiProfile.value!.userAttr["department"])
-                      .where((dept) => dept['displayName'] != "未設定") // Filter again in case needed
-                      .map((dept) => dept['displayName'])
-                      .join(', ') 
-                  : "未設定", // Otherwise, show "未設定"
-                  )
-                : const Text(""),
+                    ? Text(
+                        getDepartmentTypeDetailsBySortNumber(
+                                    moiProfile.value!.userAttr["department"])
+                                .where((dept) =>
+                                    dept['displayName'] !=
+                                    "未設定") // Filter out '未設定'
+                                .map((dept) => dept[
+                                    'displayName']) // Extract 'displayName' from each map
+                                .join(
+                                    ', ') // Join them into a comma-separated string
+                                .isNotEmpty // If there's any valid department, display them
+                            ? getDepartmentTypeDetailsBySortNumber(
+                                    moiProfile.value!.userAttr["department"])
+                                .where((dept) =>
+                                    dept['displayName'] !=
+                                    "未設定") // Filter again in case needed
+                                .map((dept) => dept['displayName'])
+                                .join(', ')
+                            : "未設定", // Otherwise, show "未設定"
+                      )
+                    : const Text(""),
               ],
             ),
           ),
@@ -174,12 +186,13 @@ class SettingsScreen extends HookConsumerWidget {
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: <Widget>[
                 const Text("役職"),
-                const SizedBox(width: 16,),
+                const SizedBox(
+                  width: 16,
+                ),
                 moiProfile.value != null
-                ?
-                Text(getJobLevelStatusTypeDetailsBySortNumber(moiProfile.value!.userAttr["jobLevel"])?["displayName"])
-                :
-                const Text("")
+                    ? Text(getJobLevelStatusTypeDetailsBySortNumber(
+                        moiProfile.value!.userAttr["jobLevel"])?["displayName"])
+                    : const Text("")
               ],
             ),
           ),
@@ -196,24 +209,23 @@ class SettingsScreen extends HookConsumerWidget {
     } */
 
     Widget buildTemplateAdminButton() {
-      return 
-          GestureDetector(
-            behavior: HitTestBehavior.opaque,
-            onTap: () async {
-              if (context.mounted) {
-                context.router.push(const TemplateAdminRoute());
-              }
-            },
-            child: const Padding(
-              padding: EdgeInsets.all(16.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text("テンプレート管理"),
-                  Icon(Icons.chevron_right),
-                ],
-              ),
-            ),
+      return GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: () async {
+          if (context.mounted) {
+            context.router.push(const TemplateAdminRoute());
+          }
+        },
+        child: const Padding(
+          padding: EdgeInsets.all(16.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text("テンプレート管理"),
+              Icon(Icons.chevron_right),
+            ],
+          ),
+        ),
       );
     }
 
@@ -224,15 +236,14 @@ class SettingsScreen extends HookConsumerWidget {
           backgroundColor: Colors.purple[300],
           actions: [
             IconButton(
-              onPressed: () async {
-                // SignOut
-                await ref.read(firebaseAuthProvider).signOut();
-                if (context.mounted) {
-                  context.router.replace(const SigninRoute());
-                }
-              },
-              icon: const Icon(Icons.logout)
-            ),
+                onPressed: () async {
+                  // SignOut
+                  await ref.read(firebaseAuthProvider).signOut();
+                  if (context.mounted) {
+                    context.router.replace(const SigninRoute());
+                  }
+                },
+                icon: const Icon(Icons.logout)),
           ],
         ),
         body: SafeArea(
@@ -248,65 +259,53 @@ class SettingsScreen extends HookConsumerWidget {
                         border: Border.all(color: Colors.lightBlue),
                         borderRadius: BorderRadius.circular(10),
                       ),
-                      child: Column(
-                        children: [
-                          /*GestureDetector(
-                            behavior: HitTestBehavior.opaque,
-                            onTap: () async {
-                              if (context.mounted) {
-                                context.router.push(const PlayAdminRoute());
-                              }
-                            },
-                            child: const Padding(
-                              padding: EdgeInsets.all(16.0),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text("あそびば"),
-                                  Icon(Icons.chevron_right),
-                                ],
+                      child: (() {
+                        if (jobLevel != null && jobLevel >= 2) {
+                          return Column(
+                            children: [
+                              GestureDetector(
+                                behavior: HitTestBehavior.opaque,
+                                onTap: () async {
+                                  if (context.mounted) {
+                                    context.router.push(const NotiAdminRoute());
+                                  }
+                                },
+                                child: const Padding(
+                                  padding: EdgeInsets.all(16.0),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text("通知管理"),
+                                      Icon(Icons.chevron_right),
+                                    ],
+                                  ),
+                                ),
                               ),
-                            ),
-                          ), */
-                          GestureDetector(
-                            behavior: HitTestBehavior.opaque,
-                            onTap: () async {
-                              if (context.mounted) {
-                                context.router.push(const NotiAdminRoute());
-                              }
-                            },
-                            child: const Padding(
-                              padding: EdgeInsets.all(16.0),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text("通知管理"),
-                                  Icon(Icons.chevron_right),
-                                ],
+                              buildTemplateAdminButton(),
+                              GestureDetector(
+                                behavior: HitTestBehavior.opaque,
+                                onTap: () async {
+                                  if (context.mounted) {
+                                    context.router.push(const UserAdminRoute());
+                                  }
+                                },
+                                child: const Padding(
+                                  padding: EdgeInsets.all(16.0),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text("ユーザ管理"),
+                                      Icon(Icons.chevron_right),
+                                    ],
+                                  ),
+                                ),
                               ),
-                            ),
-                          ),
-                          buildTemplateAdminButton(),
-                          GestureDetector(
-                            behavior: HitTestBehavior.opaque,
-                            onTap: () async {
-                              if (context.mounted) {
-                                context.router.push(const UserAdminRoute());
-                              }
-                            },
-                            child: const Padding(
-                              padding: EdgeInsets.all(16.0),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text("ユーザ管理"),
-                                  Icon(Icons.chevron_right),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ]
-                      ),
+                            ],
+                          );
+                        }
+                      })(),
                     ),
                     GestureDetector(
                       behavior: HitTestBehavior.opaque,
@@ -397,7 +396,8 @@ class SettingsScreen extends HookConsumerWidget {
                       behavior: HitTestBehavior.opaque,
                       onTap: () async {
                         if (context.mounted) {
-                          context.router.push(const PrivacyPolicyWebViewRoute());
+                          context.router
+                              .push(const PrivacyPolicyWebViewRoute());
                         }
                       },
                       child: const Padding(
@@ -487,7 +487,6 @@ class SettingsScreen extends HookConsumerWidget {
               ),
             ),
           ),
-        )
-    );
+        ));
   }
 }

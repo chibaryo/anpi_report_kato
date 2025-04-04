@@ -7,6 +7,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
+import '../../../entity/report/attendoffice_status.dart';
+import '../../../entity/report/injury_status.dart';
 import '../../../entity/userattr/department.dart';
 import '../../../entity/userattr/office_location.dart';
 import '../../../models/notification/notification.dart';
@@ -118,7 +120,7 @@ class NotiAdminDetailsScreen extends HookConsumerWidget {
                                     showCheckboxColumn: false,
                                     columns: const [
                                       DataColumn(label: Text("名前")),
-                                      DataColumn(label: Text("アドレス")),
+                                      //DataColumn(label: Text("アドレス")),
                                       DataColumn(label: Text("支社")),
                                       DataColumn(label: Text("部署名")),
                                       DataColumn(label: Text("役職")),
@@ -194,8 +196,8 @@ class NotiAdminDetailsScreen extends HookConsumerWidget {
                                         cells: [
                                           DataCell(Text(user?['username'] ??
                                               'Unknown User')),
-                                          DataCell(
-                                              Text(user?['email'] ?? 'N/A')),
+                                          /* DataCell(
+                                              Text(user?['email'] ?? 'N/A')), */
                                           DataCell(Text(
                                               getOfficeLocationStatusTypeDetailsBySortNumber(
                                                       profile?["userAttr"]
@@ -214,12 +216,16 @@ class NotiAdminDetailsScreen extends HookConsumerWidget {
                                                           ["jobLevel"])?[
                                                   "displayName"])),
                                           DataCell(Text(
-                                              reportObject.reportContents[
-                                                      "injuryStatus"] ??
+                                            getInjuryStatusTypeDetailsBySortNumber(
+                                              reportObject.reportContents["injuryStatus"]
+                                            )?["displayName"]
+                                               ??
                                                   "-")),
                                           DataCell(Text(
-                                              reportObject.reportContents[
-                                                      "attendOfficeStatus"] ??
+                                            getAttendOfficeStatusTypeDetailsBySortNumber(
+                                              reportObject.reportContents["attendOfficeStatus"]
+                                            )?["displayName"]
+                                               ??
                                                   "-")),
                                           DataCell(Text(reportObject
                                                   .reportContents["location"] ??
@@ -257,7 +263,7 @@ class NotiAdminDetailsScreen extends HookConsumerWidget {
                                     showCheckboxColumn: false,
                                     columns: const [
                                       DataColumn(label: Text("名前")),
-                                      DataColumn(label: Text("アドレス")),
+                                      // DataColumn(label: Text("アドレス")),
                                       DataColumn(label: Text("支社")),
                                       DataColumn(label: Text("部署名")),
                                       DataColumn(label: Text("役職")),
@@ -328,8 +334,8 @@ class NotiAdminDetailsScreen extends HookConsumerWidget {
                                         cells: [
                                           DataCell(Text(user?['username'] ??
                                               'Unknown User')),
-                                          DataCell(Text(user?['email'] ??
-                                              'Unknown address')),
+                                          /* DataCell(Text(user?['email'] ??
+                                              'Unknown address')), */
                                           DataCell(Text(
                                               getOfficeLocationStatusTypeDetailsBySortNumber(
                                                           profile?["userAttr"][

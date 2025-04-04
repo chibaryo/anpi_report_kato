@@ -17,10 +17,7 @@ import 'package:flutter/foundation.dart'
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
     if (kIsWeb) {
-      throw UnsupportedError(
-        'DefaultFirebaseOptions have not been configured for web - '
-        'you can reconfigure this by running the FlutterFire CLI again.',
-      );
+      return web;
     }
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
@@ -51,7 +48,7 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyDIGcFbtC8zZ2PaFX9gneKo07mh2IoT_DM',
-    appId: '1:482610373416:android:cccdf94b92f63edcd5661d',
+    appId: '1:482610373416:android:669c9c4d45212750d5661d',
     messagingSenderId: '482610373416',
     projectId: 'anpi-report-2024',
     storageBucket: 'anpi-report-2024.appspot.com',
@@ -59,10 +56,21 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'AIzaSyCG309C2cvmAgQr2Fq0ChRMLy1-tG_rieY',
-    appId: '1:482610373416:ios:5d6977ef9e2b4770d5661d',
+    appId: '1:482610373416:ios:ca49d589bd308f1dd5661d',
     messagingSenderId: '482610373416',
     projectId: 'anpi-report-2024',
     storageBucket: 'anpi-report-2024.appspot.com',
     iosBundleId: 'com.katoanpireport.flutter.app',
   );
+
+  static const FirebaseOptions web = FirebaseOptions(
+    apiKey: 'AIzaSyAiAWPBG-oqqior8mfLmkaODAr1B_5516Q',
+    appId: '1:482610373416:web:dc6d2175f3c91feed5661d',
+    messagingSenderId: '482610373416',
+    projectId: 'anpi-report-2024',
+    authDomain: 'anpi-report-2024.firebaseapp.com',
+    storageBucket: 'anpi-report-2024.appspot.com',
+    measurementId: 'G-GTMQWF75PR',
+  );
+
 }

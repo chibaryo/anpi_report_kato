@@ -65,3 +65,28 @@ bool calcSubscriptionBitmask(String topicName, int bitmask) {
   // Check if the bitMaskNum is set in the bitmask
   return (bitmask & foundType.bitMaskNum) != 0;
 }
+
+
+List<Map<String, dynamic>> getTopicDetailsBySortNumber(int sortNumber) {
+  List<Map<String, dynamic>> matchingTopics = [];
+
+  for (var topic in TopicType.values) {
+    // Omit "未設定" if the sortNumber is not zero
+    if (topic == TopicType.undefined && sortNumber != 0) {
+      continue;  // Skip "未設定"
+    }
+
+    // Use bitwise AND to check if the department is part of the sortNumber
+    if ((sortNumber & topic.sortNumber) == topic.sortNumber) {
+      matchingTopics.add({
+        'displayName': topic.displayName,
+        'sortNumber': topic.sortNumber,
+      });
+    }
+  }
+
+  // Sort by the original sortNumber for consistency
+  matchingTopics.sort((a, b) => (a['sortNumber'] as int).compareTo(b['sortNumber'] as int));
+
+  return matchingTopics;
+}

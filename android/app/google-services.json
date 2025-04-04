@@ -7,6 +7,25 @@
   "client": [
     {
       "client_info": {
+        "mobilesdk_app_id": "1:482610373416:android:669c9c4d45212750d5661d",
+        "android_client_info": {
+          "package_name": "com.katoanpireport.flutter.anpi_report_flutter"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDIGcFbtC8zZ2PaFX9gneKo07mh2IoT_DM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
         "mobilesdk_app_id": "1:482610373416:android:c6def2ff3e2cf8c4d5661d",
         "android_client_info": {
           "package_name": "com.katoanpireport.flutter.app"
