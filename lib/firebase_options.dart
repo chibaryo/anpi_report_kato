@@ -56,11 +56,11 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'AIzaSyCG309C2cvmAgQr2Fq0ChRMLy1-tG_rieY',
-    appId: '1:482610373416:ios:ca49d589bd308f1dd5661d',
+    appId: '1:482610373416:ios:a2876e70b597a14cd5661d',
     messagingSenderId: '482610373416',
     projectId: 'anpi-report-2024',
     storageBucket: 'anpi-report-2024.appspot.com',
-    iosBundleId: 'com.katoanpireport.flutter.app',
+    iosBundleId: 'com.applpsefew.comdcsd.anpireportapp',
   );
 
   static const FirebaseOptions web = FirebaseOptions(

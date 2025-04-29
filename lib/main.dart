@@ -3,11 +3,13 @@ import 'dart:async';
 //import 'dart:developer';
 import 'dart:io';
 
-import 'package:anpi_report_flutter/repository/firebase/push_notification_service.dart';
+import 'repository/firebase/push_notification_service.dart';
 import 'package:auto_route/auto_route.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_app_badger/flutter_app_badger.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -26,29 +28,7 @@ final Logger logger = Logger();
 const secureStorage = FlutterSecureStorage();
 final notiIdProvider = StateProvider<String?>((ref) => null);
 
-Future<void> logToFile(String message) async {
-  Directory? directory;
-  if (Platform.isAndroid) {
-    // Get the external cache directory for Android
-    final List<Directory>? tempDirs = await getExternalCacheDirectories();
-    if (tempDirs != null && tempDirs.isNotEmpty) {
-      directory = tempDirs.first; // Assign the first available directory
-    } else {
-      throw Exception("No cache directory found");
-    }
-  } else if (Platform.isIOS) {
-    // Get the application documents directory for iOS
-    directory = await getApplicationDocumentsDirectory();
-  } else {
-    throw Exception("Unsupported platform");
-  }
-
-  final logFile = File('${directory.path}/app.log');
-
-  // Append the log message to the file
-  await logFile.writeAsString('$message\n', mode: FileMode.append);
-}
-
+@pragma('vm:entry-point')
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   // If you're going to use other Firebase services in the background, such as Firestore,
   // make sure you call `initializeApp` before using other Firebase services.
@@ -56,10 +36,8 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  String logMessage = "Hnaddling a background message: ${message.data['notificationId']}";
+  String logMessage = "Hnaddling a background message: ${message.toString()}";
   logger.i(logMessage);
-  await logToFile(logMessage); // Log to file
-  await logToFile("message.notification : ${message.notification.toString()})"); // Log to file
 
   // Increment badge count
   await incrementBadge();
@@ -72,7 +50,6 @@ Future<void> incrementBadge() async {
     String? currentAppBadgeCountStr = await secureStorage.read(key: "currentAppBadgeCount");
   if (currentAppBadgeCountStr != null) {
     final nextAppBadgeCount = int.parse(currentAppBadgeCountStr) + 1;
-    await logToFile("nextAppBadgeCount: ${nextAppBadgeCount.toString()}"); // Log to file
 
     if (Platform.isIOS) {
       if (await FlutterAppBadger.isAppBadgeSupported()) {
@@ -92,17 +69,55 @@ Future<void> forceBadge() async {
     }
 }
 
+Future<void> initFcm() async {
+  final messaging = FirebaseMessaging.instance;
+  final fcmSettings = await messaging.requestPermission(
+    alert: true,
+    badge: true,
+    sound: true,
+  );
+  if (kDebugMode) {
+    print("FCM Permission granted: ${fcmSettings.authorizationStatus}");
+  }
+  try {
+    final fcmToken = await messaging.getToken(
+      vapidKey: "BDVr2543vCaQ2aN_DaIfLKKz0NH5hZDBPTHTfWXGWAiPULp9mCGpQyzsbcP9rOqgNTfj-K9F9A5rAkoFzGYEBvI",
+    );
+    // Print fcmToken
+    debugPrint("Got fcmToken: $fcmToken");
+    // Subscribe to "notice_all" (default)
+    await messaging.subscribeToTopic("notice_all");
+    debugPrint("Registered to notice_all");
+
+    // Save to secure storage
+    await secureStorage.write(
+      key: "fcmToken",
+      value: fcmToken,
+    );
+
+  } catch (e) {
+    //
+    throw Exception(e);
+  }
+}
+
+final notificationChannel = const MethodChannel('com.rabbitway.anpireport.staging.app/notification');
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
+//  await initFcm();
+
+  // Register background handler
+  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+
   // Load dotenv file
   await dotenv.load(fileName: ".env");
 
-  // Initialize local notifications
-  // Initialize PushNotificationService with router
   final appRouter = AppRouter();
   PushNotificationService().init(router: appRouter);
   PushNotificationService.initLocalNotification();
@@ -118,11 +133,8 @@ class MyApp extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-
     final pushNotifications = PushNotificationService();
     final token = useState<String?>("");
-
-    // Func defs
 
     useEffect(() {
       // Init Push
@@ -161,7 +173,7 @@ class MyApp extends HookConsumerWidget {
         Locale('ja'),
         Locale('en'),
       ],
-      title: "Katosansho Anpi App",
+      title: "KatoSansho Anpi App",
       theme: ThemeData(
         primarySwatch: Colors.purple,
       ),

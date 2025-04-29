@@ -7,6 +7,21 @@ import '../../providers/bottomnav/bottomnav_provider.dart';
 
 final listVersionHistory = [
   {
+    "date": "[2025/04/30]",
+    "version": "1.3.16",
+    "description": "トピック、部署のDBへの移行対応",
+  },
+  {
+    "date": "[2025/04/27]",
+    "version": "1.3.15",
+    "description": "iOSでのバックグラウンド時にバッジ数更新対応",
+  },
+  {
+    "date": "[2025/04/21]",
+    "version": "1.3.12",
+    "description": "通知管理画面、ユーザ管理画面にて、修正を実施",
+  },
+  {
     "date": "[2025/04/04]",
     "version": "1.3.9",
     "description": "通知管理画面にて、修正を実施",

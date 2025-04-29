@@ -1,13 +1,12 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:anpi_report_flutter/router/app_router.dart';
+import '../../router/app_router.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:device_info_plus/device_info_plus.dart';
 
 //final pushNotifications = PushNotificationService();
 final String fcmVapidKey = dotenv.get('FIREBASE_FCM_VAPID_KEY'); //"eD8dzYgLNtF4HmmOB9OT3i7Y1G5wXyeeAn4unMBA";
@@ -81,25 +80,17 @@ class PushNotificationService {
   }
 
   static Future<void> requestAndroidPermissions() async {
-    DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
-    AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
-    final androidOsVersion = androidInfo.version.release;
-    debugPrint("androidOsVersion : ## ${androidOsVersion.toString()}");
-
-    // Resolve the Android-specific implementation of the notifications plugin
-    final AndroidFlutterLocalNotificationsPlugin? androidImplementation =
-      flutterLocalNotificationsPlugin.resolvePlatformSpecificImplementation<
-          AndroidFlutterLocalNotificationsPlugin>();
-
-    // Request notification permissions
-    await androidImplementation?.requestNotificationsPermission();
+    await flutterLocalNotificationsPlugin
+      .resolvePlatformSpecificImplementation<
+          AndroidFlutterLocalNotificationsPlugin>()
+      ?.requestNotificationsPermission();
   }
 
   static void initializePushNotifications({
     required Future<void> Function(RemoteMessage) handler,
   }) {
     // Set the background handler
-    FirebaseMessaging.onBackgroundMessage(handler);
+    //FirebaseMessaging.onBackgroundMessage(handler);
 
 /*    // Initialize local notifications
     flutterLocalNotificationsPlugin
@@ -121,6 +112,7 @@ class PushNotificationService {
     }
 
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+      debugPrint("### opened a message ###");
       final receivedNotiId = message.data['notificationId'];
       appRouter.push(PostEnqueteRoute(notificationId: receivedNotiId));
     });
@@ -169,11 +161,7 @@ class PushNotificationService {
   }
 
   Future<void> subscribeToNoticeAll() async {
-    if (Platform.isAndroid || Platform.isIOS) {
-      return await messaging.subscribeToTopic("notice_all");
-    } else {
-      // Web
-      return;
-    }
+    debugPrint("Registered to notice_all");
+    return await messaging.subscribeToTopic("notice_all");
   }
 }

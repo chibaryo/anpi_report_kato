@@ -9,6 +9,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../../../entity/report/attendoffice_status.dart';
 import '../../../entity/report/injury_status.dart';
+import '../../../entity/topictype.dart';
 import '../../../entity/userattr/department.dart';
 import '../../../entity/userattr/office_location.dart';
 import '../../../models/notification/notification.dart';
@@ -124,6 +125,7 @@ class NotiAdminDetailsScreen extends HookConsumerWidget {
                                       DataColumn(label: Text("支社")),
                                       DataColumn(label: Text("部署名")),
                                       DataColumn(label: Text("役職")),
+//                                      DataColumn(label: Text("購読トピック")),
                                       DataColumn(label: Text("怪我")),
                                       DataColumn(label: Text("出社")),
                                       DataColumn(label: Text("位置情報")),
@@ -153,10 +155,6 @@ class NotiAdminDetailsScreen extends HookConsumerWidget {
 
                                       // Apply filtering based on job level, office location, and department
                                       if (moiJobLevel == 2) {
-                                        final isOfficeLocationMatch =
-                                          hasBitwiseOverlap(moiOfficeLocation,
-                                          targetOfficeLocation);
-                                        //
                                         final isSameOfficeLocation =
                                             (moiOfficeLocation ==
                                                 targetOfficeLocation);
@@ -165,21 +163,17 @@ class NotiAdminDetailsScreen extends HookConsumerWidget {
                                                 targetDepartment);
                                         final isSubscriptionMatch =
                                             hasBitwiseOverlap(moiSubscription,
-                                              targetSubscription
-                                            );
-                                        if (isOfficeLocationMatch) {
-                                          return isOfficeLocationMatch;
-                                        } else {
-                                          return isSameOfficeLocation &&
+                                                targetSubscription ?? 0);
+                                        // Combine all required conditions
+                                        return isSameOfficeLocation &&
                                             isDepartmentMatch &&
                                             isSubscriptionMatch;
-                                        }
                                       } else if (moiJobLevel == 4) {
                                         final isSubscriptionMatch =
                                             hasBitwiseOverlap(moiSubscription,
-                                              targetSubscription
-                                            );
+                                                targetSubscription ?? 0);
                                         return isSubscriptionMatch;
+                                        //return true;
                                       } else if (moiJobLevel == 8) {
                                         return true;
                                       } else {
@@ -216,16 +210,18 @@ class NotiAdminDetailsScreen extends HookConsumerWidget {
                                                           ["jobLevel"])?[
                                                   "displayName"])),
                                           DataCell(Text(
-                                            getInjuryStatusTypeDetailsBySortNumber(
-                                              reportObject.reportContents["injuryStatus"]
-                                            )?["displayName"]
-                                               ??
+                                              getInjuryStatusTypeDetailsBySortNumber(
+                                                          reportObject
+                                                                  .reportContents[
+                                                              "injuryStatus"])?[
+                                                      "displayName"] ??
                                                   "-")),
                                           DataCell(Text(
-                                            getAttendOfficeStatusTypeDetailsBySortNumber(
-                                              reportObject.reportContents["attendOfficeStatus"]
-                                            )?["displayName"]
-                                               ??
+                                              getAttendOfficeStatusTypeDetailsBySortNumber(
+                                                          reportObject
+                                                                  .reportContents[
+                                                              "attendOfficeStatus"])?[
+                                                      "displayName"] ??
                                                   "-")),
                                           DataCell(Text(reportObject
                                                   .reportContents["location"] ??
@@ -267,6 +263,7 @@ class NotiAdminDetailsScreen extends HookConsumerWidget {
                                       DataColumn(label: Text("支社")),
                                       DataColumn(label: Text("部署名")),
                                       DataColumn(label: Text("役職")),
+                                      DataColumn(label: Text("購読トピック")),
                                     ],
                                     rows: unansweredData.where((data) {
                                       // Filtering logic
@@ -292,13 +289,13 @@ class NotiAdminDetailsScreen extends HookConsumerWidget {
                                       // Apply filtering based on job level, office location, and department
                                       if (moiJobLevel == 2) {
                                         final isOfficeLocationMatch =
-                                          hasBitwiseOverlap(moiOfficeLocation,
-                                          targetOfficeLocation);
-                                          if (isOfficeLocationMatch) {
-                                            debugPrint("im included");
-                                          } else {
-                                            debugPrint("im without");
-                                          }             
+                                            hasBitwiseOverlap(moiOfficeLocation,
+                                                targetOfficeLocation);
+                                        if (isOfficeLocationMatch) {
+                                          debugPrint("im included");
+                                        } else {
+                                          debugPrint("im without");
+                                        }
                                         final isSameOfficeLocation =
                                             (moiOfficeLocation ==
                                                 targetOfficeLocation);
@@ -307,20 +304,18 @@ class NotiAdminDetailsScreen extends HookConsumerWidget {
                                                 targetDepartment);
                                         final isSubscriptionMatch =
                                             hasBitwiseOverlap(moiSubscription,
-                                              targetSubscription
-                                            );
+                                                targetSubscription ?? 0);
                                         return isOfficeLocationMatch &&
                                             isDepartmentMatch &&
-                                            isSubscriptionMatch
-                                            ;
+                                            isSubscriptionMatch;
                                       } else if (moiJobLevel == 4) {
                                         final isSubscriptionMatch =
                                             hasBitwiseOverlap(moiSubscription,
-                                              targetSubscription
-                                            );
-                                        return isSubscriptionMatch;
+                                                targetSubscription ?? 0);
+                                        return isSubscriptionMatch; 
+                                        //return true;
                                       } else if (moiJobLevel == 8) {
-                                        return true; 
+                                        return true;
                                       } else {
                                         return true;
                                       }
@@ -355,6 +350,13 @@ class NotiAdminDetailsScreen extends HookConsumerWidget {
                                                               ["jobLevel"])?[
                                                       "displayName"] ??
                                                   'Unknown jobLevel')),
+                                          DataCell(Text(
+                                              getTopicDetailsBySortNumber(
+                                                      profile?['userAttr']
+                                                          ["subscription"] ?? 0)
+                                                  .map((dept) =>
+                                                      dept['displayName'])
+                                                  .join(', '))),
                                         ],
                                       );
                                     }).toList(),

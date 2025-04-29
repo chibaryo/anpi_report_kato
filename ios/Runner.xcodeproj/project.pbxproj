@@ -249,7 +249,6 @@
 				};
 			};
 			buildConfigurationList = 97C146E91CF9000F007C117D /* Build configuration list for PBXProject "Runner" */;
-			compatibilityVersion = "Xcode 9.3";
 			developmentRegion = ja;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -257,6 +256,7 @@
 				ja,
 			);
 			mainGroup = 97C146E51CF9000F007C117D;
+			preferredProjectObjectVersion = 77;
 			productRefGroup = 97C146EF1CF9000F007C117D /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -532,10 +532,10 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.2.4;
-				PRODUCT_BUNDLE_IDENTIFIER = com.katoanpireport.flutter.app;
+				PRODUCT_BUNDLE_IDENTIFIER = com.applpsefew.comdcsd.anpireportapp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "Kato Sansho Anpi Flutter AppStore Dist";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "Kato Sansho Anpi Flutter MDM-Dist";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
@@ -736,10 +736,10 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.2.4;
-				PRODUCT_BUNDLE_IDENTIFIER = com.katoanpireport.flutter.app;
+				PRODUCT_BUNDLE_IDENTIFIER = com.applpsefew.comdcsd.anpireportapp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "Kato Sansho Anpi Flutter AppStore Dist";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "Kato Sansho Anpi Flutter MDM-Dist";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
@@ -774,10 +774,10 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.2.4;
-				PRODUCT_BUNDLE_IDENTIFIER = com.katoanpireport.flutter.app;
+				PRODUCT_BUNDLE_IDENTIFIER = com.applpsefew.comdcsd.anpireportapp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "Kato Sansho Anpi Flutter AppStore Dist";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "Kato Sansho Anpi Flutter MDM-Dist";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;

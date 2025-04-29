@@ -8,7 +8,7 @@ enum DepartmentType {
   candidate_06(displayName: "営業2部", sortNumber: 32),
   candidate_07(displayName: "営業3部", sortNumber: 64),
   candidate_08(displayName: "営業4部", sortNumber: 128),
-  candidate_09(displayName: "物流グループ", sortNumber: 256),
+  candidate_09(displayName: "物流業務部", sortNumber: 256),
   candidate_10(displayName: "経営企画部", sortNumber: 512),
   candidate_11(displayName: "総務部", sortNumber: 1024),
   candidate_12(displayName: "経理部", sortNumber: 2048),
@@ -17,6 +17,7 @@ enum DepartmentType {
   candidate_15(displayName: "広島営業所", sortNumber: 16384),
   candidate_16(displayName: "大阪支店", sortNumber: 32768),
   candidate_17(displayName: "名古屋支店", sortNumber: 65536),
+  candidate_18(displayName: "TIグループ", sortNumber: 131072),
   ;
 
   final String displayName;

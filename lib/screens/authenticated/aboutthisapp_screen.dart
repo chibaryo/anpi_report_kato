@@ -55,8 +55,18 @@ class AboutThisAppScreen extends HookConsumerWidget {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
+                        Text("アプリ名"),
+                        Text("加藤産商安否アプリ"),
+                      ],
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
                         Text("バージョン"),
-                        Text("v1.3.9"),
+                        Text("v1.3.16"),
                       ],
                     ),
                   ),

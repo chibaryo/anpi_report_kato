@@ -273,7 +273,6 @@ class UserAdminScreen extends HookConsumerWidget {
                                         await deviceInfoNotifier.addDeviceInfo(result, newDeviceInfo);
 
                                         // Update displayName
-                                        debugPrint(" #### Hppppp   ####");
                                         await authService.updateDisplayName(displayName);
 
                                         // Store new profile to Firestore "profiles"
@@ -284,6 +283,7 @@ class UserAdminScreen extends HookConsumerWidget {
                                             "officeLocation": 0,
                                             "jobLevel": 0,
                                             "department": 0,
+                                            "subscription": 1,
                                           },
                                           createdAt: DateTime.now(),
                                           updatedAt: DateTime.now(),
