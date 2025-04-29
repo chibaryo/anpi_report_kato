@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
+import '../../components/officeLocation_text.dart';
 import '../../entity/userattr/department.dart';
 import '../../entity/userattr/joblevel.dart';
 import '../../models/profile.dart';
@@ -139,9 +140,14 @@ class SettingsScreen extends HookConsumerWidget {
                   width: 16,
                 ),
                 moiProfile.value != null
-                    ? Text(getOfficeLocationStatusTypeDetailsBySortNumber(
+                  ? OfficeLocationText(
+                      givenSortNumber: moiProfile.value!.userAttr["officeLocation"],
+                      value: null,
+                      onChanged: (value) {},
+                    )
+/*                    ? Text(getOfficeLocationStatusTypeDetailsBySortNumber(
                         moiProfile
-                            .value!.userAttr["officeLocation"])?["displayName"])
+                            .value!.userAttr["officeLocation"])?["displayName"]) */
                     : const Text("")
               ],
             ),
