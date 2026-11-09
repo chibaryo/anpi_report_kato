@@ -267,12 +267,26 @@ class NotiAdminScreen extends HookConsumerWidget {
                       var uuid = Uuid();
                       var newId = uuid.v4();
 
-                      // POST to API
+                      // POST to API with Firebase ID Token
+                      final idToken = await ref
+                          .read(firebaseAuthProvider)
+                          .currentUser
+                          ?.getIdToken();
+                      if (idToken == null) {
+                        if (context.mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text('認証が必要です')),
+                          );
+                        }
+                        return;
+                      }
+
                       final String apiEndpoint =
                           "$apiSrvEndpoint/api/sendToTopic";
                       Uri url = Uri.parse(apiEndpoint);
                       Map<String, String> headers = {
-                        'Content-Type': 'application/json'
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer $idToken',
                       };
                       String body = json.encode({
                         'title': notiTitle,

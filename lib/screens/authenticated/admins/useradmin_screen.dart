@@ -251,7 +251,6 @@ class UserAdminScreen extends HookConsumerWidget {
                                         final newUser = FirestoreUser(
                                           username: displayName,
                                           email: email,
-                                          password: password,
                                           isOnline: true,
                                           lastActive: DateTime.now(),
                                           accoutStatus: 1, // 1: Online

@@ -42,7 +42,7 @@ abstract class FirestoreUser with _$FirestoreUser {
   Map<String, dynamic> toJson() => {
     'username': username,
     'email': email,
-    'password': password,
+    // Do not persist plaintext passwords to Firestore.
     'isOnline': isOnline,
     'lastActive': lastActive != null ? Timestamp.fromDate(lastActive!) : null,
     'accoutStatus': accoutStatus,

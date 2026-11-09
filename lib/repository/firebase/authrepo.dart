@@ -8,6 +8,26 @@ final String apiSrvBaseUrl = dotenv.get('APISRV_BASEURL');
 class AuthService {
   final _firebaseAuth = FirebaseAuth.instance;
 
+  Future<String?> _getIdToken({bool forceRefresh = false}) async {
+    final user = _firebaseAuth.currentUser;
+    if (user == null) {
+      return null;
+    }
+    return user.getIdToken(forceRefresh);
+  }
+
+  Future<Map<String, String>> _authorizedJsonHeaders() async {
+    final idToken = await _getIdToken();
+    if (idToken == null) {
+      throw Exception('Not authenticated');
+    }
+
+    return {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $idToken',
+    };
+  }
+
   Future<String?> signInWithEmail(String email, String password) async {
     try {
       final result = await _firebaseAuth.signInWithEmailAndPassword(
@@ -48,8 +68,6 @@ class AuthService {
     try {
       await _firebaseAuth.currentUser?.updateProfile(displayName: displayName);
       await _firebaseAuth.currentUser?.reload();
-      //User? latestUser = _firebaseAuth.currentUser;
-      
     } catch (err) {
       //
     }
@@ -58,7 +76,6 @@ class AuthService {
   Future<void> userReload() async {
     try {
       await _firebaseAuth.currentUser?.reload();
-      
     } catch (err) {
       //
     }
@@ -73,32 +90,24 @@ class AuthService {
   }
 
   Future<void> deleteAccount(String uid) async {
-    // POST v1 https://anpi-fcm-2024-test.vercel.app/api/firebase/deleteaccount
     final apiUrl = Uri.parse(apiSrvBaseUrl).replace(path: '/api/firebase/deleteaccount').toString();
+    final Uri url = Uri.parse(apiUrl);
+    final headers = await _authorizedJsonHeaders();
+    final String body = json.encode({'uid': uid});
 
-    Uri url = Uri.parse(apiUrl);
-    Map<String, String> headers = {'Content-Type': 'application/json'};
-    String body = json.encode({'uid': uid});
-
-    http.Response resp = await http.post(url, headers: headers, body: body);
+    final http.Response resp = await http.post(url, headers: headers, body: body);
     if (resp.statusCode != 200) {
-/*      final int statusCode = resp.statusCode;
-      print("failed"); */
-      return;
-    } else {
-      // Ok
-
-      await _firebaseAuth.signOut();
+      throw Exception('Failed to delete account');
     }
 
+    await _firebaseAuth.signOut();
   }
 
   Future<String?> createAccountViaServer(String displayName, String email, String password) async {
     final apiUrl = Uri.parse(apiSrvBaseUrl).replace(path: '/api/firebase/createaccount').toString();
-
-    Uri url = Uri.parse(apiUrl);
-    Map<String, String> headers = {'Content-Type': 'application/json'};
-    String body = json.encode(
+    final Uri url = Uri.parse(apiUrl);
+    final headers = await _authorizedJsonHeaders();
+    final String body = json.encode(
       {
         'displayName': displayName,
         'email': email,
@@ -106,18 +115,29 @@ class AuthService {
       }
     );
 
-    http.Response resp = await http.post(url, headers: headers, body: body);
+    final http.Response resp = await http.post(url, headers: headers, body: body);
 
-    print("resp.body: ${resp.body.toString()}");
     if (resp.statusCode != 200) {
-      //final int statusCode = resp.statusCode;
-      final String result = resp.body;
-      return result;
-    } else {
-      // Ok
-      final String resultUid = json.decode(resp.body)["result"]["uid"];
-
-      return resultUid;
+      return resp.body;
     }
+
+    final decoded = json.decode(resp.body);
+    final resultUid = decoded["result"]?["uid"];
+    if (resultUid is! String || resultUid.isEmpty) {
+      throw Exception('Invalid createaccount response');
+    }
+
+    return resultUid;
+  }
+
+  Future<http.Response> postAuthorizedJson(String path, Map<String, dynamic> payload) async {
+    final apiUrl = Uri.parse(apiSrvBaseUrl).replace(path: path).toString();
+    final Uri url = Uri.parse(apiUrl);
+    final headers = await _authorizedJsonHeaders();
+    return http.post(
+      url,
+      headers: headers,
+      body: json.encode(payload),
+    );
   }
 }
