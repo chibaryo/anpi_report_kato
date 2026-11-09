@@ -56,7 +56,7 @@
 - Better Auth専用schemaと`firebaseUid`一意フィールドをmigration。
 - Previewでsign-up/sign-in/session/revokeを検証。
 
-## Chunk 5: 移行ツールとdry-run
+## Chunk 5: 移行ツールとdry-run（ツール実装済み・重複email未解消）
 
 - Firebase Auth、Firestore users、Better Auth userをUID/emailで照合。
 - 重複emailを解消し、126件の行き先を一意化。
