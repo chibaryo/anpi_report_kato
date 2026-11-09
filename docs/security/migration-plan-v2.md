@@ -48,7 +48,7 @@
 - 新規Firestore userへ`password`を書かない（`toJson`からも除外）。
 - 未認証401、一般社員403、管理者成功をテスト。
 
-## Chunk 4: NeonとBetter Auth基盤
+## Chunk 4: NeonとBetter Auth基盤（実装済み・Vercel env反映待ち）
 
 - Neonのリージョン、環境スコープ、pooled/unpooled URLを確認。
 - Neon Managed Authを無効化または未使用として整理。
