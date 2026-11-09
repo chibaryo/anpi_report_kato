@@ -90,11 +90,12 @@
 - 本人確認と監査確認後に全件移行を承認。
 - 実施: `xadmin@gmail.com` を Better Auth へ移行済み。Firestore password 削除はバックアップゲート待ち。
 
-## Chunk 9: 全ユーザー移行と平文撤去
+## Chunk 9: 全ユーザー移行と平文撤去（準備のみ・承認待ち）
 
 - 最低対応バージョンを強制し、旧アプリの平文再作成を止める。
 - 小規模バッチでBetter Authへ移行し、成功分だけFirestore passwordを削除。
 - 最後にFirestore password 0件を確認。
+- ブロッカー: 重複email、バックアップ未整備、Chunk 8 実機確認。
 - モデル、signup、admin作成、SQLite、Secure Storage、ログからpassword依存を削除。
 - 不一致や不審アクセス時はsession/token失効とpassword resetへ切り替える。
 
