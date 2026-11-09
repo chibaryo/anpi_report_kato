@@ -4,6 +4,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'repository/firebase/push_notification_service.dart';
+import 'repository/local/secure_storage_migration.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -117,6 +118,8 @@ Future<void> main() async {
 
   // Load dotenv file
   await dotenv.load(fileName: ".env");
+
+  await SecureStorageMigration().stripPasswordsIfNeeded();
 
   final appRouter = AppRouter();
   PushNotificationService().init(router: appRouter);

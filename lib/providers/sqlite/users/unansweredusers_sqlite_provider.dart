@@ -65,7 +65,7 @@ class UnansweredUsersSQLiteNotifier extends _$UnansweredUsersSQLiteNotifier {
           'uid': "xxxxxxxx",
           'username': user.username,
           'email': user.email,
-          'password': user.password,
+          'password': '', // plaintext passwords are no longer persisted locally
           'isOnline': true,
           'created_at': user.createdAt?.toIso8601String(),
           'updated_at': user.updatedAt?.toIso8601String(),

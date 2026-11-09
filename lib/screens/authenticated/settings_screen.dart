@@ -13,6 +13,7 @@ import '../../components/officeLocation_text.dart';
 import '../../entity/userattr/department.dart';
 import '../../entity/userattr/joblevel.dart';
 import '../../models/profile.dart';
+import '../../repository/firebase/authrepo.dart';
 
 @RoutePage()
 class SettingsRouterScreen extends AutoRouter {
@@ -90,7 +91,7 @@ class SettingsScreen extends HookConsumerWidget {
         };
         await userNotifier.updateUserByUid(moiUid.value, updates);
         // SignOut
-        await ref.read(firebaseAuthProvider).signOut();
+        await AuthService().signOut();
         if (context.mounted) {
           context.router.replace(const SigninRoute());
         }
@@ -243,8 +244,8 @@ class SettingsScreen extends HookConsumerWidget {
           actions: [
             IconButton(
                 onPressed: () async {
-                  // SignOut
-                  await ref.read(firebaseAuthProvider).signOut();
+                  // SignOut (Better Auth revoke + Firebase when bridge enabled)
+                  await AuthService().signOut();
                   if (context.mounted) {
                     context.router.replace(const SigninRoute());
                   }
@@ -348,7 +349,7 @@ class SettingsScreen extends HookConsumerWidget {
                         };
                         await userNotifier.updateUserByUid(moiUid.value, updates);
                         // SignOut
-                        await ref.read(firebaseAuthProvider).signOut();
+                        await AuthService().signOut();
                         if (context.mounted) {
                           context.router.replace(const SigninRoute());
                             }

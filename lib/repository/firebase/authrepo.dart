@@ -3,10 +3,13 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
+import '../betterauth/better_auth_repo.dart';
+
 final String apiSrvBaseUrl = dotenv.get('APISRV_BASEURL');
 
 class AuthService {
   final _firebaseAuth = FirebaseAuth.instance;
+  final BetterAuthRepository _betterAuthRepository = BetterAuthRepository();
 
   Future<String?> _getIdToken({bool forceRefresh = false}) async {
     final user = _firebaseAuth.currentUser;
@@ -29,6 +32,17 @@ class AuthService {
   }
 
   Future<String?> signInWithEmail(String email, String password) async {
+    if (BetterAuthRepository.isBridgeEnabled) {
+      try {
+        return await _betterAuthRepository.signInWithBridge(
+          email: email,
+          password: password,
+        );
+      } catch (_) {
+        // Temporary fallback while migration is incomplete.
+      }
+    }
+
     try {
       final result = await _firebaseAuth.signInWithEmailAndPassword(
         email: email,
@@ -48,6 +62,17 @@ class AuthService {
 
     }
     return null;
+  }
+
+  Future<String?> restoreSessionWithBiometrics() async {
+    if (!BetterAuthRepository.isBridgeEnabled) {
+      return null;
+    }
+    try {
+      return await _betterAuthRepository.restoreFirebaseSessionFromStoredBearer();
+    } catch (_) {
+      return null;
+    }
   }
 
   Future<String?> createAccountByEmail(String email, String password) async {
@@ -86,7 +111,11 @@ class AuthService {
   }
 
   Future<void> signOut() async {
-      await _firebaseAuth.signOut();
+    if (BetterAuthRepository.isBridgeEnabled) {
+      await _betterAuthRepository.revokeAndSignOut();
+      return;
+    }
+    await _firebaseAuth.signOut();
   }
 
   Future<void> deleteAccount(String uid) async {
@@ -100,7 +129,7 @@ class AuthService {
       throw Exception('Failed to delete account');
     }
 
-    await _firebaseAuth.signOut();
+    await signOut();
   }
 
   Future<String?> createAccountViaServer(String displayName, String email, String password) async {

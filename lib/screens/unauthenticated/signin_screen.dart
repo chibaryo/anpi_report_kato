@@ -12,6 +12,8 @@ import 'package:form_builder_validators/form_builder_validators.dart';
 
 import '../../models/deviceinfo.dart';
 import '../../providers/firebaseauth/auth_provider.dart';
+import '../../repository/firebase/authrepo.dart';
+import '../../repository/betterauth/better_auth_repo.dart';
 import '../../providers/firestore/deviceinfo/deviceinfo_notifier.dart';
 import '../../providers/qrtext/qrtext_notifier.dart';
 import '../../router/app_router.dart';
@@ -93,16 +95,20 @@ class SigninScreen extends HookConsumerWidget {
                         dialogFormKey.currentState!.value['selected_user'];
                     final email = jsonDecode(selectedUser)["email"];
                     final password = jsonDecode(selectedUser)["password"];
+                    final authService = AuthService();
 
-                    // Login with the selected user account on Firebase
-                    // Do signin
+                    // Prefer stored Better Auth bearer restore; fall back to legacy password if present.
                     try {
-                      final result = await ref
-                          .read(firebaseAuthProvider)
-                          .signInWithEmailAndPassword(
-                            email: email,
-                            password: password,
-                          );
+                      String? result;
+                      if (BetterAuthRepository.isBridgeEnabled) {
+                        result = await authService.restoreSessionWithBiometrics();
+                      }
+                      if (result == null && password is String && password.isNotEmpty) {
+                        result = await authService.signInWithEmail(email, password);
+                      }
+                      if (result == null) {
+                        throw Exception('No reusable session for biometric login');
+                      }
 
                       // Set QR auth flag = yes
                       await storage.write(
@@ -112,7 +118,6 @@ class SigninScreen extends HookConsumerWidget {
 
                       final Map<String, String> currentUserAccount = {
                         "email": email,
-                        "password": password,
                       };
 
                       // Check if currentChoice exists in history
@@ -381,15 +386,14 @@ class SigninScreen extends HookConsumerWidget {
                                                     .currentState!
                                                     .value["password"];
 
-                                                // Do signin
+                                                // Do signin (Better Auth bridge when enabled)
                                                 try {
-                                                  final result = await ref
-                                                      .read(
-                                                          firebaseAuthProvider)
-                                                      .signInWithEmailAndPassword(
-                                                        email: email,
-                                                        password: password,
-                                                      );
+                                                  final authService = AuthService();
+                                                  final result = await authService
+                                                      .signInWithEmail(email, password);
+                                                  if (result == null || result.startsWith('err:')) {
+                                                    throw Exception(result ?? 'sign-in failed');
+                                                  }
 
                                                   // Set QR auth flag = yes
                                                   await storage.write(
@@ -401,7 +405,6 @@ class SigninScreen extends HookConsumerWidget {
                                                   final Map<String, String>
                                                       currentUserAccount = {
                                                     "email": email,
-                                                    "password": password,
                                                   };
                                                   // Initiate userHistory.value
                                                   userHistory.value.clear();

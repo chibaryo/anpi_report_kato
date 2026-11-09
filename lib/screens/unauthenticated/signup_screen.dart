@@ -480,7 +480,7 @@ List<String> getSelectedDepartments(int selectedSum) {
                                               final Map<String, String>
                                                   currentUserAccount = {
                                                 "email": email,
-                                                "password": password,
+                                                
                                               };
                                               userHistory.value.insert(
                                                   0, currentUserAccount);

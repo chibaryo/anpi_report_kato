@@ -73,13 +73,14 @@
 - 保証できない場合は、機密FirestoreアクセスをVercel API経由へ切り替える。
 - 結果: checkRevoked は数秒で拒否。Firestore Rules は ID Token 期限まで通るため、marker/API 併用が必須。
 
-## Chunk 7: Flutter二重認証と端末移行
+## Chunk 7: Flutter二重認証と端末移行（実装済み・フラグ既定OFF）
 
 - Better Auth→Custom Token→Firebase sign-inを機能フラグ下で実装。
 - Firebaseメール/パスワード認証は一時フォールバックとして残す。
 - Secure StorageとSQLiteからpasswordを除去する一度限りのmigrationを追加。
 - 生体認証を平文password再送からsessionのローカル解除へ変更。
 - logoutでBetter Auth revokeとFirebase signOutを両方実施。
+- 補足: Secure Storage migration と bridge は実装済み。SQLite password 列の完全撤去はパイロット後に継続。
 
 ## Chunk 8: adminパイロット
 
