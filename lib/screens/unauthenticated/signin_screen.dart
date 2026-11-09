@@ -474,12 +474,11 @@ class SigninScreen extends HookConsumerWidget {
                                                     final resChkDoc =
                                                         await deviceInfoNotifier
                                                             .getDeviceInfoByUid(
-                                                                result
-                                                                    .user!.uid);
+                                                                result);
                                                     if (resChkDoc != null) {
                                                       await deviceInfoNotifier
                                                           .updateFcmTokenInDeviceInfo(
-                                                              result.user!.uid,
+                                                              result,
                                                               fcmToken);
                                                     } else {
                                                       // Create a new subcollection doc
@@ -498,7 +497,7 @@ class SigninScreen extends HookConsumerWidget {
 
                                                       await deviceInfoNotifier
                                                           .addDeviceInfo(
-                                                              result.user!.uid,
+                                                              result,
                                                               newDeviceInfo);
 
                                                       // Show snackbar
