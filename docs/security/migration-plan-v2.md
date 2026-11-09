@@ -64,13 +64,14 @@
 - 平文を標準出力・例外・監査ログ・一時ファイルへ残さない。
 - 冪等性、部分失敗、再実行、ロールバックをテスト。
 
-## Chunk 6: Custom Token失効同期PoC
+## Chunk 6: Custom Token失効同期PoC（CONDITIONAL_GO）
 
 - Better Auth Bearer sessionを検証してFirebase Custom Tokenを発行。
 - logout/revoke/disable/password change時のFirebase token失効を検証。
 - claimがFirebase ID Token更新後も維持されるか確認。
 - Better Auth session失効後にFirestoreが規定時間内に拒否することを自動テスト。
 - 保証できない場合は、機密FirestoreアクセスをVercel API経由へ切り替える。
+- 結果: checkRevoked は数秒で拒否。Firestore Rules は ID Token 期限まで通るため、marker/API 併用が必須。
 
 ## Chunk 7: Flutter二重認証と端末移行
 
