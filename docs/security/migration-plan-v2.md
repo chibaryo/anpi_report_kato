@@ -82,12 +82,13 @@
 - logoutでBetter Auth revokeとFirebase signOutを両方実施。
 - 補足: Secure Storage migration と bridge は実装済み。SQLite password 列の完全撤去はパイロット後に継続。
 
-## Chunk 8: adminパイロット
+## Chunk 8: adminパイロット（xadmin移行済み・password削除と実機確認は待ち）
 
 - admin 1名だけをBetter Authへ移行。
 - login、Firestore、管理API、失効、無効化、再起動、生体認証を実機確認。
 - バックアップ条件後、対象adminのFirestore `password`だけ削除。
 - 本人確認と監査確認後に全件移行を承認。
+- 実施: `xadmin@gmail.com` を Better Auth へ移行済み。Firestore password 削除はバックアップゲート待ち。
 
 ## Chunk 9: 全ユーザー移行と平文撤去
 
