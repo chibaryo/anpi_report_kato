@@ -1,4 +1,3 @@
-
 import 'package:anpi_report_flutter/models/template/template.dart';
 import 'package:anpi_report_flutter/providers/firestore/templates/template_notifier.dart';
 import 'package:auto_route/auto_route.dart';
@@ -8,13 +7,11 @@ import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import '../../../models/firestoreuser.dart';
 import '../../../models/profile.dart';
-import '../../../providers/bottomnav/bottomnav_provider.dart';
-import '../../../providers/firebaseauth/auth_provider.dart';
 import '../../../providers/api/me_api_provider.dart';
 import '../../../providers/api/templates_api_provider.dart';
-import '../../../providers/firestore/firestoreuser/firestoreuser_notifier.dart';
+import '../../../providers/bottomnav/bottomnav_provider.dart';
+import '../../../providers/firebaseauth/auth_provider.dart';
 import '../../../providers/firestore/profile/profile_notifier.dart';
 import '../../../repository/betterauth/session_repository.dart';
 
@@ -22,15 +19,12 @@ import '../../../repository/betterauth/session_repository.dart';
 class TemplateAdminScreen extends HookConsumerWidget {
   const TemplateAdminScreen({super.key});
 
-
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final neonEnabled = SessionRepository.isNeonDataEnabled;
     final templatesApi = ref.watch(templatesApiRepositoryProvider);
-    final moiUid = useState<String>("");
     final moiProfile = useState<Profile?>(null);
-    final moiUser = useState<FirestoreUser?>(null);
-    final isLoading = useState<bool>(true); // Track loading status
+    final isLoading = useState<bool>(true);
 
     final authAsyncValue = neonEnabled
         ? const AsyncValue.data(null)
@@ -44,9 +38,6 @@ class TemplateAdminScreen extends HookConsumerWidget {
     final profileNotifier = neonEnabled
         ? null
         : ref.watch(streamProfileNotifierProvider.notifier);
-    final userNotifier = neonEnabled
-        ? null
-        : ref.watch(streamUserNotifierProvider.notifier);
     final neonProfileAsync =
         neonEnabled ? ref.watch(neonMoiProfileProvider) : null;
 
@@ -54,36 +45,23 @@ class TemplateAdminScreen extends HookConsumerWidget {
     final tFieldBodyController = useTextEditingController();
 
     useEffect(() {
-      // Hide bottomnav
       Future.microtask(() {
         ref.read(bottomNavNotifierProvider.notifier).hide();
       });
-
-      // Clean up: Show bottomnav again when leaving this screen
-      return () {
-      };
-    }, []);
+      return () {};
+    }, const []);
 
     useEffect(() {
       if (neonEnabled) {
         moiProfile.value = neonProfileAsync?.asData?.value;
         return () {};
       }
-
       final user = authAsyncValue.asData?.value;
       if (user != null) {
-        moiUid.value = user.uid;
-        debugPrint("moiUid: ${moiUid.value}");
-
-        profileNotifier?.getProfileByUid(moiUid.value).then((profile) {
+        profileNotifier?.getProfileByUid(user.uid).then((profile) {
           moiProfile.value = profile;
-
-          userNotifier?.getUserByUid(moiUid.value).then((firestoreUser) {
-            moiUser.value = firestoreUser;
-          });
         });
       }
-
       return () {};
     }, [authAsyncValue, neonEnabled, neonProfileAsync]);
 
@@ -92,144 +70,175 @@ class TemplateAdminScreen extends HookConsumerWidget {
       return () {};
     }, [asyncTemplates]);
 
-    // Dialog
-    Future<void> openAddTemplateDialog(BuildContext context, WidgetRef ref) async {
+    Future<void> openTemplateDialog({
+      String? templateId,
+      String initialTitle = '',
+      String initialBody = '',
+    }) async {
+      tFieldTitleController.text = initialTitle;
+      tFieldBodyController.text = initialBody;
+      final isEdit = templateId != null && templateId.isNotEmpty;
+
       return showDialog<void>(
         context: context,
         barrierDismissible: false,
-        builder: (BuildContext context) {
+        builder: (dialogContext) {
           return AlertDialog(
-            title: const Text("テンプレート追加"),
+            title: Text(isEdit ? 'テンプレート編集' : 'テンプレート追加'),
             content: FormBuilder(
               key: GlobalKey<FormBuilderState>(),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   CustomTextFormField(
-                    hintText: "タイトル",
+                    hintText: 'タイトル',
                     controller: tFieldTitleController,
                     autofocus: true,
                   ),
                   CustomTextFormField(
-                    hintText: "本文",
+                    hintText: '本文',
                     controller: tFieldBodyController,
-                    autofocus: true,
+                    autofocus: false,
                   ),
-                ]
-              )
+                ],
+              ),
             ),
             actions: [
               TextButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                child: const Text("キャンセル"),
+                onPressed: () => Navigator.pop(dialogContext),
+                child: const Text('キャンセル'),
               ),
+              if (isEdit && neonEnabled)
+                TextButton(
+                  onPressed: () async {
+                    await templatesApi.deleteTemplate(templateId);
+                    ref.invalidate(neonTemplatesProvider);
+                    if (dialogContext.mounted) {
+                      Navigator.pop(dialogContext);
+                    }
+                  },
+                  child: const Text(
+                    '削除',
+                    style: TextStyle(color: Colors.red),
+                  ),
+                ),
               TextButton(
                 onPressed: () async {
-                  // Save template
                   final notiTitle = tFieldTitleController.text;
                   final notiBody = tFieldBodyController.text;
-                  final newTemplate = Template(
-                    notiTitle: notiTitle,
-                    notiBody: notiBody,
-                    createdAt: DateTime.now(),
-                    updatedAt: DateTime.now(),
-                  );
-
                   if (neonEnabled) {
-                    await templatesApi.createTemplate({
-                      'title': notiTitle,
-                      'body': notiBody,
-                      'payload': {
-                        'notiTitle': notiTitle,
-                        'notiBody': notiBody,
-                      },
-                    });
+                    if (isEdit) {
+                      await templatesApi.updateTemplate(templateId, {
+                        'title': notiTitle,
+                        'body': notiBody,
+                        'payload': {
+                          'notiTitle': notiTitle,
+                          'notiBody': notiBody,
+                        },
+                      });
+                    } else {
+                      await templatesApi.createTemplate({
+                        'title': notiTitle,
+                        'body': notiBody,
+                        'payload': {
+                          'notiTitle': notiTitle,
+                          'notiBody': notiBody,
+                        },
+                      });
+                    }
                     ref.invalidate(neonTemplatesProvider);
                   } else {
-                    await templateNotifier!.addTemplate(newTemplate);
+                    await templateNotifier!.addTemplate(
+                      Template(
+                        notiTitle: notiTitle,
+                        notiBody: notiBody,
+                        createdAt: DateTime.now(),
+                        updatedAt: DateTime.now(),
+                      ),
+                    );
                   }
-                  if (context.mounted) {
-                    Navigator.pop(context);
+                  if (dialogContext.mounted) {
+                    Navigator.pop(dialogContext);
                   }
                 },
-                child: const Text("保存"),
-              )
+                child: const Text('保存'),
+              ),
             ],
           );
-        }
+        },
       );
     }
 
+    final canManage =
+        moiProfile.value != null && moiProfile.value!.userAttr['jobLevel'] == 4;
+
     return Scaffold(
-        appBar: AppBar(
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back),
-            onPressed: () async {
-              if (context.mounted) {
-                //
-                ref.read(bottomNavNotifierProvider.notifier).show();
-                context.router.maybePop();
-              }
-            },
-          ),
-          centerTitle: true,
-          title: const Text("テンプレート管理"),
-          backgroundColor: Colors.purple[300],
-        actions:
-          (() {
-            if (moiProfile.value != null && moiProfile.value!.userAttr["jobLevel"] == 4) {
-              return <Widget>[
+      appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () async {
+            if (context.mounted) {
+              ref.read(bottomNavNotifierProvider.notifier).show();
+              context.router.maybePop();
+            }
+          },
+        ),
+        centerTitle: true,
+        title: const Text('テンプレート管理'),
+        backgroundColor: Colors.purple[300],
+        actions: canManage
+            ? [
                 IconButton(
                   onPressed: () async {
-                    // Add template
-                    await openAddTemplateDialog(context, ref);
+                    await openTemplateDialog();
                   },
-                  icon: const Icon(Icons.add)
+                  icon: const Icon(Icons.add),
                 ),
-              ];
-            }
-          })()
-        ),
-        body: isLoading.value
-    ? const Center(child: CircularProgressIndicator())
-    : switch (asyncTemplates) {
-        AsyncData(:final value) => SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          child: Column(
-            children: [
-              DataTable(
-                showCheckboxColumn: false,
-                columns: const [
-                  DataColumn(
-                    label: Text("Title")
+              ]
+            : null,
+      ),
+      body: isLoading.value
+          ? const Center(child: CircularProgressIndicator())
+          : switch (asyncTemplates) {
+              AsyncData(:final value) => SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: DataTable(
+                    showCheckboxColumn: false,
+                    columns: const [
+                      DataColumn(label: Text('Title')),
+                      DataColumn(label: Text('Body')),
+                    ],
+                    rows: value.map<DataRow>((item) {
+                      final template = neonEnabled
+                          ? (item as NeonTemplateView).template
+                          : item as Template;
+                      final id = neonEnabled
+                          ? (item as NeonTemplateView).id
+                          : '';
+                      return DataRow(
+                        onSelectChanged: canManage && neonEnabled
+                            ? (selected) async {
+                                if (selected == true) {
+                                  await openTemplateDialog(
+                                    templateId: id,
+                                    initialTitle: template.notiTitle,
+                                    initialBody: template.notiBody,
+                                  );
+                                }
+                              }
+                            : null,
+                        cells: [
+                          DataCell(Text(template.notiTitle)),
+                          DataCell(Text(template.notiBody)),
+                        ],
+                      );
+                    }).toList(),
                   ),
-                  DataColumn(
-                    label: Text("Body")
-                  ),
-                ],
-                rows: value.map<DataRow>((template) {
-                  // template is already a Template object
-                  return DataRow(
-                    onSelectChanged: (bool? selected) async {
-                      if (selected != null && selected) {
-                        // Add your navigation or selection logic here
-                      }
-                    },
-                    cells: [
-                      DataCell(Text(template.notiTitle)), // Access Template properties directly
-                      DataCell(Text(template.notiBody)),
-                    ]
-                  );
-                }).toList(),
-              )
-            ],
-          ),
-        ),
-        AsyncError(:final error) => Center(child: Text('エラーが発生しました: ${error.toString()}')),
-        _ => const Center(child: CircularProgressIndicator()),
-      }
+                ),
+              AsyncError(:final error) =>
+                Center(child: Text('エラーが発生しました: ${error.toString()}')),
+              _ => const Center(child: CircularProgressIndicator()),
+            },
     );
   }
 }

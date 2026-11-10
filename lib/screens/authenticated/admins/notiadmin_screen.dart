@@ -185,7 +185,10 @@ class NotiAdminScreen extends HookConsumerWidget {
                                         newValue.notiBody;
                                   }
                                 },
-                                items: value.map((template) {
+                                items: value.map((item) {
+                                  final template = neonEnabled
+                                      ? (item as NeonTemplateView).template
+                                      : item as Template;
                                   return DropdownMenuItem<Template>(
                                     value: template,
                                     child: Text(template.notiTitle),
