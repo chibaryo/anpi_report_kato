@@ -7,6 +7,7 @@ import 'better_auth_repo.dart';
 const _bearerStorageKey = 'betterAuthBearerToken';
 const _emailStorageKey = 'betterAuthUserEmail';
 const _userIdStorageKey = 'betterAuthUserId';
+const _legacyUidStorageKey = 'betterAuthLegacyFirebaseUid';
 
 class BetterAuthSession {
   const BetterAuthSession({
@@ -50,10 +51,12 @@ class SessionRepository {
     if (token == null || token.isEmpty || email == null || userId == null) {
       return null;
     }
+    final legacyUid = await _storage.read(key: _legacyUidStorageKey);
     return BetterAuthSession(
       userId: userId,
       email: email,
       bearerToken: token,
+      legacyFirebaseUid: legacyUid,
     );
   }
 
@@ -61,16 +64,21 @@ class SessionRepository {
     required String bearerToken,
     required String email,
     required String userId,
+    String? legacyFirebaseUid,
   }) async {
     await _storage.write(key: _bearerStorageKey, value: bearerToken);
     await _storage.write(key: _emailStorageKey, value: email);
     await _storage.write(key: _userIdStorageKey, value: userId);
+    if (legacyFirebaseUid != null && legacyFirebaseUid.isNotEmpty) {
+      await _storage.write(key: _legacyUidStorageKey, value: legacyFirebaseUid);
+    }
   }
 
   Future<void> clear() async {
     await _storage.delete(key: _bearerStorageKey);
     await _storage.delete(key: _emailStorageKey);
     await _storage.delete(key: _userIdStorageKey);
+    await _storage.delete(key: _legacyUidStorageKey);
   }
 
   Future<BetterAuthSession> signInWithEmail({
@@ -92,17 +100,25 @@ class SessionRepository {
       throw Exception('Better Auth sign-in failed');
     }
     final userId = user['id']?.toString();
-    final userEmail = user['email']?.toString() || email;
+    final userEmail = user['email']?.toString() ?? email;
     if (userId == null || userId.isEmpty) {
       throw Exception('Better Auth user id missing');
     }
 
-    await _persist(bearerToken: token, email: userEmail, userId: userId);
     _apiClient.bearerToken = token;
 
     final me = await _apiClient.getJson('/api/app/me');
     final appUser = me['user'];
     final access = me['access'];
+    final legacyUid =
+        appUser is Map ? appUser['legacy_firebase_uid']?.toString() : null;
+
+    await _persist(
+      bearerToken: token,
+      email: userEmail,
+      userId: userId,
+      legacyFirebaseUid: legacyUid,
+    );
 
     return BetterAuthSession(
       userId: userId,

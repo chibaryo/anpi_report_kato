@@ -44,14 +44,27 @@ class AuthService {
     };
   }
 
+  Future<String?> _ensureFirebaseSessionFromBetterAuth() async {
+    if (!BetterAuthRepository.isBridgeEnabled) {
+      return null;
+    }
+    try {
+      return await _betterAuthRepository.restoreFirebaseSessionFromStoredBearer();
+    } catch (_) {
+      return null;
+    }
+  }
+
   Future<String?> signInWithEmail(String email, String password) async {
-    // Neon/API cutover path: Better Auth only, no Firebase email/password fallback.
+    // Neon/API cutover path: Better Auth is the credential source.
+    // Keep Firebase Custom Token so existing screens still observe authStateChanges.
     if (SessionRepository.isNeonDataEnabled) {
       final session = await _sessionRepository.signInWithEmail(
         email: email,
         password: password,
       );
-      return session.legacyFirebaseUid ?? session.userId;
+      final firebaseUid = await _ensureFirebaseSessionFromBetterAuth();
+      return firebaseUid ?? session.legacyFirebaseUid ?? session.userId;
     }
 
     if (BetterAuthRepository.isBridgeEnabled) {
@@ -91,7 +104,11 @@ class AuthService {
   Future<String?> restoreSessionWithBiometrics() async {
     if (SessionRepository.isNeonDataEnabled) {
       final session = await _sessionRepository.restoreSession();
-      return session?.legacyFirebaseUid ?? session?.userId;
+      if (session == null) {
+        return null;
+      }
+      final firebaseUid = await _ensureFirebaseSessionFromBetterAuth();
+      return firebaseUid ?? session.legacyFirebaseUid ?? session.userId;
     }
     if (!BetterAuthRepository.isBridgeEnabled) {
       return null;

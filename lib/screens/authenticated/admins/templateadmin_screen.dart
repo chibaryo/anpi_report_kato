@@ -12,8 +12,11 @@ import '../../../models/firestoreuser.dart';
 import '../../../models/profile.dart';
 import '../../../providers/bottomnav/bottomnav_provider.dart';
 import '../../../providers/firebaseauth/auth_provider.dart';
+import '../../../providers/api/me_api_provider.dart';
+import '../../../providers/api/templates_api_provider.dart';
 import '../../../providers/firestore/firestoreuser/firestoreuser_notifier.dart';
 import '../../../providers/firestore/profile/profile_notifier.dart';
+import '../../../repository/betterauth/session_repository.dart';
 
 @RoutePage()
 class TemplateAdminScreen extends HookConsumerWidget {
@@ -22,16 +25,30 @@ class TemplateAdminScreen extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final neonEnabled = SessionRepository.isNeonDataEnabled;
+    final templatesApi = ref.watch(templatesApiRepositoryProvider);
     final moiUid = useState<String>("");
     final moiProfile = useState<Profile?>(null);
     final moiUser = useState<FirestoreUser?>(null);
     final isLoading = useState<bool>(true); // Track loading status
 
-    final authAsyncValue = ref.watch(authStateChangesProvider);
-    final asyncTemplates = ref.watch(streamTemplateNotifierProvider);
-    final templateNotifier = ref.watch(streamTemplateNotifierProvider.notifier);
-    final profileNotifier = ref.watch(streamProfileNotifierProvider.notifier);
-    final userNotifier = ref.watch(streamUserNotifierProvider.notifier);
+    final authAsyncValue = neonEnabled
+        ? const AsyncValue.data(null)
+        : ref.watch(authStateChangesProvider);
+    final asyncTemplates = neonEnabled
+        ? ref.watch(neonTemplatesProvider)
+        : ref.watch(streamTemplateNotifierProvider);
+    final templateNotifier = neonEnabled
+        ? null
+        : ref.watch(streamTemplateNotifierProvider.notifier);
+    final profileNotifier = neonEnabled
+        ? null
+        : ref.watch(streamProfileNotifierProvider.notifier);
+    final userNotifier = neonEnabled
+        ? null
+        : ref.watch(streamUserNotifierProvider.notifier);
+    final neonProfileAsync =
+        neonEnabled ? ref.watch(neonMoiProfileProvider) : null;
 
     final tFieldTitleController = useTextEditingController();
     final tFieldBodyController = useTextEditingController();
@@ -48,30 +65,30 @@ class TemplateAdminScreen extends HookConsumerWidget {
     }, []);
 
     useEffect(() {
+      if (neonEnabled) {
+        moiProfile.value = neonProfileAsync?.asData?.value;
+        return () {};
+      }
+
       final user = authAsyncValue.asData?.value;
       if (user != null) {
         moiUid.value = user.uid;
         debugPrint("moiUid: ${moiUid.value}");
 
-        // Get profile by uid
-        profileNotifier.getProfileByUid(moiUid.value).then((profile) {
+        profileNotifier?.getProfileByUid(moiUid.value).then((profile) {
           moiProfile.value = profile;
 
-          // Get user by uid
-          userNotifier.getUserByUid(moiUid.value).then((firestoreUser) {
+          userNotifier?.getUserByUid(moiUid.value).then((firestoreUser) {
             moiUser.value = firestoreUser;
           });
         });
       }
 
       return () {};
-    }, [authAsyncValue]);
+    }, [authAsyncValue, neonEnabled, neonProfileAsync]);
 
-    // Load templates from DB
     useEffect(() {
-
-      isLoading.value = false;
-
+      isLoading.value = asyncTemplates.isLoading;
       return () {};
     }, [asyncTemplates]);
 
@@ -120,8 +137,19 @@ class TemplateAdminScreen extends HookConsumerWidget {
                     updatedAt: DateTime.now(),
                   );
 
-                  await templateNotifier.addTemplate(newTemplate);
-                  // Back
+                  if (neonEnabled) {
+                    await templatesApi.createTemplate({
+                      'title': notiTitle,
+                      'body': notiBody,
+                      'payload': {
+                        'notiTitle': notiTitle,
+                        'notiBody': notiBody,
+                      },
+                    });
+                    ref.invalidate(neonTemplatesProvider);
+                  } else {
+                    await templateNotifier!.addTemplate(newTemplate);
+                  }
                   if (context.mounted) {
                     Navigator.pop(context);
                   }

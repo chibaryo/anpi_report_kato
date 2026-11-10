@@ -1,7 +1,9 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:anpi_report_flutter/providers/appStatus/isAlreadyQRAuthenticated.dart';
 import 'package:auto_route/auto_route.dart';
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -11,6 +13,7 @@ import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
 
 import '../../models/deviceinfo.dart';
+import '../../providers/api/account_api_cache.dart';
 import '../../providers/firebaseauth/auth_provider.dart';
 import '../../repository/firebase/authrepo.dart';
 import '../../repository/betterauth/better_auth_repo.dart';
@@ -21,6 +24,28 @@ import '../../router/app_router.dart';
 import 'package:local_auth/local_auth.dart';
 
 const storage = FlutterSecureStorage();
+
+Future<void> registerNeonDeviceAfterSignIn() async {
+  if (!SessionRepository.isNeonDataEnabled) {
+    return;
+  }
+  final fcmToken = await storage.read(key: 'fcmToken');
+  var udid = 'unknown';
+  try {
+    final deviceInfo = DeviceInfoPlugin();
+    if (Platform.isAndroid) {
+      udid = (await deviceInfo.androidInfo).id;
+    } else if (Platform.isIOS) {
+      udid = (await deviceInfo.iosInfo).identifierForVendor ?? 'unknown';
+    }
+  } catch (_) {}
+  await SessionRepository().registerDevice(
+    udid: udid,
+    platform: Platform.isIOS ? 'ios' : 'android',
+    fcmToken: fcmToken,
+    topics: const ['notice_all'],
+  );
+}
 
 @RoutePage()
 class SigninScreen extends HookConsumerWidget {
@@ -104,16 +129,27 @@ class SigninScreen extends HookConsumerWidget {
                       String? result;
                       if (BetterAuthRepository.isBridgeEnabled ||
                           SessionRepository.isNeonDataEnabled) {
-                        result = await authService.restoreSessionWithBiometrics();
+                        result =
+                            await authService.restoreSessionWithBiometrics();
                       }
                       if (result == null &&
                           !SessionRepository.isNeonDataEnabled &&
                           password is String &&
                           password.isNotEmpty) {
-                        result = await authService.signInWithEmail(email, password);
+                        result =
+                            await authService.signInWithEmail(email, password);
                       }
                       if (result == null) {
-                        throw Exception('No reusable session for biometric login');
+                        throw Exception(
+                            'No reusable session for biometric login');
+                      }
+
+                      await registerNeonDeviceAfterSignIn();
+
+                      if (context.mounted) {
+                        invalidateAccountApiProviders(ref);
+                        await context.router.root
+                            .replaceAll([const TabsRouterRoute()]);
                       }
 
                       // Set QR auth flag = yes
@@ -203,13 +239,16 @@ class SigninScreen extends HookConsumerWidget {
           }
         }
       } catch (e) {
-        print(e);
+        debugPrint('Biometric authentication failed: $e');
       }
 
       authorized.value = authenticated ? '認証成功' : '認証失敗';
     }
 
     ref.listen(streamAuthNotifierProvider, (previous, next) {
+      if (SessionRepository.isNeonDataEnabled) {
+        return;
+      }
       // Check the current route
       final currentRoute = context.router.current.name;
 
@@ -394,11 +433,17 @@ class SigninScreen extends HookConsumerWidget {
 
                                                 // Do signin (Better Auth bridge when enabled)
                                                 try {
-                                                  final authService = AuthService();
-                                                  final result = await authService
-                                                      .signInWithEmail(email, password);
-                                                  if (result == null || result.startsWith('err:')) {
-                                                    throw Exception(result ?? 'sign-in failed');
+                                                  final authService =
+                                                      AuthService();
+                                                  final result =
+                                                      await authService
+                                                          .signInWithEmail(
+                                                              email, password);
+                                                  if (result == null ||
+                                                      result
+                                                          .startsWith('err:')) {
+                                                    throw Exception(result ??
+                                                        'sign-in failed');
                                                   }
 
                                                   // Set QR auth flag = yes
@@ -474,9 +519,11 @@ class SigninScreen extends HookConsumerWidget {
                                                             resultUserHistory));
                                                   }
 
-                                                  // Update fcmToken in "deviceinfo"
-                                                  if (fcmToken != null) {
-                                                    // Check if already "deviceinfo" doc exists
+                                                  await registerNeonDeviceAfterSignIn();
+
+                                                  if (!SessionRepository
+                                                          .isNeonDataEnabled &&
+                                                      fcmToken != null) {
                                                     final resChkDoc =
                                                         await deviceInfoNotifier
                                                             .getDeviceInfoByUid(
@@ -484,10 +531,8 @@ class SigninScreen extends HookConsumerWidget {
                                                     if (resChkDoc != null) {
                                                       await deviceInfoNotifier
                                                           .updateFcmTokenInDeviceInfo(
-                                                              result,
-                                                              fcmToken);
+                                                              result, fcmToken);
                                                     } else {
-                                                      // Create a new subcollection doc
                                                       final newDeviceInfo =
                                                           DeviceInfo(
                                                         fcmTokens: {
@@ -500,16 +545,20 @@ class SigninScreen extends HookConsumerWidget {
                                                         updatedAt:
                                                             DateTime.now(),
                                                       );
-
                                                       await deviceInfoNotifier
-                                                          .addDeviceInfo(
-                                                              result,
+                                                          .addDeviceInfo(result,
                                                               newDeviceInfo);
-
-                                                      // Show snackbar
                                                     }
                                                   }
                                                   debugPrint("result: $result");
+                                                  if (context.mounted) {
+                                                    invalidateAccountApiProviders(
+                                                        ref);
+                                                    await context.router.root
+                                                        .replaceAll([
+                                                      const TabsRouterRoute()
+                                                    ]);
+                                                  }
                                                 } catch (e) {
                                                   if (context.mounted) {
                                                     ScaffoldMessenger.of(
@@ -547,16 +596,17 @@ class SigninScreen extends HookConsumerWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        minimumSize: Size(150, 20),
-                      ),
+                        style: ElevatedButton.styleFrom(
+                          minimumSize: Size(150, 20),
+                        ),
                         onPressed: () async {
                           if (context.mounted) {
                             context.router.push(const SignupRoute());
                           }
                         },
                         child: Text("アカウントを持っていない方",
-                            style: TextStyle(fontSize: 9, color: Colors.blueGrey)))
+                            style:
+                                TextStyle(fontSize: 9, color: Colors.blueGrey)))
                   ],
                 ),
               ),

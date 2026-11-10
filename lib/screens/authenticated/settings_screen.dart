@@ -1,4 +1,3 @@
-import 'package:anpi_report_flutter/entity/userattr/office_location.dart';
 import 'package:anpi_report_flutter/models/firestoreuser.dart';
 import 'package:anpi_report_flutter/providers/firebaseauth/auth_provider.dart';
 import 'package:anpi_report_flutter/providers/firestore/firestoreuser/firestoreuser_notifier.dart';
@@ -13,6 +12,9 @@ import '../../components/officeLocation_text.dart';
 import '../../entity/userattr/department.dart';
 import '../../entity/userattr/joblevel.dart';
 import '../../models/profile.dart';
+import '../../providers/api/account_api_cache.dart';
+import '../../providers/api/me_api_provider.dart';
+import '../../repository/betterauth/session_repository.dart';
 import '../../repository/firebase/authrepo.dart';
 
 @RoutePage()
@@ -29,33 +31,61 @@ class SettingsScreen extends HookConsumerWidget {
     final moiUid = useState<String>("");
     final moiUser = useState<FirestoreUser?>(null);
     final moiProfile = useState<Profile?>(null);
+    final neonEnabled = SessionRepository.isNeonDataEnabled;
 
-    final authAsyncValue = ref.watch(authStateChangesProvider);
-    final userNotifier = ref.watch(streamUserNotifierProvider.notifier);
-    final profileNotifier = ref.watch(streamProfileNotifierProvider.notifier);
+    final authAsyncValue = neonEnabled
+        ? const AsyncValue.data(null)
+        : ref.watch(authStateChangesProvider);
+    final userNotifier =
+        neonEnabled ? null : ref.watch(streamUserNotifierProvider.notifier);
+    final profileNotifier =
+        neonEnabled ? null : ref.watch(streamProfileNotifierProvider.notifier);
 
-    final jobLevel = moiProfile.value?.userAttr?["jobLevel"] as int?; // Cast to int? if needed
+    final neonMe = neonEnabled ? ref.watch(neonMeProvider) : null;
+    final neonProfile = neonEnabled ? ref.watch(neonMoiProfileProvider) : null;
+    final jobLevel = moiProfile.value?.userAttr["jobLevel"] as int?;
     //final AuthService authService = AuthService();
 
     useEffect(() {
+      if (neonEnabled) {
+        moiProfile.value = neonProfile?.asData?.value;
+        final user = neonMe!.asData?.value['user'];
+        if (user is Map) {
+          moiUid.value = user['id']?.toString() ?? '';
+          final payload = neonMe.asData?.value;
+          final sessionUser = payload?['sessionUser'];
+          final fromUser = user['username']?.toString() ?? '';
+          final fromDisplay = payload?['displayName']?.toString() ?? '';
+          final fromSession =
+              sessionUser is Map ? sessionUser['name']?.toString() ?? '' : '';
+          moiUser.value = FirestoreUser(
+            username: fromUser.isNotEmpty
+                ? fromUser
+                : (fromDisplay.isNotEmpty ? fromDisplay : fromSession),
+            email: user['email']?.toString() ?? '',
+          );
+        }
+        return () {};
+      }
+
       final user = authAsyncValue.asData?.value;
       if (user != null) {
         moiUid.value = user.uid;
         debugPrint("moiUid: ${moiUid.value}");
 
         // Get profile by uid
-        profileNotifier.getProfileByUid(moiUid.value).then((profile) {
+        profileNotifier?.getProfileByUid(moiUid.value).then((profile) {
           moiProfile.value = profile;
 
           // Get user by uid
-          userNotifier.getUserByUid(moiUid.value).then((firestoreUser) {
+          userNotifier?.getUserByUid(moiUid.value).then((firestoreUser) {
             moiUser.value = firestoreUser;
           });
         });
       }
 
       return () {};
-    }, [authAsyncValue]);
+    }, [authAsyncValue, neonEnabled, neonMe, neonProfile]);
 
 /*
     Widget buildDeleteAccount () => screensettings.SimpleSettingsTile(
@@ -141,11 +171,12 @@ class SettingsScreen extends HookConsumerWidget {
                   width: 16,
                 ),
                 moiProfile.value != null
-                  ? OfficeLocationText(
-                      givenSortNumber: moiProfile.value!.userAttr["officeLocation"],
-                      value: null,
-                      onChanged: (value) {},
-                    )
+                    ? OfficeLocationText(
+                        givenSortNumber:
+                            moiProfile.value!.userAttr["officeLocation"],
+                        value: null,
+                        onChanged: (value) {},
+                      )
 /*                    ? Text(getOfficeLocationStatusTypeDetailsBySortNumber(
                         moiProfile
                             .value!.userAttr["officeLocation"])?["displayName"]) */
@@ -246,8 +277,9 @@ class SettingsScreen extends HookConsumerWidget {
                 onPressed: () async {
                   // SignOut (Better Auth revoke + Firebase when bridge enabled)
                   await AuthService().signOut();
+                  invalidateAccountApiProviders(ref);
                   if (context.mounted) {
-                    context.router.replace(const SigninRoute());
+                    await context.router.root.replaceAll([const SigninRoute()]);
                   }
                 },
                 icon: const Icon(Icons.logout)),

@@ -52,6 +52,19 @@ class AppApiClient {
     return _decode(response);
   }
 
+  Future<Map<String, dynamic>> patchJson(
+    String path,
+    Map<String, dynamic> body, {
+    bool auth = true,
+  }) async {
+    final response = await _httpClient.patch(
+      _uri(path),
+      headers: _headers(auth: auth),
+      body: jsonEncode(body),
+    );
+    return _decode(response);
+  }
+
   Future<Map<String, dynamic>> deleteJson(
     String path,
     Map<String, dynamic> body,
@@ -65,18 +78,50 @@ class AppApiClient {
   }
 
   Map<String, dynamic> _decode(http.Response response) {
-    final decoded = response.body.isEmpty
-        ? <String, dynamic>{}
-        : jsonDecode(response.body);
+    // Dart http defaults to latin1 when charset is missing, which garbles Japanese UTF-8.
+    final bodyText =
+        response.bodyBytes.isEmpty ? '' : utf8.decode(response.bodyBytes);
+    final decoded =
+        bodyText.isEmpty ? <String, dynamic>{} : jsonDecode(bodyText);
     if (response.statusCode < 200 || response.statusCode >= 300) {
       final message = decoded is Map && decoded['error'] != null
           ? decoded['error'].toString()
           : 'API error ${response.statusCode}';
       throw Exception(message);
     }
-    if (decoded is Map<String, dynamic>) {
-      return decoded;
+    if (decoded is Map) {
+      return _repairJsonMap(decoded);
     }
-    return {'data': decoded};
+    return {'data': _repairMojibake(decoded)};
+  }
+
+  static Map<String, dynamic> _repairJsonMap(Map<dynamic, dynamic> value) {
+    return <String, dynamic>{
+      for (final entry in value.entries)
+        entry.key.toString(): _repairMojibake(entry.value),
+    };
+  }
+
+  /// Dart http may latin1-decode UTF-8. Repair those strings after JSON parse.
+  static dynamic _repairMojibake(dynamic value) {
+    if (value is String) {
+      if (value.isEmpty ||
+          value.codeUnits.any((code) => code > 0xFF) ||
+          !value.codeUnits.any((code) => code >= 0x80)) {
+        return value;
+      }
+      try {
+        return utf8.decode(latin1.encode(value));
+      } catch (_) {
+        return value;
+      }
+    }
+    if (value is List) {
+      return value.map(_repairMojibake).toList();
+    }
+    if (value is Map) {
+      return _repairJsonMap(value);
+    }
+    return value;
   }
 }

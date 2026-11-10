@@ -68,7 +68,7 @@ class BetterAuthRepository {
     final bearer = response.headers['set-auth-token'];
     if (bearer == null || bearer.isEmpty) {
       // Some deployments expose the token in JSON body as well.
-      final decoded = jsonDecode(response.body);
+      final decoded = jsonDecode(utf8.decode(response.bodyBytes));
       final token = decoded is Map ? decoded['token'] : null;
       if (token is! String || token.isEmpty) {
         throw Exception('Better Auth bearer token missing');
@@ -91,7 +91,7 @@ class BetterAuthRepository {
       throw Exception('Failed to fetch Firebase custom token');
     }
 
-    final decoded = jsonDecode(response.body);
+    final decoded = jsonDecode(utf8.decode(response.bodyBytes));
     final customToken = decoded is Map ? decoded['customToken'] : null;
     if (customToken is! String || customToken.isEmpty) {
       throw Exception('Invalid firebase-token response');

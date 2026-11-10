@@ -24,8 +24,10 @@ import '../../../models/template/template.dart';
 import '../../../providers/bottomnav/bottomnav_provider.dart';
 import '../../../providers/firebaseauth/auth_provider.dart';
 import '../../../providers/firestore/profile/profile_notifier.dart';
-import '../../../providers/firestore/report/report_notifier.dart';
-import '../../../providers/sqlite/users/unansweredusers_sqlite_provider.dart';
+import '../../../providers/api/me_api_provider.dart';
+import '../../../providers/api/notifications_api_provider.dart';
+import '../../../providers/api/templates_api_provider.dart';
+import '../../../repository/betterauth/session_repository.dart';
 import '../../../router/app_router.dart';
 
 @RoutePage()
@@ -39,17 +41,25 @@ class NotiAdminScreen extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final sqlUsersNotifier =
-        ref.read(unansweredUsersSQLiteNotifierProvider.notifier);
+    final neonEnabled = SessionRepository.isNeonDataEnabled;
+    final notificationsApi = ref.watch(notificationsApiRepositoryProvider);
 
-    final asyncNotis = ref.watch(streamNotificationNotifierProvider);
-    //final asyncTemplates = ref.watch(streamTemplateNotifierProvider);
-    final authAsyncValue = ref.watch(authStateChangesProvider);
+    final asyncNotis = neonEnabled
+        ? ref.watch(neonNotificationsProvider)
+        : ref.watch(streamNotificationNotifierProvider);
+    final authAsyncValue = neonEnabled
+        ? const AsyncValue.data(null)
+        : ref.watch(authStateChangesProvider);
     final moiUid = useState<String>("");
     final moiProfile = useState<Profile?>(null);
-    final profileNotifier = ref.watch(streamProfileNotifierProvider.notifier);
-    final notiStreamNotifier =
-        ref.watch(streamNotificationNotifierProvider.notifier);
+    final profileNotifier = neonEnabled
+        ? null
+        : ref.watch(streamProfileNotifierProvider.notifier);
+    final notiStreamNotifier = neonEnabled
+        ? null
+        : ref.watch(streamNotificationNotifierProvider.notifier);
+    final neonProfileAsync =
+        neonEnabled ? ref.watch(neonMoiProfileProvider) : null;
 
     final formKey = useMemoized(() => GlobalKey<FormBuilderState>());
     final tFieldTitleController = useTextEditingController();
@@ -59,8 +69,8 @@ class NotiAdminScreen extends HookConsumerWidget {
     final selectedNotiType = useState<int>(NotiType.undefined.sortNumber);
     final selectedNotiTopic = useState<String>(TopicType.undefined.topic);
 
-    final String apiSrvEndpoint = dotenv
-        .get('APISRV_BASEURL'); //"eD8dzYgLNtF4HmmOB9OT3i7Y1G5wXyeeAn4unMBA";
+    final String apiSrvEndpoint =
+        neonEnabled ? '' : dotenv.get('APISRV_BASEURL');
 
     // Helper method to get options for DropdownButton
     List<DropdownMenuItem<int>> getNotiTypeDropdownItems() {
@@ -138,7 +148,9 @@ class NotiAdminScreen extends HookConsumerWidget {
           return Consumer(
             builder: (context, ref, child) {
               Template? selectedTemplate;
-              final asyncTemplates = ref.watch(streamTemplateNotifierProvider);
+              final asyncTemplates = neonEnabled
+                  ? ref.watch(neonTemplatesProvider)
+                  : ref.watch(streamTemplateNotifierProvider);
 
               return AlertDialog(
                 title: const Text("通知を送信する"),
@@ -267,46 +279,65 @@ class NotiAdminScreen extends HookConsumerWidget {
                       var uuid = Uuid();
                       var newId = uuid.v4();
 
-                      // POST to API with Firebase ID Token
-                      final idToken = await ref
-                          .read(firebaseAuthProvider)
-                          .currentUser
-                          ?.getIdToken();
-                      if (idToken == null) {
-                        if (context.mounted) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text('認証が必要です')),
+                      try {
+                        if (neonEnabled) {
+                          await notificationsApi.sendToTopic({
+                            'title': notiTitle,
+                            'body': notiBody,
+                            'type': notiType,
+                            'topic': notiTopic,
+                            'notiTopic': notiTopic,
+                            'notiType': notiType,
+                            'notificationId': newId,
+                          });
+                          ref.invalidate(neonNotificationsProvider);
+                        } else {
+                          final idToken = await ref
+                              .read(firebaseAuthProvider)
+                              .currentUser
+                              ?.getIdToken();
+                          if (idToken == null) {
+                            if (context.mounted) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(content: Text('認証が必要です')),
+                              );
+                            }
+                            return;
+                          }
+
+                          final String apiEndpoint =
+                              "$apiSrvEndpoint/api/sendToTopic";
+                          final Uri url = Uri.parse(apiEndpoint);
+                          final Map<String, String> headers = {
+                            'Content-Type': 'application/json',
+                            'Authorization': 'Bearer $idToken',
+                          };
+                          final String body = json.encode({
+                            'title': notiTitle,
+                            'body': notiBody,
+                            'type': notiType,
+                            'topic': notiTopic,
+                            'notificationId': newId,
+                          });
+                          final http.Response resp = await http.post(
+                            url,
+                            headers: headers,
+                            body: body,
                           );
+                          if (resp.statusCode != 200) {
+                            throw Exception('sendToTopic failed');
+                          }
                         }
-                        return;
-                      }
-
-                      final String apiEndpoint =
-                          "$apiSrvEndpoint/api/sendToTopic";
-                      Uri url = Uri.parse(apiEndpoint);
-                      Map<String, String> headers = {
-                        'Content-Type': 'application/json',
-                        'Authorization': 'Bearer $idToken',
-                      };
-                      String body = json.encode({
-                        'title': notiTitle,
-                        'body': notiBody,
-                        'type': notiType,
-                        'topic': notiTopic,
-                        'notificationId': newId,
-                      });
-                      http.Response resp =
-                          await http.post(url, headers: headers, body: body);
-
-                      if (resp.statusCode == 200) {
                         debugPrint("### message sent ###");
-                        // Ok, handle Firestore saving logic as well
                         if (context.mounted) {
                           Navigator.pop(dialogContext);
-                          //context.router.maybePop(dialogContext);
                         }
-                      } else {
-                        // Handle errors
+                      } catch (e) {
+                        if (context.mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text(e.toString())),
+                          );
+                        }
                       }
                     },
                     child: const Text("送信"),
@@ -330,19 +361,23 @@ class NotiAdminScreen extends HookConsumerWidget {
     }, []);
 
     useEffect(() {
+      if (neonEnabled) {
+        moiProfile.value = neonProfileAsync?.asData?.value;
+        return () {};
+      }
+
       final user = authAsyncValue.asData?.value;
       if (user != null) {
         moiUid.value = user.uid;
         debugPrint("moiUid: ${moiUid.value}");
 
-        // Get profile by uid
-        profileNotifier.getProfileByUid(moiUid.value).then((profile) {
+        profileNotifier?.getProfileByUid(moiUid.value).then((profile) {
           moiProfile.value = profile;
         });
       }
 
       return () {};
-    }, [authAsyncValue]);
+    }, [authAsyncValue, neonEnabled, neonProfileAsync]);
 
     return Scaffold(
         appBar: AppBar(
@@ -400,7 +435,7 @@ class NotiAdminScreen extends HookConsumerWidget {
                           label: Text("本文"),
                         ),
                       ],
-                      rows: asyncNotis.value.map<DataRow>((data) {
+                      rows: value.map<DataRow>((data) {
                         final rowRecord = data["noti"];
                         debugPrint("rowRecord: ${rowRecord.toString()}");
 
@@ -443,11 +478,22 @@ class NotiAdminScreen extends HookConsumerWidget {
                                                           color: Colors.red),
                                                     ),
                                                     onPressed: () async {
-                                                      // Delete notification
-                                                      await notiStreamNotifier
-                                                          .deleteNotificationById(
-                                                              rowRecord
-                                                                  .notificationId);
+                                                      if (neonEnabled) {
+                                                        await notificationsApi
+                                                            .deleteNotification(
+                                                          rowRecord
+                                                              .notificationId,
+                                                        );
+                                                        ref.invalidate(
+                                                          neonNotificationsProvider,
+                                                        );
+                                                      } else {
+                                                        await notiStreamNotifier!
+                                                            .deleteNotificationById(
+                                                          rowRecord
+                                                              .notificationId,
+                                                        );
+                                                      }
                                                       // Close modal
                                                       if (context.mounted) {
                                                         context.router

@@ -11,8 +11,11 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import '../../models/notification/notification.dart';
 import '../../models/userreport.dart';
+import '../../providers/api/notifications_api_provider.dart';
 import '../../providers/bottomnav/bottomnav_provider.dart';
 import '../../providers/firestore/notification/combined_notification_notifier.dart';
+import '../../repository/api/notifications_api_repository.dart';
+import '../../repository/betterauth/session_repository.dart';
 
 @RoutePage()
 class PostEnqueteScreen extends HookConsumerWidget {
@@ -24,8 +27,12 @@ class PostEnqueteScreen extends HookConsumerWidget {
     final isNewReport = useState<bool>(true);
     final moiUid = useState<String>("");
     final moiReport = useState<UserReport?>(null);
+    final neonAnswers = useState<Map<String, dynamic>?>(null);
     final isConfirmationChecked = useState<bool?>(false);
-    final authAsyncValue = ref.watch(authStateChangesProvider);
+    final neonEnabled = SessionRepository.isNeonDataEnabled;
+    final authAsyncValue = neonEnabled
+        ? const AsyncValue.data(null)
+        : ref.watch(authStateChangesProvider);
 
     final currentNoti = useState<Noti?>(null);
     //
@@ -37,8 +44,52 @@ class PostEnqueteScreen extends HookConsumerWidget {
     //
     final tFieldMessageController = useTextEditingController();
     // Provider watch
-    final userReportNotifier = ref.watch(streamUserReportNotifierProvider.notifier);
-    final notificationNotifier = ref.watch(streamNotificationNotifierProvider.notifier);
+    final userReportNotifier = neonEnabled
+        ? null
+        : ref.watch(streamUserReportNotifierProvider.notifier);
+    final notificationNotifier = neonEnabled
+        ? null
+        : ref.watch(streamNotificationNotifierProvider.notifier);
+    final notificationsApi = NotificationsApiRepository();
+
+    DateTime? parseDate(dynamic value) {
+      if (value is DateTime) return value;
+      if (value is String && value.isNotEmpty) return DateTime.tryParse(value);
+      return null;
+    }
+
+    Noti notiFromNeon(Map<String, dynamic> row) {
+      final payload = row['payload'];
+      final payloadMap =
+          payload is Map ? Map<String, dynamic>.from(payload) : <String, dynamic>{};
+      final typeRaw = payloadMap['notiType'] ?? payloadMap['type'] ?? 0;
+      return Noti(
+        notificationId: row['id']?.toString() ?? '',
+        notiTitle: row['title']?.toString() ??
+            payloadMap['notiTitle']?.toString() ??
+            '',
+        notiBody:
+            row['body']?.toString() ?? payloadMap['notiBody']?.toString() ?? '',
+        notiType: typeRaw is int ? typeRaw : int.tryParse(typeRaw.toString()) ?? 0,
+        notiTopic: row['noti_topic']?.toString() ??
+            payloadMap['notiTopic']?.toString() ??
+            '',
+        createdAt: parseDate(row['created_at']),
+        updatedAt: parseDate(row['updated_at']),
+      );
+    }
+
+    Future<void> submitNeonAnswers(Map<String, dynamic> answers) async {
+      await notificationsApi.submitReport(
+        notificationId: notificationId,
+        answers: answers,
+      );
+      if (context.mounted) {
+        ref.read(bottomNavNotifierProvider.notifier).show();
+        ref.invalidate(neonNotificationsProvider);
+        context.router.replaceAll([const AppHomeRoute()]);
+      }
+    }
 
     // Hide the BottomNavBar when this screen is active
     useEffect(() {
@@ -47,31 +98,53 @@ class PostEnqueteScreen extends HookConsumerWidget {
         ref.read(bottomNavNotifierProvider.notifier).hide();
       });
 
-      notificationNotifier.getNotificationByNotiId(notificationId).then((value) {
-        currentNoti.value = value;
-        debugPrint("currentNoti value: ${currentNoti.value}");
+      Future(() async {
+        if (neonEnabled) {
+          final session = await SessionRepository().readStoredSession();
+          moiUid.value = session?.userId ?? '';
+          final notification =
+              await notificationsApi.getNotification(notificationId);
+          if (notification != null) {
+            currentNoti.value = notiFromNeon(notification);
+          }
+          final report = await notificationsApi.getMyReport(notificationId);
+          if (report != null) {
+            final answers = report['answers'];
+            final answerMap = answers is Map
+                ? Map<String, dynamic>.from(answers)
+                : <String, dynamic>{};
+            neonAnswers.value = answerMap;
+            injuryStatus.value = answerMap['injuryStatus'] as int? ??
+                int.tryParse(answerMap['injuryStatus']?.toString() ?? '') ??
+                0;
+            attendOfficeStatus.value = answerMap['attendOfficeStatus'] as int? ??
+                int.tryParse(answerMap['attendOfficeStatus']?.toString() ?? '') ??
+                0;
+            tFieldMessageController.text =
+                answerMap['message']?.toString() ?? '';
+            isNewReport.value = false;
+          }
+          return;
+        }
 
-        // Get moiUid
+        final value =
+            await notificationNotifier!.getNotificationByNotiId(notificationId);
+        currentNoti.value = value;
         final user = authAsyncValue.asData?.value;
         if (user != null) {
           moiUid.value = user.uid;
-          //debugPrint("moiUid: ${moiUid.value}");
-
-          // Load injuryStatus
-          userReportNotifier.getUserReportByUid(moiUid.value, notificationId).then((result) {
-            if (result != null) {
-              moiReport.value = result;
-              //debugPrint("moiReport: ${moiReport.value}");
-              // Apply moiReport.value to local states
-              injuryStatus.value = moiReport.value!.reportContents["injuryStatus"] ?? 0;
-              attendOfficeStatus.value = moiReport.value!.reportContents["attendOfficeStatus"] ?? 0;
-              tFieldMessageController.text = moiReport.value!.reportContents["message"] ?? "";
-              // Flag on
-              isNewReport.value = false;
-            }
-          });
-
-          // Load attendOfficeStatus
+          final result = await userReportNotifier!
+              .getUserReportByUid(moiUid.value, notificationId);
+          if (result != null) {
+            moiReport.value = result;
+            injuryStatus.value =
+                moiReport.value!.reportContents["injuryStatus"] ?? 0;
+            attendOfficeStatus.value =
+                moiReport.value!.reportContents["attendOfficeStatus"] ?? 0;
+            tFieldMessageController.text =
+                moiReport.value!.reportContents["message"] ?? "";
+            isNewReport.value = false;
+          }
         }
       });
 
@@ -334,6 +407,17 @@ class PostEnqueteScreen extends HookConsumerWidget {
                         // Send report
                         //debugPrint("locationAddr: ${locationAddr.value.toString()}");
                           
+                        final answers = {
+                          "injuryStatus": injuryStatus.value,
+                          "attendOfficeStatus": attendOfficeStatus.value,
+                          "location": isChecked.value ? locationAddr.value : "",
+                          "message": tFieldMessageController.text,
+                          "isConfirmed": true,
+                        };
+                        if (neonEnabled) {
+                          await submitNeonAnswers(answers);
+                          return;
+                        }
                         if (isNewReport.value == true) {
                         // Build newReport
                         final DocumentReference userRef = FirebaseFirestore.instance.collection('users').doc(moiUid.value);
@@ -346,20 +430,14 @@ class PostEnqueteScreen extends HookConsumerWidget {
                           final newreport = UserReport(
                             uid: moiUid.value,
                             notificationId: notificationId,
-                            reportContents: {
-                              "injuryStatus": injuryStatus.value,
-                              "attendOfficeStatus": attendOfficeStatus.value,
-                              "location": isChecked.value ? locationAddr.value : "",
-                              "message": tFieldMessageController.text,
-                              "isConfirmed": true,
-                            },
+                            reportContents: answers,
                             userRef: userRef,
                             profileRef: profileRef,
                             createdAt: DateTime.now(),
                             updatedAt: DateTime.now(),
                           );
                           
-                          await userReportNotifier.addUserReport(
+                          await userReportNotifier!.addUserReport(
                             notificationId,
                             moiUid.value,
                             newreport,
@@ -367,16 +445,10 @@ class PostEnqueteScreen extends HookConsumerWidget {
                         } else {
                           final updates = {
                             "uid": moiUid.value,
-                            "reportContents": {
-                              "injuryStatus": injuryStatus.value,
-                              "attendOfficeStatus": attendOfficeStatus.value,
-                              "location": isChecked.value ? locationAddr.value : "",
-                              "message": tFieldMessageController.text,
-                              "isConfirmed": true,
-                            },
+                            "reportContents": answers,
                             "updatedAt": DateTime.now(),
                           };
-                          await userReportNotifier.updateUserReport(
+                          await userReportNotifier!.updateUserReport(
                             notificationId,
                             moiUid.value,
                             updates,
@@ -474,6 +546,13 @@ class PostEnqueteScreen extends HookConsumerWidget {
                                 elevation: 8,
                               ),
                 onPressed: !isConfirmationChecked.value! ? null : () async {
+                        final answers = {
+                          "isConfirmed": isConfirmationChecked.value!,
+                        };
+                        if (neonEnabled) {
+                          await submitNeonAnswers(answers);
+                          return;
+                        }
                         if (isNewReport.value == true) {
                         // Build newReport
                         final DocumentReference userRef = FirebaseFirestore.instance.collection('users').doc(moiUid.value);
@@ -486,16 +565,14 @@ class PostEnqueteScreen extends HookConsumerWidget {
                           final newreport = UserReport(
                             uid: moiUid.value,
                             notificationId: notificationId,
-                            reportContents: {
-                              "isConfirmed": isConfirmationChecked.value!,
-                            },
+                            reportContents: answers,
                             userRef: userRef,
                             profileRef: profileRef,
                             createdAt: DateTime.now(),
                             updatedAt: DateTime.now(),
                           );
               
-                          await userReportNotifier.addUserReport(
+                          await userReportNotifier!.addUserReport(
                             notificationId,
                             moiUid.value,
                             newreport,
@@ -503,12 +580,10 @@ class PostEnqueteScreen extends HookConsumerWidget {
                         } else {
                           final updates = {
                             "uid": moiUid.value,
-                            "reportContents": {
-                              "isConfirmed": isConfirmationChecked.value!,
-                            },
+                            "reportContents": answers,
                             "updatedAt": DateTime.now(),
                           };
-                          await userReportNotifier.updateUserReport(
+                          await userReportNotifier!.updateUserReport(
                             notificationId,
                             moiUid.value,
                             updates,

@@ -14,9 +14,12 @@ import '../../../models/firestoreuser.dart';
 import '../../../models/profile.dart';
 import '../../../providers/bottomnav/bottomnav_provider.dart';
 import '../../../providers/firebaseauth/auth_provider.dart';
+import '../../../providers/api/me_api_provider.dart';
+import '../../../providers/api/users_api_provider.dart';
 import '../../../providers/firestore/deviceinfo/deviceinfo_notifier.dart';
 import '../../../providers/firestore/firestoreuser/firestoreuser_notifier.dart';
 import '../../../providers/firestore/profile/profile_notifier.dart';
+import '../../../repository/betterauth/session_repository.dart';
 import '../../../repository/firebase/authrepo.dart';
 
 @RoutePage()
@@ -25,6 +28,8 @@ class UserAdminScreen extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final neonEnabled = SessionRepository.isNeonDataEnabled;
+    final usersApi = ref.watch(usersApiRepositoryProvider);
     final moiUid = useState<String>("");
     final moiUser = useState<FirestoreUser?>(null);
     final moiProfile = useState<Profile?>(null);
@@ -34,11 +39,23 @@ class UserAdminScreen extends HookConsumerWidget {
 
     final filterAdminOnly = useState<bool>(false);
 
-    final authAsyncValue = ref.watch(authStateChangesProvider);
-    final asyncUsers = ref.watch(streamUserNotifierProvider);
-    final userNotifier = ref.watch(streamUserNotifierProvider.notifier);
-    final profileNotifier = ref.watch(streamProfileNotifierProvider.notifier);
-    final deviceInfoNotifier = ref.watch(streamDeviceInfoNotifierProvider.notifier);
+    final authAsyncValue = neonEnabled
+        ? const AsyncValue.data(null)
+        : ref.watch(authStateChangesProvider);
+    final asyncUsers = neonEnabled
+        ? ref.watch(neonUsersProvider)
+        : ref.watch(streamUserNotifierProvider);
+    final userNotifier = neonEnabled
+        ? null
+        : ref.watch(streamUserNotifierProvider.notifier);
+    final profileNotifier = neonEnabled
+        ? null
+        : ref.watch(streamProfileNotifierProvider.notifier);
+    final deviceInfoNotifier = neonEnabled
+        ? null
+        : ref.watch(streamDeviceInfoNotifierProvider.notifier);
+    final neonProfileAsync =
+        neonEnabled ? ref.watch(neonMoiProfileProvider) : null;
 
     final AuthService authService = AuthService();
 
@@ -58,31 +75,44 @@ class UserAdminScreen extends HookConsumerWidget {
     }, const []);
 
     useEffect(() {
+      if (neonEnabled) {
+        moiProfile.value = neonProfileAsync?.asData?.value;
+        return () {};
+      }
+
       final user = authAsyncValue.asData?.value;
       if (user != null) {
         moiUid.value = user.uid;
         debugPrint("moiUid: ${moiUid.value}");
 
-        // Get profile by uid
-        profileNotifier.getProfileByUid(moiUid.value).then((profile) {
+        profileNotifier?.getProfileByUid(moiUid.value).then((profile) {
           moiProfile.value = profile;
           debugPrint("moiProfile.value: ${moiProfile.value}");
 
-          // Get user by uid
-          userNotifier.getUserByUid(moiUid.value).then((firestoreUser) {
+          userNotifier?.getUserByUid(moiUid.value).then((firestoreUser) {
             moiUser.value = firestoreUser;
           });
         });
       }
 
       return () {};
-    }, [authAsyncValue]);
+    }, [authAsyncValue, neonEnabled, neonProfileAsync]);
 
     bool hasBitwiseOverlap(int currentUserDepartments, int userDepartments) {
       return (currentUserDepartments & userDepartments) != 0;
     }
 
     useEffect(() {
+      if (asyncUsers.isLoading) {
+        isLoading.value = true;
+        return () {};
+      }
+      if (asyncUsers.hasError) {
+        isLoading.value = false;
+        hasFilteredData.value = false;
+        return () {};
+      }
+
       asyncUsers.whenData((value) {
         final currentUserProfile = moiProfile.value;
         final currentUserJobLevel = currentUserProfile?.userAttr["jobLevel"];
@@ -231,67 +261,72 @@ class UserAdminScreen extends HookConsumerWidget {
                                       final email = tFieldEmailController.text;
                                       final password = tFieldPasswordController.text;
 
-                                      // Do signup
                                       try {
-                                        final result = await authService.createAccountViaServer(
-                                          displayName,
-                                          email,
-                                          password,
-                                        );
-                                        /*final result = await authService.createAccountByEmail(
-                                          email,
-                                          password
-                                        ); */
-                                        debugPrint("result: ${result.toString()}");
+                                        if (neonEnabled) {
+                                          await usersApi.createUser({
+                                            'displayName': displayName,
+                                            'email': email,
+                                            'password': password,
+                                            'userAttr': {
+                                              'officeLocation': 0,
+                                              'jobLevel': 0,
+                                              'department': 0,
+                                              'subscription': 1,
+                                            },
+                                          });
+                                          ref.invalidate(neonUsersProvider);
+                                        } else {
+                                          final result =
+                                              await authService.createAccountViaServer(
+                                            displayName,
+                                            email,
+                                            password,
+                                          );
+                                          debugPrint("result: ${result.toString()}");
 
-                                        // Retreive fcmToken from SecureStorage
-                                        String? fcmToken = await storage.read(key: 'fcmToken');
+                                          String? fcmToken =
+                                              await storage.read(key: 'fcmToken');
 
-                                        // Store userdata to Firestore "users"
-                                        final newUser = FirestoreUser(
-                                          username: displayName,
-                                          email: email,
-                                          isOnline: true,
-                                          lastActive: DateTime.now(),
-                                          accoutStatus: 1, // 1: Online
-                                          createdAt: DateTime.now(),
-                                          updatedAt: DateTime.now(),
-                                        );
+                                          final newUser = FirestoreUser(
+                                            username: displayName,
+                                            email: email,
+                                            isOnline: true,
+                                            lastActive: DateTime.now(),
+                                            accoutStatus: 1,
+                                            createdAt: DateTime.now(),
+                                            updatedAt: DateTime.now(),
+                                          );
 
-                                        await userNotifier.addUser(result!, newUser);
+                                          await userNotifier!.addUser(result!, newUser);
 
-                                        // Store fcmToken to "deviceinfo" subcollection of each user
-                                        final newDeviceInfo = DeviceInfo(
-                                          fcmTokens: {
-                                            "token": fcmToken,
-                                            "updatedAt": DateTime.now(),
-                                          },
-                                          createdAt: DateTime.now(),
-                                          updatedAt: DateTime.now(),
-                                        );
-                                        await deviceInfoNotifier.addDeviceInfo(result, newDeviceInfo);
+                                          final newDeviceInfo = DeviceInfo(
+                                            fcmTokens: {
+                                              "token": fcmToken,
+                                              "updatedAt": DateTime.now(),
+                                            },
+                                            createdAt: DateTime.now(),
+                                            updatedAt: DateTime.now(),
+                                          );
+                                          await deviceInfoNotifier!.addDeviceInfo(
+                                              result, newDeviceInfo);
 
-                                        // Update displayName
-                                        await authService.updateDisplayName(displayName);
+                                          await authService.updateDisplayName(displayName);
 
-                                        // Store new profile to Firestore "profiles"
-                                        final newProfile = Profile(
-                                          uid: result,
-                                          avatarUrl: [],
-                                          userAttr: {
-                                            "officeLocation": 0,
-                                            "jobLevel": 0,
-                                            "department": 0,
-                                            "subscription": 1,
-                                          },
-                                          createdAt: DateTime.now(),
-                                          updatedAt: DateTime.now(),
-                                        );
-                                        await profileNotifier.addProfile(result, newProfile);
-
-                                        /* if (context.mounted) {
-                                          context.router.replace(const RootRoute());
-                                        } */
+                                          final newProfile = Profile(
+                                            uid: result,
+                                            avatarUrl: [],
+                                            userAttr: {
+                                              "officeLocation": 0,
+                                              "jobLevel": 0,
+                                              "department": 0,
+                                              "subscription": 1,
+                                            },
+                                            createdAt: DateTime.now(),
+                                            updatedAt: DateTime.now(),
+                                          );
+                                          await profileNotifier!.addProfile(
+                                              result, newProfile);
+                                        }
                                       } catch (e) {
                                         if (context.mounted) {
                                           ScaffoldMessenger.of(context).showSnackBar(
@@ -300,8 +335,9 @@ class UserAdminScreen extends HookConsumerWidget {
                                         }
                                       }
 
-                                      // ref.invalidate
-                                      ref.invalidate(streamUserNotifierProvider);
+                                      if (!neonEnabled) {
+                                        ref.invalidate(streamUserNotifierProvider);
+                                      }
 
                                       // Reset form
                                       formKey.currentState?.reset();
@@ -425,10 +461,18 @@ class UserAdminScreen extends HookConsumerWidget {
                                                       child: const Text("削除", style: TextStyle(color: Colors.red),),
                                                       onPressed: () async {
                   
-                                                        // Delete user from Firebase
-                                                        await authService.deleteAccount(rowRecordOfProfile["uid"]);
-                                                        // Delete user from Firestore
-                                                        await userNotifier.deleteUserByUid(rowRecordOfProfile["uid"]);
+                                                        if (neonEnabled) {
+                                                          await usersApi.deleteUser(
+                                                            rowRecordOfProfile["uid"]
+                                                                .toString(),
+                                                          );
+                                                          ref.invalidate(neonUsersProvider);
+                                                        } else {
+                                                          await authService.deleteAccount(
+                                                              rowRecordOfProfile["uid"]);
+                                                          await userNotifier!.deleteUserByUid(
+                                                              rowRecordOfProfile["uid"]);
+                                                        }
                   
                                                         // Close modal
                                                         if (context.mounted) {

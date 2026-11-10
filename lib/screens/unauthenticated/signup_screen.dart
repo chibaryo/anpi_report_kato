@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:anpi_report_flutter/entity/userattr/joblevel.dart';
 import 'package:anpi_report_flutter/entity/userattr/office_location.dart';
@@ -6,8 +7,8 @@ import 'package:anpi_report_flutter/providers/firestore/firestoreuser/firestoreu
 import 'package:anpi_report_flutter/providers/firestore/profile/profile_notifier.dart';
 import 'package:anpi_report_flutter/router/app_router.dart';
 import 'package:auto_route/auto_route.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:custom_text_form_field_plus/custom_text_form_field_plus.dart';
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
@@ -19,9 +20,12 @@ import '../../entity/userattr/department.dart';
 import '../../models/deviceinfo.dart';
 import '../../models/firestoreuser.dart';
 import '../../models/profile.dart';
+import '../../providers/api/account_api_cache.dart';
+import '../../providers/api/me_api_repository_provider.dart';
 import '../../providers/appStatus/isAlreadyQRAuthenticated.dart';
 import '../../providers/firestore/deviceinfo/deviceinfo_notifier.dart';
 import '../../providers/qrtext/qrtext_notifier.dart';
+import '../../repository/betterauth/session_repository.dart';
 import '../../repository/firebase/authrepo.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
 //import 'package:dropdown_button2/dropdown_button2.dart';
@@ -35,6 +39,9 @@ class SignupScreen extends HookConsumerWidget {
     const storage = FlutterSecureStorage();
     final formKey = useMemoized(() => GlobalKey<FormBuilderState>());
     final AuthService authService = AuthService();
+    final neonEnabled = SessionRepository.isNeonDataEnabled;
+    final meApi = ref.watch(meApiRepositoryProvider);
+    final sessionRepository = SessionRepository();
 
     final tFieldCompanyCodeController = useTextEditingController();
     final String targetCompanyCode = dotenv.get('COMPANYAUTHCODE'); //"eD8dzYgLNtF4HmmOB9OT3i7Y1G5wXyeeAn4unMBA";
@@ -52,9 +59,15 @@ class SignupScreen extends HookConsumerWidget {
       () => tFieldCompanyCodeController.text == targetCompanyCode
     );
 
-    final userNotifier = ref.watch(streamUserNotifierProvider.notifier);
-    final deviceInfoNotifier = ref.watch(streamDeviceInfoNotifierProvider.notifier);
-    final profileNotifier = ref.watch(streamProfileNotifierProvider.notifier);
+    final userNotifier = neonEnabled
+        ? null
+        : ref.watch(streamUserNotifierProvider.notifier);
+    final deviceInfoNotifier = neonEnabled
+        ? null
+        : ref.watch(streamDeviceInfoNotifierProvider.notifier);
+    final profileNotifier = neonEnabled
+        ? null
+        : ref.watch(streamProfileNotifierProvider.notifier);
     //
     final tFieldUserNameController = useTextEditingController();
 /*    const targetCompanyCode = "C1040090==";
@@ -439,114 +452,165 @@ List<String> getSelectedDepartments(int selectedSum) {
                                       final email = formKey.currentState!.value["email"];
                                       final password = formKey.currentState!.value["password"];
 
-                                      // Do signup
                                       try {
-                                        final result = await authService.createAccountByEmail(
-                                          email,
-                                          password
-                                        );
-                                        debugPrint("result: $result");
+                                        final companyCode =
+                                            qrTextProvider == targetCompanyCode ||
+                                                    isAlreadyQRAuthed
+                                                ? targetCompanyCode
+                                                : (formKey.currentState
+                                                        ?.value["companyCode"] ??
+                                                    tFieldCompanyCodeController
+                                                        .text);
+                                        final userAttr = {
+                                          "officeLocation": selectedOffice.value,
+                                          "jobLevel": selectedJobLevel.value,
+                                          "department": selectedDepartments.value,
+                                          "subscription": 1,
+                                        };
 
-                                        // Retreive fcmToken from SecureStorage
-                                        String? fcmToken = await storage.read(key: 'fcmToken');
+                                        if (neonEnabled) {
+                                          await meApi.register(
+                                            email: email,
+                                            password: password,
+                                            username: displayName,
+                                            companyCode: companyCode,
+                                            userAttr: userAttr,
+                                          );
+                                          await sessionRepository.signInWithEmail(
+                                            email: email,
+                                            password: password,
+                                          );
+                                          final fcmToken =
+                                              await storage.read(key: 'fcmToken');
+                                          var udid = 'unknown';
+                                          try {
+                                            final deviceInfo = DeviceInfoPlugin();
+                                            if (Platform.isAndroid) {
+                                              udid = (await deviceInfo.androidInfo).id;
+                                            } else if (Platform.isIOS) {
+                                              udid = (await deviceInfo.iosInfo)
+                                                      .identifierForVendor ??
+                                                  'unknown';
+                                            }
+                                          } catch (_) {}
+                                          await sessionRepository.registerDevice(
+                                            udid: udid,
+                                            platform: Platform.isIOS ? 'ios' : 'android',
+                                            fcmToken: fcmToken,
+                                            topics: const ['notice_all'],
+                                          );
+                                          invalidateAccountApiProviders(ref);
+                                        } else {
+                                          final result =
+                                              await authService.createAccountByEmail(
+                                            email,
+                                            password,
+                                          );
+                                          debugPrint("result: $result");
 
-                                        // Store userdata to Firestore "users"
-                                        final newUser = FirestoreUser(
-                                          username: displayName,
-                                          email: email,
-                                          isOnline: true,
-                                          lastActive: DateTime.now(),
-                                          accoutStatus: 1, // 1: Online
-                                          createdAt: DateTime.now(),
-                                          updatedAt: DateTime.now(),
-                                        );
+                                          String? fcmToken =
+                                              await storage.read(key: 'fcmToken');
 
-                                        await userNotifier.addUser(result!, newUser);
+                                          final newUser = FirestoreUser(
+                                            username: displayName,
+                                            email: email,
+                                            isOnline: true,
+                                            lastActive: DateTime.now(),
+                                            accoutStatus: 1,
+                                            createdAt: DateTime.now(),
+                                            updatedAt: DateTime.now(),
+                                          );
 
-                                        // add userHistory
+                                          await userNotifier!.addUser(result!, newUser);
+
+                                          userHistory.value.clear();
+                                          final userHistoryOnStorage =
+                                              await storage.read(key: "userHistory");
+                                          if (userHistoryOnStorage != null) {
+                                            final List<dynamic> userHistoryDecoded =
+                                                jsonDecode(userHistoryOnStorage);
+                                            final List<Map<String, dynamic>>
+                                                userHistoryList =
+                                                userHistoryDecoded
+                                                    .map((history) => history
+                                                        as Map<String, dynamic>)
+                                                    .toList();
+
+                                            userHistory.value
+                                                .addAll(userHistoryList);
+                                          }
+                                          final Map<String, String>
+                                              currentUserAccount = {
+                                            "email": email,
+                                          };
+                                          userHistory.value
+                                              .insert(0, currentUserAccount);
+
+                                          List<Map<String, dynamic>>
+                                              resultUserHistory;
+                                          if (userHistory.value.length > 2) {
+                                            resultUserHistory =
+                                                userHistory.value.sublist(0, 2);
+                                          } else {
+                                            resultUserHistory = userHistory.value;
+                                          }
+
+                                          await storage.write(
+                                            key: "userHistory",
+                                            value: jsonEncode(resultUserHistory),
+                                          );
+
+                                          final newDeviceInfo = DeviceInfo(
+                                            fcmTokens: {
+                                              "token": fcmToken,
+                                              "updatedAt": DateTime.now(),
+                                            },
+                                            createdAt: DateTime.now(),
+                                            updatedAt: DateTime.now(),
+                                          );
+                                          await deviceInfoNotifier!
+                                              .addDeviceInfo(result, newDeviceInfo);
+
+                                          await authService.updateDisplayName(displayName);
+
+                                          final newProfile = Profile(
+                                            uid: result,
+                                            avatarUrl: [],
+                                            userAttr: userAttr,
+                                            createdAt: DateTime.now(),
+                                            updatedAt: DateTime.now(),
+                                          );
+                                          await profileNotifier!
+                                              .addProfile(result, newProfile);
+                                        }
+
                                         userHistory.value.clear();
-                                        final userHistoryOnStorage = await storage.read(key: "userHistory");
+                                        final userHistoryOnStorage =
+                                            await storage.read(key: "userHistory");
                                         if (userHistoryOnStorage != null) {
                                           final List<dynamic> userHistoryDecoded =
-                                            jsonDecode(userHistoryOnStorage);
-                                          final List<Map<String, dynamic>> userHistoryList =
+                                              jsonDecode(userHistoryOnStorage);
+                                          userHistory.value.addAll(
                                             userHistoryDecoded
-                                              .map((history) => history as Map<String, dynamic>)
-                                              .toList();
-
-                                          debugPrint("userHistory on storage: ${userHistoryList.toString()}");
-                                          userHistory.value.addAll(userHistoryList);
+                                                .map((h) => h as Map<String, dynamic>),
+                                          );
                                         }
-                                              final Map<String, String>
-                                                  currentUserAccount = {
-                                                "email": email,
-                                                
-                                              };
-                                              userHistory.value.insert(
-                                                  0, currentUserAccount);
-
-                                              // 要素数を2以下にする
-                                              List<Map<String, dynamic>>
-                                                  resultUserHistory;
-                                              if (userHistory.value.length >
-                                                  2) {
-                                                resultUserHistory = userHistory
-                                                    .value
-                                                    .sublist(0, 2);
-                                              } else {
-                                                resultUserHistory =
-                                                    userHistory.value;
-                                              }
-
-                                              await storage.write(
-                                                  key: "userHistory",
-                                                  value: jsonEncode(
-                                                      resultUserHistory));
-
-
-                                        // Store fcmToken to "deviceinfo" subcollection of each user
-                                        final newDeviceInfo = DeviceInfo(
-                                          fcmTokens: {
-                                            "token": fcmToken,
-                                            "updatedAt": DateTime.now(),
-                                          },
-                                          createdAt: DateTime.now(),
-                                          updatedAt: DateTime.now(),
+                                        userHistory.value.insert(0, {"email": email});
+                                        final trimmed = userHistory.value.length > 2
+                                            ? userHistory.value.sublist(0, 2)
+                                            : userHistory.value;
+                                        await storage.write(
+                                          key: "userHistory",
+                                          value: jsonEncode(trimmed),
                                         );
-                                        await deviceInfoNotifier.addDeviceInfo(result, newDeviceInfo);
-
-                                        // Update displayName
-                                        debugPrint(" #### Hppppp   ####");
-                                        await authService.updateDisplayName(displayName);
-
-                                        // Store new profile to Firestore "profiles"
-                                        final newProfile = Profile(
-                                          uid: result,
-                                          avatarUrl: [],
-                                          userAttr: {
-                                            "officeLocation": selectedOffice.value,
-                                            "jobLevel": selectedJobLevel.value,
-                                            "department": selectedDepartments.value,
-                                            "subscription": 1, // notice_all
-                                          },
-                                          createdAt: DateTime.now(),
-                                          updatedAt: DateTime.now(),
+                                        await storage.write(
+                                          key: "isAlreadyQRAuthenticated",
+                                          value: "yes",
                                         );
-                                        await profileNotifier.addProfile(result, newProfile);
-
-                                        // Update cachestatus
-                                        await FirebaseFirestore.instance
-                                          .collection("cachestatus").doc("users").set({
-                                            'updatedAt': DateTime.now(),
-                                        });
-                                        debugPrint("updated cache date");
 
                                         if (context.mounted) {
                                           context.router.replace(const TabsRouterRoute());
                                         }
-                                        // Reset form
-//                                        formKey.currentState?.reset();
-
                                       } catch (e) {
                                         if (context.mounted) {
                                           ScaffoldMessenger.of(context).showSnackBar(

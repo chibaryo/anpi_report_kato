@@ -9,9 +9,11 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 //import 'package:badges/badges.dart' as badges; // Import the badges package
 
+import '../../providers/api/notifications_api_provider.dart';
 import '../../providers/bottomnav/bottomnav_provider.dart';
 import '../../providers/firebaseauth/auth_provider.dart';
 import '../../providers/firestore/notification/combined_notification_notifier.dart';
+import '../../repository/betterauth/session_repository.dart';
 
 const secureStorage = FlutterSecureStorage();
 
@@ -24,10 +26,23 @@ class TabsRouterScreen extends HookConsumerWidget {
     final isBottomNavBarVisible = ref.watch(bottomNavNotifierProvider);
 
     final moiUid = useState<String>("");
-    final authAsyncValue = ref.watch(authStateChangesProvider);
+    final neonEnabled = SessionRepository.isNeonDataEnabled;
+    final authAsyncValue = neonEnabled
+        ? const AsyncValue.data(null)
+        : ref.watch(authStateChangesProvider);
     final unAnsweredNotiBadgeCount = useState<int>(0);
 
     useEffect(() {
+      if (neonEnabled) {
+        Future.microtask(() async {
+          final session = await SessionRepository().readStoredSession();
+          if (session != null) {
+            moiUid.value = session.userId;
+          }
+        });
+        return () {};
+      }
+
       final user = authAsyncValue.asData?.value;
       if (user != null) {
         moiUid.value = user.uid;
@@ -35,20 +50,29 @@ class TabsRouterScreen extends HookConsumerWidget {
       }
 
       return () {};
-    }, [authAsyncValue]);
+    }, [authAsyncValue, neonEnabled]);
 
-
-    // Wait for authentication to be ready
-    if (authAsyncValue.isLoading || authAsyncValue.hasError || moiUid.value.isEmpty) {
+    if (!neonEnabled &&
+        (authAsyncValue.isLoading ||
+            authAsyncValue.hasError ||
+            moiUid.value.isEmpty)) {
       return const Center(child: CircularProgressIndicator());
     }
-    // Now it's safe
-    final notificationStream = ref.watch(streamNotificationCombinedNotifierProvider(moiUid.value));
-    // Count the number of unanswered notis
-    notificationStream.whenData((notifications) {
-      final unansweredCount = notifications.where((notification) => notification['answered'] == false).length;
-      unAnsweredNotiBadgeCount.value = unansweredCount;
-    });
+
+    if (neonEnabled) {
+      final neonFeed = ref.watch(neonNotificationsProvider);
+      neonFeed.whenData((notifications) {
+        unAnsweredNotiBadgeCount.value =
+            notifications.where((notification) => notification['answered'] == false).length;
+      });
+    } else {
+      final notificationStream =
+          ref.watch(streamNotificationCombinedNotifierProvider(moiUid.value));
+      notificationStream.whenData((notifications) {
+        unAnsweredNotiBadgeCount.value =
+            notifications.where((notification) => notification['answered'] == false).length;
+      });
+    }
 
     void setIconBadge(int number) async {
       // バッジ表示機能に対応している場合のみ、バッジの数字を更新する

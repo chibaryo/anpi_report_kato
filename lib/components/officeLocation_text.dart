@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
+import 'package:anpi_report_flutter/entity/userattr/office_location.dart';
+
 import '../models/firestore/officelocation/officelocation.dart';
+import '../repository/betterauth/session_repository.dart';
 import '../repository/firebase/officelocation_repo.dart';
 
 class OfficeLocationText extends ConsumerWidget {
@@ -18,6 +21,12 @@ class OfficeLocationText extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    if (SessionRepository.isNeonDataEnabled) {
+      final sort = givenSortNumber ?? 0;
+      final name = getOfficeLocationStatusTypeDetailsBySortNumber(sort)?['displayName'] ?? '未設定';
+      return Text(name);
+    }
+
     // Get repository from provider
     final officeLocationRepository = ref.watch(officeLocationRepositoryProvider);
 

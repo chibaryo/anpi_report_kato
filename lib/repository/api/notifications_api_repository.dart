@@ -19,6 +19,16 @@ class NotificationsApiRepository {
     _apiClient.bearerToken = session.bearerToken;
   }
 
+  List<Map<String, dynamic>> _asMapList(dynamic items) {
+    if (items is List) {
+      return items
+          .whereType<Map>()
+          .map((item) => Map<String, dynamic>.from(item))
+          .toList();
+    }
+    return [];
+  }
+
   Future<List<Map<String, dynamic>>> listNotifications({
     int limit = 100,
     int offset = 0,
@@ -31,11 +41,29 @@ class NotificationsApiRepository {
         'offset': '$offset',
       },
     );
-    final items = response['notifications'];
-    if (items is List) {
-      return items.whereType<Map>().map((item) => Map<String, dynamic>.from(item)).toList();
+    return _asMapList(response['notifications']);
+  }
+
+  Future<Map<String, dynamic>?> getNotification(String notificationId) async {
+    await _ensureAuth();
+    final response =
+        await _apiClient.getJson('/api/app/notifications/$notificationId');
+    final notification = response['notification'];
+    if (notification is Map) {
+      return Map<String, dynamic>.from(notification);
     }
-    return [];
+    return null;
+  }
+
+  Future<Map<String, dynamic>?> getMyReport(String notificationId) async {
+    await _ensureAuth();
+    final response = await _apiClient
+        .getJson('/api/app/notifications/$notificationId/reports/me');
+    final report = response['report'];
+    if (report is Map) {
+      return Map<String, dynamic>.from(report);
+    }
+    return null;
   }
 
   Future<Map<String, dynamic>> submitReport({
@@ -49,20 +77,28 @@ class NotificationsApiRepository {
     );
   }
 
-  Future<List<Map<String, dynamic>>> listUnanswered(String notificationId) async {
+  Future<List<Map<String, dynamic>>> listReports(String notificationId) async {
     await _ensureAuth();
-    final response = await _apiClient.getJson(
-      '/api/app/notifications/$notificationId/unanswered',
-    );
-    final items = response['users'];
-    if (items is List) {
-      return items.whereType<Map>().map((item) => Map<String, dynamic>.from(item)).toList();
-    }
-    return [];
+    final response = await _apiClient
+        .getJson('/api/app/notifications/$notificationId/reports');
+    return _asMapList(response['reports']);
+  }
+
+  Future<List<Map<String, dynamic>>> listUnanswered(
+      String notificationId) async {
+    await _ensureAuth();
+    final response = await _apiClient
+        .getJson('/api/app/notifications/$notificationId/unanswered');
+    return _asMapList(response['users']);
   }
 
   Future<Map<String, dynamic>> sendToTopic(Map<String, dynamic> payload) async {
     await _ensureAuth();
     return _apiClient.postJson('/api/app/send-to-topic', payload);
+  }
+
+  Future<void> deleteNotification(String notificationId) async {
+    await _ensureAuth();
+    await _apiClient.deleteJson('/api/app/notifications/$notificationId', {});
   }
 }

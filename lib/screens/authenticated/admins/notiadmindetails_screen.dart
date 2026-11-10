@@ -14,7 +14,10 @@ import '../../../entity/userattr/department.dart';
 import '../../../entity/userattr/office_location.dart';
 import '../../../models/notification/notification.dart';
 import '../../../models/profile.dart';
-import '../../../providers/bottomnav/bottomnav_provider.dart';
+import '../../../providers/api/me_api_provider.dart';
+import '../../../providers/api/notifications_api_provider.dart';
+import '../../../repository/api/notifications_api_repository.dart';
+import '../../../repository/betterauth/session_repository.dart';
 import '../../../providers/firebaseauth/auth_provider.dart';
 import '../../../providers/firestore/profile/profile_notifier.dart';
 import '../../../providers/progress/progress_notifier.dart';
@@ -26,38 +29,89 @@ class NotiAdminDetailsScreen extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final neonEnabled = SessionRepository.isNeonDataEnabled;
     final moiUid = useState<String>("");
-    final authAsyncValue = ref.watch(authStateChangesProvider);
-    final notiNotifier = ref.watch(streamNotificationNotifierProvider.notifier);
-    final profileNotifier = ref.watch(streamProfileNotifierProvider.notifier);
+    final authAsyncValue = neonEnabled
+        ? const AsyncValue.data(null)
+        : ref.watch(authStateChangesProvider);
+    final notiNotifier = neonEnabled
+        ? null
+        : ref.watch(streamNotificationNotifierProvider.notifier);
+    final profileNotifier = neonEnabled
+        ? null
+        : ref.watch(streamProfileNotifierProvider.notifier);
     final currentNoti = useState<Noti?>(null);
     final moiProfile = useState<Profile?>(null);
-    /** new ***/
-    final answeredUsersReportStream =
-        ref.watch(streamAnsweredUserReportNotifierProvider(notiId));
-    final unansweredUsers = ref.watch(fetchUnansweredUsersProvider(notiId));
+    final neonProfileAsync =
+        neonEnabled ? ref.watch(neonMoiProfileProvider) : null;
+  /** new ***/
+    final answeredUsersReportStream = neonEnabled
+        ? ref.watch(neonNotificationReportsProvider(notiId))
+        : ref.watch(streamAnsweredUserReportNotifierProvider(notiId));
+    final unansweredUsers = neonEnabled
+        ? ref.watch(neonNotificationUnansweredProvider(notiId))
+        : ref.watch(fetchUnansweredUsersProvider(notiId));
     final filteredUnansweredUsers = useState<List<Map<String, dynamic>>>([]);
     //final unansweredUsersStream = ref.watch(streamUnansweredUserNotifierProvider(notiId));
     final progress = ref.watch(progressNotifierProvider);
 
     final tabController = useTabController(initialLength: 2);
 
+    DateTime? parseDate(dynamic value) {
+      if (value is DateTime) return value;
+      if (value is String && value.isNotEmpty) {
+        return DateTime.tryParse(value);
+      }
+      return null;
+    }
+
+  Noti notiFromNeonRow(Map<String, dynamic> row) {
+    final payload = row['payload'];
+    final payloadMap =
+        payload is Map ? Map<String, dynamic>.from(payload) : <String, dynamic>{};
+    final typeRaw = payloadMap['notiType'] ?? payloadMap['type'] ?? 0;
+    return Noti(
+      notificationId: row['id']?.toString() ?? '',
+      notiTitle: row['title']?.toString() ??
+          payloadMap['notiTitle']?.toString() ??
+          '',
+      notiBody:
+          row['body']?.toString() ?? payloadMap['notiBody']?.toString() ?? '',
+      notiType: typeRaw is int ? typeRaw : int.tryParse(typeRaw.toString()) ?? 0,
+      notiTopic: row['noti_topic']?.toString() ??
+          payloadMap['notiTopic']?.toString() ??
+          '',
+      createdAt: parseDate(row['created_at']),
+      updatedAt: parseDate(row['updated_at']),
+    );
+  }
+
     useEffect(() {
+      if (neonEnabled) {
+        moiProfile.value = neonProfileAsync?.asData?.value;
+        NotificationsApiRepository()
+            .getNotification(notiId)
+            .then((row) {
+          if (row != null) {
+            currentNoti.value = notiFromNeonRow(row);
+          }
+        });
+        return () {};
+      }
+
       final user = authAsyncValue.asData?.value;
 
       if (user != null) {
         moiUid.value = user.uid;
         debugPrint("moiUid (notiAdminDetail): ${moiUid.value}");
 
-        // Get profile by uid
-        profileNotifier.getProfileByUid(moiUid.value).then((profile) {
+        profileNotifier?.getProfileByUid(moiUid.value).then((profile) {
           moiProfile.value = profile;
           debugPrint(
               "officeLocation: ${profile?.userAttr["officeLocation"].toString()}");
         });
       }
-      // Get noti
-      notiNotifier.getNotificationByNotiId(notiId).then((value) {
+      notiNotifier?.getNotificationByNotiId(notiId).then((value) {
         currentNoti.value = value;
         if (currentNoti.value != null) {
           debugPrint("currentNoti.value: ${currentNoti.value.toString()}");
@@ -65,7 +119,7 @@ class NotiAdminDetailsScreen extends HookConsumerWidget {
       });
 
       return () {};
-    }, [authAsyncValue]);
+    }, [authAsyncValue, neonEnabled, neonProfileAsync, notiId]);
 
     bool hasBitwiseOverlap(int currentUserDepartments, int userDepartments) {
       return (currentUserDepartments & userDepartments) != 0;
@@ -371,21 +425,23 @@ class NotiAdminDetailsScreen extends HookConsumerWidget {
                   ],
                 ),
               (AsyncError _, AsyncError _) => const Text('Error'),
-              (_, _) => Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      LinearProgressIndicator(
-                        value: progress,
-                        backgroundColor: Colors.grey,
-                        valueColor: const AlwaysStoppedAnimation<Color>(
-                            Colors.deepPurpleAccent),
+              (_, _) => neonEnabled
+                  ? const Center(child: CircularProgressIndicator())
+                  : Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          LinearProgressIndicator(
+                            value: progress,
+                            backgroundColor: Colors.grey,
+                            valueColor: const AlwaysStoppedAnimation<Color>(
+                                Colors.deepPurpleAccent),
+                          ),
+                          Text(
+                              "${(progress * 100).toStringAsFixed(0)} パーセント ロード中...")
+                        ],
                       ),
-                      Text(
-                          "${(progress * 100).toStringAsFixed(0)} パーセント ロード中...")
-                    ],
-                  ),
-                ),
+                    ),
             },
           ),
         ],

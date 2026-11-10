@@ -7,9 +7,12 @@ import 'package:intl/intl.dart';
 
 import '../../models/notification/notification.dart';
 import '../../models/profile.dart';
+import '../../providers/api/me_api_provider.dart';
+import '../../providers/api/notifications_api_provider.dart';
 import '../../providers/firebaseauth/auth_provider.dart';
 import '../../providers/firestore/notification/combined_notification_notifier.dart';
 import '../../providers/firestore/profile/moiProfile_notifier.dart';
+import '../../repository/betterauth/session_repository.dart';
 import '../../router/app_router.dart';
 
 @RoutePage()
@@ -25,22 +28,29 @@ class AppHomeScreen extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final moiUid = useState<String>("");
     final moiProfile = useState<Profile?>(null);
+    final neonEnabled = SessionRepository.isNeonDataEnabled;
 
     final tabController = useTabController(initialLength: 2);
-    final authAsyncValue = ref.watch(authStateChangesProvider);
+    final authAsyncValue = neonEnabled
+        ? const AsyncValue.data(null)
+        : ref.watch(authStateChangesProvider);
     final unAnsweredNotiBadgeCount = useState<int>(0);
-    //final answeredByMeNotificationStream = ref.watch(streamNotificationAnswerByMeNotifierProvider(moiUid.value));
-    final profileAsyncValue = ref.watch(streamMoiProfileNotifierProvider(moiUid.value));
+    final profileAsyncValue = neonEnabled
+        ? ref.watch(neonMoiProfileProvider)
+        : ref.watch(streamMoiProfileNotifierProvider(moiUid.value));
 
     useEffect(() {
       Future.microtask(() {
         ref.read(
           bottomNavNotifierProvider.notifier
         ).show();
-        if (moiUid.value.isNotEmpty) {
+        if (!neonEnabled && moiUid.value.isNotEmpty) {
           ref.invalidate(
             streamNotificationCombinedNotifierProvider(moiUid.value)
           );
+        }
+        if (neonEnabled) {
+          ref.invalidate(neonNotificationsProvider);
         }
       });
 
@@ -48,29 +58,34 @@ class AppHomeScreen extends HookConsumerWidget {
     }, const []);
 
     useEffect(() {
+      if (neonEnabled) {
+        moiProfile.value = profileAsyncValue.asData?.value;
+        return () {};
+      }
       final user = authAsyncValue.asData?.value;
       if (user != null) {
         moiUid.value = user.uid;
         debugPrint("moiUid: ${moiUid.value}");
-
-        // Profile stream
         moiProfile.value = profileAsyncValue.asData?.value;
         debugPrint("moiP : ${moiProfile.value.toString()}");
       }
 
       return () {};
-    }, [authAsyncValue, profileAsyncValue]);
+    }, [authAsyncValue, profileAsyncValue, neonEnabled]);
 
-    // Wait for authentication to be ready
-    if (authAsyncValue.isLoading || authAsyncValue.hasError || moiUid.value.isEmpty) {
+    if (!neonEnabled &&
+        (authAsyncValue.isLoading ||
+            authAsyncValue.hasError ||
+            moiUid.value.isEmpty)) {
       return const Center(child: CircularProgressIndicator());
     }
-    // Now it's safe
-    final notificationStream = ref.watch(streamNotificationCombinedNotifierProvider(moiUid.value));
-    // Count the number of unanswered notis
+
+    final notificationStream = neonEnabled
+        ? ref.watch(neonNotificationsProvider)
+        : ref.watch(streamNotificationCombinedNotifierProvider(moiUid.value));
     notificationStream.whenData((notifications) {
-      final unansweredCount = notifications.where((notification) => notification['answered'] == false).length;
-      unAnsweredNotiBadgeCount.value = unansweredCount;
+      unAnsweredNotiBadgeCount.value =
+          notifications.where((notification) => notification['answered'] == false).length;
     });
 
     return Scaffold(
@@ -147,7 +162,11 @@ class AppHomeScreen extends HookConsumerWidget {
                                             await context.router.push(PostEnqueteRoute(notificationId: noti.notificationId));
                                             ref.read(bottomNavNotifierProvider.notifier).show();
                                             // Invalidate list
-                                            ref.invalidate(streamNotificationCombinedNotifierProvider(moiUid.value));
+                                            if (neonEnabled) {
+                                              ref.invalidate(neonNotificationsProvider);
+                                            } else {
+                                              ref.invalidate(streamNotificationCombinedNotifierProvider(moiUid.value));
+                                            }
                                           }
                                         },
                                         contentPadding: const EdgeInsets.all(4.0),
