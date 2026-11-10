@@ -1,0 +1,11 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Cutover end-state: all client access denied.
+    // Data access must go through Better Auth protected Neon APIs.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

@@ -7,6 +7,11 @@ import '../../providers/bottomnav/bottomnav_provider.dart';
 
 final listVersionHistory = [
   {
+    "date": "[2026/11/10]",
+    "version": "1.4.0",
+    "description": "Better Auth / Neon API cutover build (ENABLE_NEON_DATA_API)",
+  },
+  {
     "date": "[2025/04/30]",
     "version": "1.3.16",
     "description": "トピック、部署のDBへの移行対応",

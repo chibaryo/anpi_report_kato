@@ -14,6 +14,7 @@ import '../../models/deviceinfo.dart';
 import '../../providers/firebaseauth/auth_provider.dart';
 import '../../repository/firebase/authrepo.dart';
 import '../../repository/betterauth/better_auth_repo.dart';
+import '../../repository/betterauth/session_repository.dart';
 import '../../providers/firestore/deviceinfo/deviceinfo_notifier.dart';
 import '../../providers/qrtext/qrtext_notifier.dart';
 import '../../router/app_router.dart';
@@ -97,13 +98,18 @@ class SigninScreen extends HookConsumerWidget {
                     final password = jsonDecode(selectedUser)["password"];
                     final authService = AuthService();
 
-                    // Prefer stored Better Auth bearer restore; fall back to legacy password if present.
+                    // Prefer stored Better Auth bearer restore.
+                    // Neon cutover: never fall back to stored plaintext password.
                     try {
                       String? result;
-                      if (BetterAuthRepository.isBridgeEnabled) {
+                      if (BetterAuthRepository.isBridgeEnabled ||
+                          SessionRepository.isNeonDataEnabled) {
                         result = await authService.restoreSessionWithBiometrics();
                       }
-                      if (result == null && password is String && password.isNotEmpty) {
+                      if (result == null &&
+                          !SessionRepository.isNeonDataEnabled &&
+                          password is String &&
+                          password.isNotEmpty) {
                         result = await authService.signInWithEmail(email, password);
                       }
                       if (result == null) {
