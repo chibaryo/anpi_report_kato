@@ -3,6 +3,7 @@ import 'dart:async';
 //import 'dart:developer';
 import 'dart:io';
 
+import 'components/app_version_gate.dart';
 import 'repository/firebase/push_notification_service.dart';
 import 'repository/local/secure_storage_migration.dart';
 import 'package:auto_route/auto_route.dart';
@@ -183,6 +184,11 @@ class MyApp extends HookConsumerWidget {
       debugShowCheckedModeBanner: false,
       routerDelegate: appRouter.delegate(),
       routeInformationParser: appRouter.defaultRouteParser(),
+      builder: (context, child) {
+        return AppVersionGate(
+          child: child ?? const SizedBox.shrink(),
+        );
+      },
     );
   }
 }

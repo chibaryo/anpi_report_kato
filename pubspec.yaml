@@ -73,6 +73,7 @@ dependencies:
   geocoding:
   custom_text_form_field_plus:
   device_info_plus:
+  package_info_plus:
   ios_utsname_ext:
   device_imei:
   flutter_device_identifier:

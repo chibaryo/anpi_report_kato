@@ -187,14 +187,18 @@ class SessionRepository {
     required String version,
     required int build,
   }) async {
-    final result = await _apiClient.postJson(
-      '/api/app/min-version',
-      {
-        'version': version,
-        'build': build,
-      },
-      auth: false,
-    );
-    return result['outdated'] == true;
+    try {
+      final result = await _apiClient.postJson(
+        '/api/app/min-version',
+        {
+          'version': version,
+          'build': build,
+        },
+        auth: false,
+      );
+      return result['outdated'] == true;
+    } catch (_) {
+      return false;
+    }
   }
 }
