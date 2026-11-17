@@ -9,6 +9,15 @@ enum TopicType {
   candidateKyushu(displayName: "通知_九州", topic: "notice_kyushu", sortNumber: 64, bitMaskNum: 64),
   //candidateTestAdm2024(displayName: "管理用テスト2024", topic: "test_adm_2024", sortNumber: 128, bitMaskNum: 128),
   candidateAdmOnly2025(displayName: "管理用テスト2025", topic: "adm_only_2025", sortNumber: 256, bitMaskNum: 256),
+  // Regions the earthquake server (wsocket) sends to. Bits 128 and 512 are taken, so these start at 1024
+  // and must match app.topics on the server (db/data/003_add_regional_topics.sql in the web repo).
+  candidateHokkaido(displayName: "通知_北海道", topic: "notice_hokkaido", sortNumber: 1024, bitMaskNum: 1024),
+  candidateTohoku(displayName: "通知_東北", topic: "notice_tohoku", sortNumber: 2048, bitMaskNum: 2048),
+  candidateKitakanto(displayName: "通知_北関東", topic: "notice_kitakanto", sortNumber: 4096, bitMaskNum: 4096),
+  candidateHokuriku(displayName: "通知_北陸", topic: "notice_hokuriku", sortNumber: 8192, bitMaskNum: 8192),
+  candidateKoshinetsu(displayName: "通知_甲信越", topic: "notice_koshinetsu", sortNumber: 16384, bitMaskNum: 16384),
+  candidateChugoku(displayName: "通知_中国（岡山・広島以外）", topic: "notice_chugoku", sortNumber: 32768, bitMaskNum: 32768),
+  candidateShikoku(displayName: "通知_四国", topic: "notice_shikoku", sortNumber: 65536, bitMaskNum: 65536),
   ;
 
   final String displayName;
@@ -23,6 +32,23 @@ enum TopicType {
     required this.bitMaskNum,
   });
 }
+
+/// Regions an employee can switch on, north to south. notice_all is always on and is not listed.
+const List<TopicType> selectableRegionTopics = [
+  TopicType.candidateHokkaido,
+  TopicType.candidateTohoku,
+  TopicType.candidateKitakanto,
+  TopicType.candidateTokyo,
+  TopicType.candidateHokuriku,
+  TopicType.candidateKoshinetsu,
+  TopicType.candidateNagoya,
+  TopicType.candidateOsaka,
+  TopicType.candidateOkayama,
+  TopicType.candidateHiroshima,
+  TopicType.candidateChugoku,
+  TopicType.candidateShikoku,
+  TopicType.candidateKyushu,
+];
 
 Map<String, dynamic>? getNotiTopicDetailsBySortNumber(int sortNumber) {
   TopicType? foundType = TopicType.values.firstWhere(
