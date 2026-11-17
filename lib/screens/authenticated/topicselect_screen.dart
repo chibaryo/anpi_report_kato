@@ -9,6 +9,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
+import '../../entity/topictype.dart';
 import '../../models/profile.dart';
 import '../../providers/api/account_api_cache.dart';
 import '../../providers/api/me_api_provider.dart';
@@ -17,6 +18,21 @@ import '../../providers/firebaseauth/auth_provider.dart';
 import '../../providers/firestore/profile/profile_notifier.dart';
 import '../../repository/api/me_api_repository.dart';
 import '../../repository/betterauth/session_repository.dart';
+
+// Keys used before the region list became data driven; kept so existing switches survive the update.
+const Map<String, String> _legacyStorageKeys = {
+  'notice_tokyo': 'tokyoFlagStr',
+  'notice_nagoya': 'nagoyaFlagStr',
+  'notice_osaka': 'osakaFlagStr',
+  'notice_hiroshima': 'hiroshimaFlagStr',
+  'notice_okayama': 'okayamaFlagStr',
+  'notice_kyushu': 'kyushuFlagStr',
+  'adm_only_2025': 'admOnly2025FlagStr',
+};
+
+String _storageKeyFor(TopicType t) => _legacyStorageKeys[t.topic] ?? '${t.topic}FlagStr';
+
+String _regionLabel(TopicType t) => t.displayName.replaceFirst('通知_', '');
 
 @RoutePage()
 class TopicSelectScreen extends HookConsumerWidget {
@@ -40,16 +56,16 @@ class TopicSelectScreen extends HookConsumerWidget {
         ? null
         : ref.watch(streamMoiProfileNotifierProvider(moiUid.value));
 
-    final isTokyoFlagOn = useState<bool>(false);
-    final isNagoyaFlagOn = useState<bool>(false);
-    final isOsakaFlagOn = useState<bool>(false);
-    final isHiroshimaFlagOn = useState<bool>(false);
-    final isOkayamaFlagOn = useState<bool>(false);
-    final isKyushuFlagOn = useState<bool>(false);
-    final isTestAdm2024FlagOn = useState<bool>(false);
-    final isAdmOnly2025FlagOn = useState<bool>(false);
+    final enabledTopics = useState<Set<String>>(<String>{});
+    final busyTopic = useState<String?>(null);
     const storage = FlutterSecureStorage();
     final meApi = MeApiRepository();
+
+    final isAdmin = ((moiProfile.value?.userAttr['jobLevel'] as num?)?.toInt() ?? 0) >= 4;
+    final visibleTopics = <TopicType>[
+      ...selectableRegionTopics,
+      if (isAdmin) TopicType.candidateAdmOnly2025,
+    ];
 
     useEffect(() {
       if (neonEnabled) {
@@ -68,37 +84,38 @@ class TopicSelectScreen extends HookConsumerWidget {
       return () {};
     }, [authAsyncValue, profileAsyncValue, neonEnabled, neonMe, neonProfile]);
 
+    // Device-local flags first, so the screen is usable before the profile loads.
     useEffect(() {
       Future.microtask(() {
         ref.read(bottomNavNotifierProvider.notifier).hide();
       });
 
-      Future<void> getNotiTopicFlagsFromStorage() async {
-        Future<bool> readFlag(String key) async {
-          final value = await storage.read(key: key);
-          return value == 'on';
+      Future<void> readFlags() async {
+        final on = <String>{};
+        for (final t in [...selectableRegionTopics, TopicType.candidateAdmOnly2025]) {
+          if (await storage.read(key: _storageKeyFor(t)) == 'on') on.add(t.topic);
         }
-
-        isTokyoFlagOn.value = await readFlag('tokyoFlagStr');
-        isNagoyaFlagOn.value = await readFlag('nagoyaFlagStr');
-        isOsakaFlagOn.value = await readFlag('osakaFlagStr');
-        isHiroshimaFlagOn.value = await readFlag('hiroshimaFlagStr');
-        isOkayamaFlagOn.value = await readFlag('okayamaFlagStr');
-        isKyushuFlagOn.value = await readFlag('kyushuFlagStr');
-        isTestAdm2024FlagOn.value = await readFlag('testadm2024FlagStr');
-        isAdmOnly2025FlagOn.value = await readFlag('admOnly2025FlagStr');
+        enabledTopics.value = on;
       }
 
-      getNotiTopicFlagsFromStorage();
+      readFlags();
       return () {};
     }, const []);
 
-    Future<void> persistSubscriptionBit({
-      required int bit,
-      required bool enabled,
-    }) async {
-      final current = moiProfile.value?.userAttr['subscription'] as int? ?? 0;
-      final next = enabled ? (current | (1 << bit)) : (current & ~(1 << bit));
+    // The account's bitmask wins once known: it also reflects changes made from the web.
+    final subscription = (moiProfile.value?.userAttr['subscription'] as num?)?.toInt();
+    useEffect(() {
+      if (subscription == null) return () {};
+      enabledTopics.value = {
+        for (final t in [...selectableRegionTopics, TopicType.candidateAdmOnly2025])
+          if ((subscription & t.bitMaskNum) != 0) t.topic,
+      };
+      return () {};
+    }, [subscription]);
+
+    Future<void> persistSubscription(Set<String> topics, TopicType changed, bool enabled) async {
+      final current = (moiProfile.value?.userAttr['subscription'] as num?)?.toInt() ?? 0;
+      final next = enabled ? (current | changed.bitMaskNum) : (current & ~changed.bitMaskNum);
       if (neonEnabled) {
         final response = await meApi.patchProfile(
           userAttr: {'subscription': next},
@@ -124,15 +141,6 @@ class TopicSelectScreen extends HookConsumerWidget {
         invalidateAccountApiProviders(ref);
 
         final fcmToken = await storage.read(key: 'fcmToken');
-        final topics = <String>['notice_all'];
-        if (isTokyoFlagOn.value) topics.add('notice_tokyo');
-        if (isNagoyaFlagOn.value) topics.add('notice_nagoya');
-        if (isOsakaFlagOn.value) topics.add('notice_osaka');
-        if (isHiroshimaFlagOn.value) topics.add('notice_hiroshima');
-        if (isOkayamaFlagOn.value) topics.add('notice_okayama');
-        if (isKyushuFlagOn.value) topics.add('notice_kyushu');
-        if (isAdmOnly2025FlagOn.value) topics.add('adm_only_2025');
-
         String udid = 'unknown';
         try {
           final deviceInfo = DeviceInfoPlugin();
@@ -149,7 +157,7 @@ class TopicSelectScreen extends HookConsumerWidget {
           udid: udid,
           platform: Platform.isIOS ? 'ios' : 'android',
           fcmToken: fcmToken,
-          topics: topics,
+          topics: ['notice_all', ...topics],
         );
         return;
       }
@@ -167,25 +175,30 @@ class TopicSelectScreen extends HookConsumerWidget {
       );
     }
 
-    Future<void> toggleTopic({
-      required bool? value,
-      required ValueNotifier<bool> flag,
-      required String storageKey,
-      required String topic,
-      required int bit,
-    }) async {
-      if (value == null) return;
+    Future<void> toggleTopic(TopicType t, bool value) async {
+      if (busyTopic.value != null) return;
+      busyTopic.value = t.topic;
       final messaging = FirebaseMessaging.instance;
-      if (value) {
-        await storage.write(key: storageKey, value: 'on');
-        await messaging.subscribeToTopic(topic);
-        flag.value = true;
-        await persistSubscriptionBit(bit: bit, enabled: true);
-      } else {
-        await storage.write(key: storageKey, value: 'off');
-        await messaging.unsubscribeFromTopic(topic);
-        flag.value = false;
-        await persistSubscriptionBit(bit: bit, enabled: false);
+      final next = {...enabledTopics.value};
+      try {
+        if (value) {
+          await messaging.subscribeToTopic(t.topic);
+          next.add(t.topic);
+        } else {
+          await messaging.unsubscribeFromTopic(t.topic);
+          next.remove(t.topic);
+        }
+        await storage.write(key: _storageKeyFor(t), value: value ? 'on' : 'off');
+        enabledTopics.value = next;
+        await persistSubscription(next, t, value);
+      } catch (_) {
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('設定の保存に失敗しました。通信状況を確認してください。')),
+          );
+        }
+      } finally {
+        busyTopic.value = null;
       }
     }
 
@@ -201,91 +214,30 @@ class TopicSelectScreen extends HookConsumerWidget {
           },
         ),
         centerTitle: true,
-        title: const Text('Anpi'),
+        title: const Text('通知受信設定'),
         backgroundColor: Colors.purple[300],
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: <Widget>[
-            SwitchListTile(
-              title: const Text('通知_東京'),
-              value: isTokyoFlagOn.value,
-              onChanged: (value) => toggleTopic(
-                value: value,
-                flag: isTokyoFlagOn,
-                storageKey: 'tokyoFlagStr',
-                topic: 'notice_tokyo',
-                bit: 1,
-              ),
+      body: ListView(
+        children: <Widget>[
+          const Padding(
+            padding: EdgeInsets.fromLTRB(16, 16, 16, 8),
+            child: Text(
+              '地震の自動通知など、地域ごとの通知を受け取るかを選びます。全体通知は常に受け取ります。',
+              style: TextStyle(fontSize: 13, color: Colors.black54),
             ),
+          ),
+          const ListTile(
+            title: Text('全体'),
+            trailing: Text('常に受信', style: TextStyle(color: Colors.black54)),
+          ),
+          const Divider(height: 1),
+          for (final t in visibleTopics)
             SwitchListTile(
-              title: const Text('通知_名古屋'),
-              value: isNagoyaFlagOn.value,
-              onChanged: (value) => toggleTopic(
-                value: value,
-                flag: isNagoyaFlagOn,
-                storageKey: 'nagoyaFlagStr',
-                topic: 'notice_nagoya',
-                bit: 2,
-              ),
+              title: Text(_regionLabel(t)),
+              value: enabledTopics.value.contains(t.topic),
+              onChanged: busyTopic.value == null ? (value) => toggleTopic(t, value) : null,
             ),
-            SwitchListTile(
-              title: const Text('通知_大阪'),
-              value: isOsakaFlagOn.value,
-              onChanged: (value) => toggleTopic(
-                value: value,
-                flag: isOsakaFlagOn,
-                storageKey: 'osakaFlagStr',
-                topic: 'notice_osaka',
-                bit: 3,
-              ),
-            ),
-            SwitchListTile(
-              title: const Text('通知_広島'),
-              value: isHiroshimaFlagOn.value,
-              onChanged: (value) => toggleTopic(
-                value: value,
-                flag: isHiroshimaFlagOn,
-                storageKey: 'hiroshimaFlagStr',
-                topic: 'notice_hiroshima',
-                bit: 4,
-              ),
-            ),
-            SwitchListTile(
-              title: const Text('通知_岡山'),
-              value: isOkayamaFlagOn.value,
-              onChanged: (value) => toggleTopic(
-                value: value,
-                flag: isOkayamaFlagOn,
-                storageKey: 'okayamaFlagStr',
-                topic: 'notice_okayama',
-                bit: 5,
-              ),
-            ),
-            SwitchListTile(
-              title: const Text('通知_九州'),
-              value: isKyushuFlagOn.value,
-              onChanged: (value) => toggleTopic(
-                value: value,
-                flag: isKyushuFlagOn,
-                storageKey: 'kyushuFlagStr',
-                topic: 'notice_kyushu',
-                bit: 6,
-              ),
-            ),
-            SwitchListTile(
-              title: const Text('管理用テスト2025'),
-              value: isAdmOnly2025FlagOn.value,
-              onChanged: (value) => toggleTopic(
-                value: value,
-                flag: isAdmOnly2025FlagOn,
-                storageKey: 'admOnly2025FlagStr',
-                topic: 'adm_only_2025',
-                bit: 8,
-              ),
-            ),
-          ],
-        ),
+        ],
       ),
     );
   }
